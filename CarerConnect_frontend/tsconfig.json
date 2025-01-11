@@ -1,0 +1,29 @@
+{
+  "compilerOptions": {
+    "target": "ES2020",
+    "useDefineForClassFields": true,
+    "lib": ["ES2020", "DOM", "DOM.Iterable"],
+    "module": "esnext",
+    "moduleResolution": "node",
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": true,
+    "jsx": "react-jsx",
+
+    /* Linting */
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true,
+
+    /* Support for `import.meta` in testing */
+    "types": ["node", "jest", "@testing-library/jest-dom"],
+    "allowSyntheticDefaultImports": true,
+    "allowJs": true
+  },
+  "include": ["src"],
+  "files": [],
+  "references": [{ "path": "./tsconfig.node.json" }]
+}
