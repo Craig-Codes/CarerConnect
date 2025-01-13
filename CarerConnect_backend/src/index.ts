@@ -2,9 +2,14 @@ import express from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import { connectDatabase } from "./Database/db";
-import { getUser, loginUser, registerUser } from "./User/user";
+import {
+  getUser,
+  getUsers,
+  loginUser,
+  registerUser,
+} from "./Controllers/User/user";
 
-const app = express();
+export const app = express();
 
 // Define the allowed origin - in this case only the frontends domain, preventing cross-site forgery attacks
 const corsOptions = {
@@ -23,6 +28,7 @@ app.get("/", (req, res) => {
   res.send("Welcome to the home route!");
 });
 
+app.get("/api/users", getUsers);
 app.get("/api/user", getUser);
 app.post("/api/user", loginUser);
 app.post("/api/user/register", registerUser);
