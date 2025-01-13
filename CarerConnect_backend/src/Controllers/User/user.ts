@@ -25,14 +25,10 @@ export const createWebToken = (inputEmail: string) => {
 
 // Function returns a full list of users with details... remove this!!!!
 export const getUsers = async (req: Request, res: Response) => {
-  console.log("HITTING!");
   try {
     const result = (await database.query("SELECT * FROM person;")).rows;
-    console.log(result);
     res.status(200).json(result);
   } catch (error) {
-    console.log("FAILED.... WHY");
-    console.error("Error retrieving users:", error);
     res.status(500).json({ message: "Unable to retrieve users - try harder" });
   }
 };
