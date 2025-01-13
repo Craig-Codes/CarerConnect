@@ -62,4 +62,4 @@ services:
       - carer_connect_database
 
 volumes:
-  postgres_data: {}
+  postgres_data: {} # Named volume to store database data
