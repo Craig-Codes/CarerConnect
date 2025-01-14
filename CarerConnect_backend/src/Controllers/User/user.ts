@@ -17,10 +17,15 @@ const isValidPassword = async (
 // Create a JWT and send to the user. This can then be passed back in subsequent requests, allowing API to be stateless.
 // Signing the token using an environmet variable ensures the token is trusted
 // as only the originator knows the private key
-export const createWebToken = (inputEmail: string) => {
-  return jwt.sign({ email: inputEmail }, process.env.JWT_PRIVATE_KEY!, {
-    expiresIn: "1h",
-  });
+// Token encapsualtes users unique email, and permission level
+export const createWebToken = (inputEmail: string, isAdmin: boolean) => {
+  return jwt.sign(
+    { email: inputEmail, isAdmin: isAdmin },
+    process.env.JWT_PRIVATE_KEY!,
+    {
+      expiresIn: "1h",
+    }
+  );
 };
 
 // Function returns a full list of users with details... remove this!!!!
@@ -29,7 +34,7 @@ export const getUsers = async (req: Request, res: Response) => {
     const result = (await database.query("SELECT * FROM person;")).rows;
     res.status(200).json(result);
   } catch (error) {
-    res.status(500).json({ message: "Unable to retrieve users - try harder" });
+    res.status(500).json({ message: "Unable to retrieve users" });
   }
 };
 
@@ -50,7 +55,6 @@ export const getUser = async (req: Request, res: Response) => {
       ) as JwtPayload;
 
       const result = await database.query(findUserQuery, [decoded.email]);
-      console.log(`Database Result = ${JSON.stringify(result)}`);
       res.status(200).json({
         user: {
           email: result.rows[0].email,
@@ -74,7 +78,9 @@ export const loginUser = async (req: Request, res: Response) => {
     const user = await database.query(findUserQuery, [inputEmail]);
 
     if (await isValidPassword(inputPassword, user.rows[0].password)) {
-      const token = createWebToken(inputEmail);
+      // Create a JWT using the users email and permissions level
+      const isAdmin = user.rows[0].is_admin;
+      const token = createWebToken(inputEmail, isAdmin);
 
       // Set the cookie to store the JWT
       res.cookie("CarerConnect_user_token", token, {
@@ -120,8 +126,6 @@ export const registerUser = async (req: Request, res: Response) => {
       return res.status(400).json({ message: "Invalid email address" });
     }
 
-    console.log("valid email");
-
     // Validate password (must be longer than 5 characters)
     if (password.length <= 5) {
       console.log("invalid password");
@@ -129,8 +133,6 @@ export const registerUser = async (req: Request, res: Response) => {
         .status(400)
         .json({ message: "Password must be longer than 5 characters" });
     }
-
-    console.log("valid password");
 
     // Hash and Salt the password before it is stored in the database
     const encryptedPassword = await encryptPassword(password);
@@ -145,10 +147,8 @@ export const registerUser = async (req: Request, res: Response) => {
       false,
     ]);
 
-    console.log("created in db");
-
     // Login the new user
-    const token = createWebToken(email);
+    const token = createWebToken(email, false);
 
     // Set the cookie to store the JWT
     res.cookie("CarerConnect_user_token", token, {
@@ -157,8 +157,6 @@ export const registerUser = async (req: Request, res: Response) => {
       secure: true, // Ensures the cookie is sent over HTTPS only
       sameSite: "strict", // Limits cross-site requests to prevent CSRF
     });
-
-    console.log("Returning user to frontend");
 
     res.status(200).json({
       email: newUser.rows[0].email,

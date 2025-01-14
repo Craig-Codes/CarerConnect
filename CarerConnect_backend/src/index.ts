@@ -8,6 +8,8 @@ import {
   loginUser,
   registerUser,
 } from "./Controllers/User/user";
+import { adminAuthorisation } from "./Middlewear/adminAuthorisation";
+import { getCategories } from "./Controllers/Forum/forum";
 
 export const app = express();
 
@@ -28,10 +30,13 @@ app.get("/", (req, res) => {
   res.send("Welcome to the home route!");
 });
 
-app.get("/api/users", getUsers);
-app.get("/api/user", getUser);
+// AdminAuthroisation middlewear used to protect certain routes which
+// require that a user is an administrator
+app.get("/api/user", adminAuthorisation, getUser);
 app.post("/api/user", loginUser);
 app.post("/api/user/register", registerUser);
+
+app.get("/api/forum", getCategories);
 
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);

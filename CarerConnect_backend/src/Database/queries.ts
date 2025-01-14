@@ -15,3 +15,24 @@ export const getPosts = `SELECT person.username, post.content, post.created_at
 FROM post
 INNER JOIN person ON post.user_id=person.id
 WHERE post.thread_id=$1;`;
+
+// Query retrieves each catergory with a title, description, number of threads, and number of posts
+// Thread count is DISTINCT as we only want to count the unique threads (as each post is joined to a thread causing duplicates)
+// Left Join creates a row whenever the right hand table matches a row on the left table:
+// - Each time a thread has a category (first join)
+// - Each time a tread has a post (second join)
+// This is then grouped up per category
+export const findCategoriesWithThreadAndPostCount = `SELECT 
+    c.id,
+    c.title AS category_title,
+    c.description AS category_description,
+    COUNT(DISTINCT t.id) AS thread_count,
+    COUNT(p.id) AS post_count
+FROM 
+    category c
+LEFT JOIN 
+    thread t ON c.id = t.category_id
+LEFT JOIN 
+    post p ON t.id = p.thread_id
+GROUP BY 
+    c.id;`;
