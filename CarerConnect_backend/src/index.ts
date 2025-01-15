@@ -2,14 +2,13 @@ import express from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import { connectDatabase } from "./Database/db";
-import {
-  getUser,
-  getUsers,
-  loginUser,
-  registerUser,
-} from "./Controllers/User/user";
+import { getUser, loginUser, registerUser } from "./Controllers/User/user";
 import { adminAuthorisation } from "./Middlewear/adminAuthorisation";
-import { getCategories } from "./Controllers/Forum/forum";
+import {
+  getCategories,
+  getThread,
+  getThreads,
+} from "./Controllers/Forum/forum";
 
 export const app = express();
 
@@ -37,6 +36,8 @@ app.post("/api/user", loginUser);
 app.post("/api/user/register", registerUser);
 
 app.get("/api/forum", getCategories);
+app.get("/api/forum/threads/:id", getThreads);
+app.get("/api/forum/thread/:id", getThread);
 
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);
