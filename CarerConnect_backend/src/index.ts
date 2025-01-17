@@ -5,8 +5,11 @@ import { connectDatabase } from "./Database/db";
 import { getUser, loginUser, registerUser } from "./Controllers/User/user";
 import { adminAuthorisation } from "./Middlewear/adminAuthorisation";
 import {
+  addThread,
+  deletePost,
+  deleteThread,
   getCategories,
-  getThread,
+  getThreadPosts,
   getThreads,
 } from "./Controllers/Forum/forum";
 
@@ -35,9 +38,17 @@ app.get("/api/user", adminAuthorisation, getUser);
 app.post("/api/user", loginUser);
 app.post("/api/user/register", registerUser);
 
+// Forum routes
 app.get("/api/forum", getCategories);
+
 app.get("/api/forum/threads/:id", getThreads);
-app.get("/api/forum/thread/:id", getThread);
+app.delete("/api/forum/thread/:id", deleteThread);
+app.post("/api/forum/thread", addThread);
+
+app.get("/api/forum/thread/:id", getThreadPosts);
+app.delete("/api/forum/post/:id", deletePost);
+
+// Events routes
 
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);

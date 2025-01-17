@@ -1,7 +1,7 @@
 import { database } from "../../Database/db";
 import { Request, Response } from "express";
 import { compareHash, encryptPassword } from "./hashing";
-import { addUser, findUserQuery } from "../../Database/queries";
+import { insertUser, findUserQuery } from "../../Database/queries";
 import Jwt, { JwtPayload } from "jsonwebtoken";
 const jwt = Jwt;
 
@@ -42,7 +42,6 @@ export const getUsers = async (req: Request, res: Response) => {
 export const getUser = async (req: Request, res: Response) => {
   try {
     const token = req.cookies.CarerConnect_user_token;
-    console.log(`Token: ${token}`);
 
     if (!token) {
       return res
@@ -140,7 +139,7 @@ export const registerUser = async (req: Request, res: Response) => {
     // Create a new user in the database (defaulting to no admin permissions)
     // If either username or email unique fields are not unique, the database
     // will return an error and the catch block will be hit
-    const newUser = await database.query(addUser, [
+    const newUser = await database.query(insertUser, [
       username,
       email,
       encryptedPassword,
@@ -167,4 +166,13 @@ export const registerUser = async (req: Request, res: Response) => {
     console.log("failed to register: ", error);
     res.status(400).json({ message: "Failed to register" });
   }
+};
+
+// Decode the JWT  to get users unique email addess
+// then query the database to return users id
+export const getUserId = async (token: string): Promise<Number> => {
+  const decoded = jwt.verify(token, process.env.JWT_PRIVATE_KEY!) as JwtPayload;
+  return Number(
+    (await database.query(findUserQuery, [decoded.email])).rows[0].id
+  );
 };

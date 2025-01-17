@@ -5,7 +5,7 @@ WHERE p.email = $1
 LIMIT 1;`;
 
 // Query adds a new user to the database
-export const addUser = `INSERT INTO public."person" (username, email, password, is_admin)
+export const insertUser = `INSERT INTO public."person" (username, email, password, is_admin)
 VALUES ($1, $2, $3, $4)
 RETURNING username, email, is_admin;`;
 
@@ -63,3 +63,12 @@ GROUP BY
 
 // Query retrieves all posts belonging to a thread
 export const findPostByThread = `SELECT * FROM post WHERE thread_id = $1;`;
+
+export const deleteThreadById = `DELETE FROM thread
+WHERE id = $1;`;
+
+export const deletePostById = `DELETE FROM post
+WHERE id = $1;`;
+
+export const insertThread = `INSERT INTO thread (category_id, user_id, title)
+VALUES ($1, $2, $3);`;
