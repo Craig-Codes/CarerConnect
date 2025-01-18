@@ -9,7 +9,7 @@ import {
   findThreadsByCategory,
   insertThread,
 } from "../../Database/queries";
-import { getUserId } from "../User/user";
+import { getUserId, getUserIsAdmin } from "../User/user";
 
 export const getCategories = async (req: Request, res: Response) => {
   try {
@@ -90,7 +90,6 @@ export const addThread = async (req: Request, res: Response) => {
     } else {
       // If token is found, decode it to get the users email
       userId = await getUserId(token);
-      console.log("userId", userId);
     }
 
     // Get categoryId from request paramaters
@@ -115,11 +114,6 @@ export const addThread = async (req: Request, res: Response) => {
   } catch (error) {
     res.status(500).json({ message: "Failed to add thread" });
   }
-
-  // Get category id:
-
-  // validation
-  // Title
 };
 
 export const addPost = async (req: Request, res: Response) => {};
@@ -159,6 +153,8 @@ export const deletePost = async (req: Request, res: Response) => {
     res.status(400).json({ message: "Thread id expects a number" });
   } else {
     try {
+      // Determine if the deleting user is an admin, or the post creator
+      // const isAdmin = getUserIsAdmin()
       const thread = await database.query(deletePostById, [postId]);
       res.status(200).json({
         message: "Post deleted",

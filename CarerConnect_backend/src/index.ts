@@ -3,7 +3,7 @@ import cors from "cors";
 import cookieParser from "cookie-parser";
 import { connectDatabase } from "./Database/db";
 import { getUser, loginUser, registerUser } from "./Controllers/User/user";
-import { adminAuthorisation } from "./Middlewear/adminAuthorisation";
+import { adminAuthorisationMiddlewear } from "./Middlewear/adminAuthorisation";
 import {
   addThread,
   deletePost,
@@ -12,6 +12,7 @@ import {
   getThreadPosts,
   getThreads,
 } from "./Controllers/Forum/forum";
+import { userAuthorisationMiddlewear } from "./Middlewear/loggedInUserAuthorisation";
 
 export const app = express();
 
@@ -32,21 +33,23 @@ app.get("/", (req, res) => {
   res.send("Welcome to the home route!");
 });
 
-// AdminAuthroisation middlewear used to protect certain routes which
+// adminAuthorisationMiddlewear used to protect certain routes which
 // require that a user is an administrator
-app.get("/api/user", adminAuthorisation, getUser);
+// userAuthorisationMiddlewear used to protect certain routes which
+// require a user to be logged in
+app.get("/api/user", userAuthorisationMiddlewear, getUser);
 app.post("/api/user", loginUser);
 app.post("/api/user/register", registerUser);
 
 // Forum routes
-app.get("/api/forum", getCategories);
+app.get("/api/forum", userAuthorisationMiddlewear, getCategories);
 
-app.get("/api/forum/threads/:id", getThreads);
-app.delete("/api/forum/thread/:id", deleteThread);
-app.post("/api/forum/thread", addThread);
+app.get("/api/forum/threads/:id", userAuthorisationMiddlewear, getThreads);
+app.delete("/api/forum/thread/:id", adminAuthorisationMiddlewear, deleteThread);
+app.post("/api/forum/thread", userAuthorisationMiddlewear, addThread);
 
-app.get("/api/forum/thread/:id", getThreadPosts);
-app.delete("/api/forum/post/:id", deletePost);
+app.get("/api/forum/thread/:id", userAuthorisationMiddlewear, getThreadPosts);
+app.delete("/api/forum/post/:id", userAuthorisationMiddlewear, deletePost);
 
 // Events routes
 
