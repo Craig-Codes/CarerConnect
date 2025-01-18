@@ -75,3 +75,24 @@ WHERE id = $1 AND user_id = $2;`;
 
 export const insertThread = `INSERT INTO thread (category_id, user_id, title)
 VALUES ($1, $2, $3);`;
+
+export const insertPost = `INSERT INTO post (thread_id, user_id, content)
+VALUES ($1, $2, $3);`;
+
+export const editThreadTitle = `UPDATE thread
+SET title = $2
+WHERE id = $1`;
+
+export const editThreadByIdAndUser = `UPDATE thread
+SET title = $3
+WHERE id = $1
+AND user_id = $2`;
+
+export const editPostContent = `UPDATE post
+SET content = $2
+WHERE id = $1`;
+
+export const editPostByIdAndUser = `UPDATE post
+SET content = $3
+WHERE id = $1
+AND user_id = $2`;

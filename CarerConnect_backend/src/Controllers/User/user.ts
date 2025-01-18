@@ -42,26 +42,22 @@ export const getUsers = async (req: Request, res: Response) => {
 export const getUser = async (req: Request, res: Response) => {
   try {
     const token = req.cookies.CarerConnect_user_token;
+    const userEmail = getUserEmail(token); // decode token to get userEmail
 
-    if (!token) {
+    if (userEmail === null) {
       return res
         .status(401)
         .json({ message: "Access denied. No token provided." });
-    } else {
-      const decoded = jwt.verify(
-        token,
-        process.env.JWT_PRIVATE_KEY!
-      ) as JwtPayload;
-
-      const result = await database.query(findUserQuery, [decoded.email]);
-      res.status(200).json({
-        user: {
-          email: result.rows[0].email,
-          username: result.rows[0].username,
-          isAdmin: result.rows[0].is_admin,
-        },
-      });
     }
+
+    const result = await database.query(findUserQuery, [userEmail]);
+    res.status(200).json({
+      user: {
+        email: result.rows[0].email,
+        username: result.rows[0].username,
+        isAdmin: result.rows[0].is_admin,
+      },
+    });
   } catch (error) {
     res.status(500).json({ message: "Failed to retrieve user" });
   }
@@ -171,10 +167,42 @@ export const registerUser = async (req: Request, res: Response) => {
 // Decode the JWT  to get users unique email address
 // then query the database to return users id
 export const getUserId = async (token: string): Promise<Number> => {
-  const decoded = jwt.verify(token, process.env.JWT_PRIVATE_KEY!) as JwtPayload;
-  return Number(
-    (await database.query(findUserQuery, [decoded.email])).rows[0].id
-  );
+  try {
+    if (!token) {
+      // if there is no value in token, return 0
+      return 0;
+    } else {
+      const decoded = jwt.verify(
+        token,
+        process.env.JWT_PRIVATE_KEY!
+      ) as JwtPayload;
+      return Number(
+        (await database.query(findUserQuery, [decoded.email])).rows[0].id
+      );
+    }
+  } catch (error) {
+    console.log(error);
+    return 0;
+  }
+};
+
+// Decode the JWT  to get users unique email address
+export const getUserEmail = (token: string) => {
+  try {
+    if (!token) {
+      // if there is no value in token, return null
+      return null;
+    } else {
+      const decoded = jwt.verify(
+        token,
+        process.env.JWT_PRIVATE_KEY!
+      ) as JwtPayload;
+      return decoded.email;
+    }
+  } catch (error) {
+    console.log(error);
+    return null;
+  }
 };
 
 // Decode the JWT to get users unique email address

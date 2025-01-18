@@ -5,9 +5,12 @@ import { connectDatabase } from "./Database/db";
 import { getUser, loginUser, registerUser } from "./Controllers/User/user";
 import { adminAuthorisationMiddlewear } from "./Middlewear/adminAuthorisation";
 import {
+  addPost,
   addThread,
   deletePost,
   deleteThread,
+  editPost,
+  editThread,
   getCategories,
   getThreadPosts,
   getThreads,
@@ -47,9 +50,12 @@ app.get("/api/forum", userAuthorisationMiddlewear, getCategories);
 app.get("/api/forum/threads/:id", userAuthorisationMiddlewear, getThreads);
 app.delete("/api/forum/thread/:id", adminAuthorisationMiddlewear, deleteThread);
 app.post("/api/forum/thread", userAuthorisationMiddlewear, addThread);
+app.patch("/api/forum/thread/:id", userAuthorisationMiddlewear, editThread);
 
 app.get("/api/forum/thread/:id", userAuthorisationMiddlewear, getThreadPosts);
-app.delete("/api/forum/post/:id", userAuthorisationMiddlewear, deletePost);
+app.delete("/api/forum/post/:id", adminAuthorisationMiddlewear, deletePost);
+app.post("/api/forum/post", userAuthorisationMiddlewear, addPost);
+app.patch("/api/forum/post/:id", userAuthorisationMiddlewear, editPost);
 
 // Events routes
 
