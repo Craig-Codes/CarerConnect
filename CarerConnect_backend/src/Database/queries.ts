@@ -70,5 +70,8 @@ WHERE id = $1;`;
 export const deletePostById = `DELETE FROM post
 WHERE id = $1;`;
 
+export const deletePostByIdAndUser = `DELETE FROM post
+WHERE id = $1 AND user_id = $2;`;
+
 export const insertThread = `INSERT INTO thread (category_id, user_id, title)
 VALUES ($1, $2, $3);`;
