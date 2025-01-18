@@ -97,13 +97,53 @@ SET content = $3
 WHERE id = $1
 AND user_id = $2`;
 
-export const findAllEvents = `SELECT * 
-FROM event;`;
+// Select everythin in the events table, and an aggregated list of subscribers for the event
+// Group by event.id allows the aggregation in the count, grouping results by each unique id
+// Join the tables based on matching event ids in the subscription table
+// Where clause ensures only future events are shown
+// Order by orders the events by the closest date first
+export const findAllEvents = `
+  SELECT 
+    event.*,
+    COUNT(subscription.id) AS subscriber_count
+  FROM event
+  LEFT JOIN subscription ON event.id = subscription.event_id
+  WHERE event.event_date > CURRENT_TIMESTAMP
+  GROUP BY event.id
+  ORDER BY event.event_date ASC;
+`;
 
-export const findAllEventsOnline = `SELECT * 
-FROM event
-WHERE is_online = true;`;
+export const findAllEventsOnline = `
+  SELECT 
+    event.*,
+    COUNT(subscription.id) AS subscriber_count
+  FROM event
+  LEFT JOIN subscription ON event.id = subscription.event_id
+  WHERE event.event_date > CURRENT_TIMESTAMP
+  AND event.is_online = true
+  GROUP BY event.id
+  ORDER BY event.event_date ASC;
+`;
 
-export const findAllEventsOffline = `SELECT * 
+export const findAllEventsOffline = `
+SELECT 
+  event.*,
+  COUNT(subscription.id) AS subscriber_count
 FROM event
-WHERE is_online = false;`;
+LEFT JOIN subscription ON event.id = subscription.event_id
+WHERE event.event_date > CURRENT_TIMESTAMP
+AND event.is_online = false
+GROUP BY event.id
+ORDER BY event.event_date ASC;
+`;
+
+export const findUserEventSubscriptions = `
+  SELECT 
+    event.*,
+    COUNT(subscription.id) AS subscriber_count
+  FROM event
+  LEFT JOIN subscription ON event.id = subscription.event_id
+  WHERE event.event_date > CURRENT_TIMESTAMP AND subscription.user_id = $1
+  GROUP BY event.id
+  ORDER BY event.event_date ASC;
+`;

@@ -16,7 +16,10 @@ import {
   getThreads,
 } from "./Controllers/Forum/forum";
 import { userAuthorisationMiddlewear } from "./Middlewear/loggedInUserAuthorisation";
-import { getEvents } from "./Controllers/Events/events";
+import {
+  getEvents,
+  getUserSubscribedEvents,
+} from "./Controllers/Events/events";
 
 export const app = express();
 
@@ -60,6 +63,7 @@ app.patch("/api/forum/post/:id", userAuthorisationMiddlewear, editPost);
 
 // Events routes
 app.get("/api/event", getEvents);
+app.get("/api/event/user/:id", getUserSubscribedEvents);
 
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);
