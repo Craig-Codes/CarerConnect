@@ -1,5 +1,6 @@
 import Jwt, { JwtPayload } from "jsonwebtoken";
-import { getUserIsAdmin } from "../Controllers/User/user";
+import { getUserIsAdmin } from "../Validators/token";
+
 const jwt = Jwt;
 
 // Function checks that a user has admin permissions to access the route

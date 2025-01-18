@@ -8,7 +8,7 @@ describe("createWebToken", () => {
   it("should generate a valid JWT token", () => {
     // Given
     const email = "test@example.com";
-    const token = createWebToken(email);
+    const token = createWebToken(email, true);
 
     // When - Verify the token is correctly signed and valid
     const decoded = jwt.verify(token, process.env.JWT_PRIVATE_KEY!);
@@ -20,7 +20,7 @@ describe("createWebToken", () => {
   it("should expire after 1 hour", () => {
     // Given
     const email = "test@example.com";
-    const token = createWebToken(email);
+    const token = createWebToken(email, true);
 
     // When
     const decoded = jwt.verify(

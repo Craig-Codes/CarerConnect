@@ -15,16 +15,18 @@ import {
   insertPost,
   insertThread,
 } from "../../Database/queries";
-import { getUserId, getUserIsAdmin, tokenIsValid } from "../User/user";
+import { getUserId } from "../User/user";
+import { getUserIsAdmin } from "../../Validators/token";
+import { stringInputValidator } from "../../Validators/input";
 
 export const getCategories = async (req: Request, res: Response) => {
   try {
     const categories = (
       await database.query(findCategoriesWithThreadAndPostCount)
     ).rows;
-    res.status(200).json(categories);
+    return res.status(200).json(categories);
   } catch (error) {
-    res.status(500).json({ message: "Unable to retrieve categories" });
+    return res.status(500).json({ message: "Unable to retrieve categories" });
   }
 };
 
@@ -36,16 +38,16 @@ export const getThreads = async (req: Request, res: Response) => {
   // If the conversion produces NaN, the input was not a valid integer value
   if (isNaN(categoryId)) {
     // 400 - Bad request status code
-    res.status(400).json({ message: "Category id expects a number" });
+    return res.status(400).json({ message: "Category id expects a number" });
   }
 
   try {
     const threads = (await database.query(findThreadsByCategory, [categoryId]))
       .rows;
-    res.status(200).json({ threads: threads, category: categoryId });
+    return res.status(200).json({ threads: threads, category: categoryId });
   } catch (error) {
     // If we have a valid id but can't find a resources, return a 404 error
-    res.status(404).json({ message: "Category id does not exist" });
+    return res.status(404).json({ message: "Category id does not exist" });
   }
 };
 
@@ -55,7 +57,7 @@ export const addThread = async (req: Request, res: Response) => {
     const userId = await getUserId(token); // Decode token to get the users id
 
     if (userId === 0) {
-      res.status(400).json({ message: "invalid user id" });
+      return res.status(400).json({ message: "invalid user id" });
     }
 
     // Get categoryId from request paramaters
@@ -64,7 +66,7 @@ export const addThread = async (req: Request, res: Response) => {
     // If the conversion produces NaN, the input was not a valid integer value
     if (isNaN(categoryId)) {
       // 400 - Bad request status code
-      res.status(400).json({ message: "Category id expects a number" });
+      return res.status(400).json({ message: "Category id expects a number" });
     }
 
     // Get the threadTitle from request parameters
@@ -73,15 +75,17 @@ export const addThread = async (req: Request, res: Response) => {
     // Add the new thread
     try {
       await database.query(insertThread, [categoryId, userId, threadTitle]);
-      res.status(200).json({ message: "Thread successfully added" });
+      return res.status(200).json({ message: "Thread successfully added" });
     } catch (error) {
-      res.status(500).json({ message: "Failed to add thread" });
+      return res.status(500).json({ message: "Failed to add thread" });
     }
   } catch (error) {
-    res.status(500).json({ message: "Failed to add thread" });
+    return res.status(500).json({ message: "Failed to add thread" });
   }
 };
 
+// Only adminsitrators can delete threads - route protected with
+// adminAuthorisationMiddlewear
 export const deleteThread = async (req: Request, res: Response) => {
   // Get the input :id and convert the string into a number
   const threadId = Number(req.params.id);
@@ -89,17 +93,17 @@ export const deleteThread = async (req: Request, res: Response) => {
   // If the conversion produces NaN, the input was not a valid integer value
   if (isNaN(threadId)) {
     // 400 - Bad request status code
-    res.status(400).json({ message: "Thread id expects a number" });
+    return res.status(400).json({ message: "Thread id expects a number" });
   }
 
   try {
     const thread = await database.query(deleteThreadById, [threadId]);
-    res.status(200).json({
+    return res.status(200).json({
       message: "Thread deleted",
     });
   } catch (error) {
     // If we have a valid id but can't find a resources, return a 404 error
-    res.status(404).json({ message: "Thread id does not exist" });
+    return res.status(404).json({ message: "Thread id does not exist" });
   }
 };
 
@@ -111,7 +115,7 @@ export const getThreadPosts = async (req: Request, res: Response) => {
   // If the conversion produces NaN, the input was not a valid integer value
   if (isNaN(categoryId)) {
     // 400 - Bad request status code
-    res.status(400).json({ message: "Thread id expects a number" });
+    return res.status(400).json({ message: "Thread id expects a number" });
   }
 
   try {
@@ -121,13 +125,13 @@ export const getThreadPosts = async (req: Request, res: Response) => {
     console.log(threadId);
     const posts = (await database.query(findPostByThread, [threadId])).rows;
 
-    res.status(200).json({
+    return res.status(200).json({
       thread: thread,
       posts: posts,
     });
   } catch (error) {
     // If we have a valid id but can't find a resources, return a 404 error
-    res.status(404).json({ message: "Thread id does not exist" });
+    return res.status(404).json({ message: "Thread id does not exist" });
   }
 };
 
@@ -137,7 +141,7 @@ export const addPost = async (req: Request, res: Response) => {
     const userId = await getUserId(token); // Decode token to get the users id
 
     if (userId === 0) {
-      res.status(400).json({ message: "invalid user id" });
+      return res.status(400).json({ message: "invalid user id" });
     }
 
     // Get threadId from request paramaters
@@ -146,7 +150,7 @@ export const addPost = async (req: Request, res: Response) => {
     // If the conversion produces NaN, the input was not a valid integer value
     if (isNaN(threadId)) {
       // 400 - Bad request status code
-      res.status(400).json({ message: "thread id expects a number" });
+      return res.status(400).json({ message: "thread id expects a number" });
     }
 
     // Get the post content from request parameters
@@ -155,16 +159,16 @@ export const addPost = async (req: Request, res: Response) => {
     // Add the new post
     try {
       await database.query(insertPost, [threadId, userId, content]);
-      res.status(200).json({ message: "Post successfully added" });
+      return res.status(200).json({ message: "Post successfully added" });
     } catch (error) {
-      res.status(500).json({ message: "Failed to create post" });
+      return res.status(500).json({ message: "Failed to create post" });
     }
   } catch (error) {
-    res.status(500).json({ message: "Failed to create post" });
+    return res.status(500).json({ message: "Failed to create post" });
   }
 };
 
-// Only adminsitrators can delete threads - route protected with
+// Only adminsitrators can delete posts - route protected with
 // adminAuthorisationMiddlewear
 export const deletePost = async (req: Request, res: Response) => {
   // Get the input :id and convert the string into a number
@@ -175,7 +179,7 @@ export const deletePost = async (req: Request, res: Response) => {
   // Validate id
   if (isNaN(postId)) {
     // 400 - Bad request status code
-    res.status(400).json({ message: "Thread id expects a number" });
+    return res.status(400).json({ message: "Thread id expects a number" });
   }
 
   try {
@@ -186,12 +190,12 @@ export const deletePost = async (req: Request, res: Response) => {
       // If user is admin, delete the post
       try {
         const thread = await database.query(deletePostById, [postId]);
-        res.status(200).json({
+        return res.status(200).json({
           message: "Post deleted",
         });
       } catch {
         // If we have a valid id but can't find a resources, return a 404 error
-        res.status(404).json({ message: "Unable to delete post" });
+        return res.status(404).json({ message: "Unable to delete post" });
       }
     } else {
       try {
@@ -202,20 +206,20 @@ export const deletePost = async (req: Request, res: Response) => {
           userId,
         ]);
         if (result.rowCount! > 0) {
-          res.status(200).json({
+          return res.status(200).json({
             message: "Post deleted",
           });
         } else {
-          res.status(404).json({ message: "Unable to delete post" });
+          return res.status(404).json({ message: "Unable to delete post" });
         }
       } catch {
         // If we have a valid id but can't find a resources, return a 404 error
-        res.status(404).json({ message: "Unable to delete post" });
+        return res.status(404).json({ message: "Unable to delete post" });
       }
     }
   } catch (error) {
     // If we have a valid id but can't find a resources, return a 404 error
-    res.status(404).json({ message: "Unable to delete post" });
+    return res.status(404).json({ message: "Unable to delete post" });
   }
 };
 
@@ -223,8 +227,13 @@ export const editThread = async (req: Request, res: Response) => {
   // Get the input :id and convert the string into a number
   const threadId = Number(req.params.id);
 
-  // VALIDATE THE INPUT HERE -> REMOVE PROFANITIES AND LIMIT TO 250 characters!!!
-  const title = req.body.title;
+  // Check that we have the correct JSON body
+  if (req.body.title === undefined) {
+    return res.status(400).json({ message: "Expected thread title" });
+  }
+
+  // Validate the title input to ensure its less than 255 characters and removed of profanities
+  const title = stringInputValidator(req.body.title);
 
   // Get the cookie sent in the response header
   const token = req.cookies.CarerConnect_user_token;
@@ -232,7 +241,7 @@ export const editThread = async (req: Request, res: Response) => {
   // Validate id
   if (isNaN(threadId)) {
     // 400 - Bad request status code
-    res.status(400).json({ message: "Thread id expects a number" });
+    return res.status(400).json({ message: "Thread id expects a number" });
   }
 
   try {
@@ -243,12 +252,12 @@ export const editThread = async (req: Request, res: Response) => {
       // If user is admin, delete the post
       try {
         const thread = await database.query(editThreadTitle, [threadId, title]);
-        res.status(200).json({
+        return res.status(200).json({
           message: "Thread updated",
         });
       } catch {
         // If we have a valid id but can't find a resources, return a 404 error
-        res.status(404).json({ message: "Unable to update thread" });
+        return res.status(404).json({ message: "Unable to update thread" });
       }
     } else {
       try {
@@ -260,20 +269,20 @@ export const editThread = async (req: Request, res: Response) => {
           title,
         ]);
         if (result.rowCount! > 0) {
-          res.status(200).json({
+          return res.status(200).json({
             message: "Thread updated",
           });
         } else {
-          res.status(404).json({ message: "Unable to update thread" });
+          return res.status(404).json({ message: "Unable to update thread" });
         }
       } catch {
         // If we have a valid id but can't find a resources, return a 404 error
-        res.status(404).json({ message: "Unable to update thread" });
+        return res.status(404).json({ message: "Unable to update thread" });
       }
     }
   } catch (error) {
     // If we have a valid id but can't find a resources, return a 404 error
-    res.status(404).json({ message: "Unable to update thread" });
+    return res.status(404).json({ message: "Unable to update thread" });
   }
 };
 
@@ -281,8 +290,12 @@ export const editPost = async (req: Request, res: Response) => {
   // Get the input :id and convert the string into a number
   const postId = Number(req.params.id);
 
-  // VALIDATE THE INPUT HERE -> REMOVE PROFANITIES AND LIMIT TO 250 characters!!!
-  const content = req.body.content;
+  if (req.body.content === undefined) {
+    return res.status(400).json({ message: "Expected post content" });
+  }
+
+  // Validate the title input to ensure its less than 255 characters and removed of profanities
+  const content = stringInputValidator(req.body.content);
 
   // Get the cookie sent in the response header
   const token = req.cookies.CarerConnect_user_token;
@@ -290,7 +303,7 @@ export const editPost = async (req: Request, res: Response) => {
   // Validate id
   if (isNaN(postId)) {
     // 400 - Bad request status code
-    res.status(400).json({ message: "Post id expects a number" });
+    return res.status(400).json({ message: "Post id expects a number" });
   }
 
   try {
@@ -301,12 +314,12 @@ export const editPost = async (req: Request, res: Response) => {
       // If user is admin, delete the post
       try {
         const thread = await database.query(editPostContent, [postId, content]);
-        res.status(200).json({
+        return res.status(200).json({
           message: "Post updated",
         });
       } catch {
         // If we have a valid id but can't find a resources, return a 404 error
-        res.status(404).json({ message: "Unable to update post" });
+        return res.status(404).json({ message: "Unable to update post" });
       }
     } else {
       try {
@@ -318,19 +331,19 @@ export const editPost = async (req: Request, res: Response) => {
           content,
         ]);
         if (result.rowCount! > 0) {
-          res.status(200).json({
+          return res.status(200).json({
             message: "Post updated",
           });
         } else {
-          res.status(404).json({ message: "Unable to update post" });
+          return res.status(404).json({ message: "Unable to update post" });
         }
       } catch {
         // If we have a valid id but can't find a resources, return a 404 error
-        res.status(404).json({ message: "Unable to update post" });
+        return res.status(404).json({ message: "Unable to update post" });
       }
     }
   } catch (error) {
     // If we have a valid id but can't find a resources, return a 404 error
-    res.status(404).json({ message: "Unable to update post" });
+    return res.status(404).json({ message: "Unable to update post" });
   }
 };

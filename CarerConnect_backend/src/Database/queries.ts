@@ -96,3 +96,14 @@ export const editPostByIdAndUser = `UPDATE post
 SET content = $3
 WHERE id = $1
 AND user_id = $2`;
+
+export const findAllEvents = `SELECT * 
+FROM event;`;
+
+export const findAllEventsOnline = `SELECT * 
+FROM event
+WHERE is_online = true;`;
+
+export const findAllEventsOffline = `SELECT * 
+FROM event
+WHERE is_online = false;`;

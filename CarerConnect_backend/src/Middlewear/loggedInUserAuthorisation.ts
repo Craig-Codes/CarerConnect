@@ -1,5 +1,5 @@
-import Jwt, { JwtPayload } from "jsonwebtoken";
-import { tokenIsValid } from "../Controllers/User/user";
+import Jwt from "jsonwebtoken";
+import { tokenIsValid } from "../Validators/token";
 const jwt = Jwt;
 
 // Function checks that a user has a valid JWT and is therefore logged in
