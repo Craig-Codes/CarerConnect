@@ -1,7 +1,7 @@
-import { database } from "../Database/db";
+import { database } from "../../Database/db";
 import { Request, Response } from "express";
 import { compareHash, encryptPassword } from "./hashing";
-import { addUser, findUserQuery } from "../Database/queries";
+import { insertUser, findUserQuery } from "../../Database/queries";
 import Jwt, { JwtPayload } from "jsonwebtoken";
 const jwt = Jwt;
 
@@ -17,21 +17,24 @@ const isValidPassword = async (
 // Create a JWT and send to the user. This can then be passed back in subsequent requests, allowing API to be stateless.
 // Signing the token using an environmet variable ensures the token is trusted
 // as only the originator knows the private key
-const createWebToken = (inputEmail: string) => {
-  return jwt.sign({ email: inputEmail }, process.env.JWT_PRIVATE_KEY!, {
-    expiresIn: "1h",
-  });
+// Token encapsualtes users unique email, and permission level
+export const createWebToken = (inputEmail: string, isAdmin: boolean) => {
+  return jwt.sign(
+    { email: inputEmail, isAdmin: isAdmin },
+    process.env.JWT_PRIVATE_KEY!,
+    {
+      expiresIn: "1h",
+    }
+  );
 };
 
 // Function returns a full list of users with details... remove this!!!!
 export const getUsers = async (req: Request, res: Response) => {
   try {
     const result = (await database.query("SELECT * FROM person;")).rows;
-    console.log(result);
     res.status(200).json(result);
   } catch (error) {
-    console.error("Error retrieving users:", error);
-    res.status(500).json({ message: "Unable to retrieve users - try harder" });
+    res.status(500).json({ message: "Unable to retrieve users" });
   }
 };
 
@@ -39,28 +42,22 @@ export const getUsers = async (req: Request, res: Response) => {
 export const getUser = async (req: Request, res: Response) => {
   try {
     const token = req.cookies.CarerConnect_user_token;
-    console.log(`Token: ${token}`);
+    const userEmail = getUserEmail(token); // decode token to get userEmail
 
-    if (!token) {
+    if (userEmail === null) {
       return res
         .status(401)
         .json({ message: "Access denied. No token provided." });
-    } else {
-      const decoded = jwt.verify(
-        token,
-        process.env.JWT_PRIVATE_KEY!
-      ) as JwtPayload;
-
-      const result = await database.query(findUserQuery, [decoded.email]);
-      console.log(`Database Result = ${JSON.stringify(result)}`);
-      res.status(200).json({
-        user: {
-          email: result.rows[0].email,
-          username: result.rows[0].username,
-          isAdmin: result.rows[0].is_admin,
-        },
-      });
     }
+
+    const result = await database.query(findUserQuery, [userEmail]);
+    res.status(200).json({
+      user: {
+        email: result.rows[0].email,
+        username: result.rows[0].username,
+        isAdmin: result.rows[0].is_admin,
+      },
+    });
   } catch (error) {
     res.status(500).json({ message: "Failed to retrieve user" });
   }
@@ -76,7 +73,9 @@ export const loginUser = async (req: Request, res: Response) => {
     const user = await database.query(findUserQuery, [inputEmail]);
 
     if (await isValidPassword(inputPassword, user.rows[0].password)) {
-      const token = createWebToken(inputEmail);
+      // Create a JWT using the users email and permissions level
+      const isAdmin = user.rows[0].is_admin;
+      const token = createWebToken(inputEmail, isAdmin);
 
       // Set the cookie to store the JWT
       res.cookie("CarerConnect_user_token", token, {
@@ -122,8 +121,6 @@ export const registerUser = async (req: Request, res: Response) => {
       return res.status(400).json({ message: "Invalid email address" });
     }
 
-    console.log("valid email");
-
     // Validate password (must be longer than 5 characters)
     if (password.length <= 5) {
       console.log("invalid password");
@@ -132,25 +129,21 @@ export const registerUser = async (req: Request, res: Response) => {
         .json({ message: "Password must be longer than 5 characters" });
     }
 
-    console.log("valid password");
-
     // Hash and Salt the password before it is stored in the database
     const encryptedPassword = await encryptPassword(password);
 
     // Create a new user in the database (defaulting to no admin permissions)
     // If either username or email unique fields are not unique, the database
     // will return an error and the catch block will be hit
-    const newUser = await database.query(addUser, [
+    const newUser = await database.query(insertUser, [
       username,
       email,
       encryptedPassword,
       false,
     ]);
 
-    console.log("created in db");
-
     // Login the new user
-    const token = createWebToken(email);
+    const token = createWebToken(email, false);
 
     // Set the cookie to store the JWT
     res.cookie("CarerConnect_user_token", token, {
@@ -160,8 +153,6 @@ export const registerUser = async (req: Request, res: Response) => {
       sameSite: "strict", // Limits cross-site requests to prevent CSRF
     });
 
-    console.log("Returning user to frontend");
-
     res.status(200).json({
       email: newUser.rows[0].email,
       username: newUser.rows[0].username,
@@ -170,5 +161,46 @@ export const registerUser = async (req: Request, res: Response) => {
   } catch (error) {
     console.log("failed to register: ", error);
     res.status(400).json({ message: "Failed to register" });
+  }
+};
+
+// Decode the JWT  to get users unique email address
+// then query the database to return users id
+export const getUserId = async (token: string): Promise<Number> => {
+  try {
+    if (!token) {
+      // if there is no value in token, return 0
+      return 0;
+    } else {
+      const decoded = jwt.verify(
+        token,
+        process.env.JWT_PRIVATE_KEY!
+      ) as JwtPayload;
+      return Number(
+        (await database.query(findUserQuery, [decoded.email])).rows[0].id
+      );
+    }
+  } catch (error) {
+    console.log(error);
+    return 0;
+  }
+};
+
+// Decode the JWT  to get users unique email address
+export const getUserEmail = (token: string) => {
+  try {
+    if (!token) {
+      // if there is no value in token, return null
+      return null;
+    } else {
+      const decoded = jwt.verify(
+        token,
+        process.env.JWT_PRIVATE_KEY!
+      ) as JwtPayload;
+      return decoded.email;
+    }
+  } catch (error) {
+    console.log(error);
+    return null;
   }
 };

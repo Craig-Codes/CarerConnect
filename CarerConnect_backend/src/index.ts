@@ -2,9 +2,26 @@ import express from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import { connectDatabase } from "./Database/db";
-import { getUser, loginUser, registerUser } from "./User/user";
+import { getUser, loginUser, registerUser } from "./Controllers/User/user";
+import { adminAuthorisationMiddlewear } from "./Middlewear/adminAuthorisation";
+import {
+  addPost,
+  addThread,
+  deletePost,
+  deleteThread,
+  editPost,
+  editThread,
+  getCategories,
+  getThreadPosts,
+  getThreads,
+} from "./Controllers/Forum/forum";
+import { userAuthorisationMiddlewear } from "./Middlewear/loggedInUserAuthorisation";
+import {
+  getEvents,
+  getUserSubscribedEvents,
+} from "./Controllers/Events/events";
 
-const app = express();
+export const app = express();
 
 // Define the allowed origin - in this case only the frontends domain, preventing cross-site forgery attacks
 const corsOptions = {
@@ -23,9 +40,30 @@ app.get("/", (req, res) => {
   res.send("Welcome to the home route!");
 });
 
-app.get("/api/user", getUser);
+// adminAuthorisationMiddlewear used to protect certain routes which
+// require that a user is an administrator
+// userAuthorisationMiddlewear used to protect certain routes which
+// require a user to be logged in
+app.get("/api/user", userAuthorisationMiddlewear, getUser);
 app.post("/api/user", loginUser);
 app.post("/api/user/register", registerUser);
+
+// Forum routes
+app.get("/api/forum", userAuthorisationMiddlewear, getCategories);
+
+app.get("/api/forum/threads/:id", userAuthorisationMiddlewear, getThreads);
+app.delete("/api/forum/thread/:id", adminAuthorisationMiddlewear, deleteThread);
+app.post("/api/forum/thread", userAuthorisationMiddlewear, addThread);
+app.patch("/api/forum/thread/:id", userAuthorisationMiddlewear, editThread);
+
+app.get("/api/forum/thread/:id", userAuthorisationMiddlewear, getThreadPosts);
+app.delete("/api/forum/post/:id", adminAuthorisationMiddlewear, deletePost);
+app.post("/api/forum/post", userAuthorisationMiddlewear, addPost);
+app.patch("/api/forum/post/:id", userAuthorisationMiddlewear, editPost);
+
+// Events routes
+app.get("/api/event", getEvents);
+app.get("/api/event/user/:id", getUserSubscribedEvents);
 
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);
