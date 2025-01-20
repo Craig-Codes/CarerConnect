@@ -17,8 +17,10 @@ import {
 } from "./Controllers/Forum/forum";
 import { userAuthorisationMiddlewear } from "./Middlewear/loggedInUserAuthorisation";
 import {
+  deleteEvent,
   getEvents,
   getUserSubscribedEvents,
+  unsubscribeEvent,
 } from "./Controllers/Events/events";
 
 export const app = express();
@@ -64,6 +66,8 @@ app.patch("/api/forum/post/:id", userAuthorisationMiddlewear, editPost);
 // Events routes
 app.get("/api/event", getEvents);
 app.get("/api/event/user/:id", getUserSubscribedEvents);
+app.delete("/api/event/:id", adminAuthorisationMiddlewear, deleteEvent);
+app.delete("/api/event/subscription/:eventId", unsubscribeEvent);
 
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);

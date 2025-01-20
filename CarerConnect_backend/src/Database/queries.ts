@@ -147,3 +147,10 @@ export const findUserEventSubscriptions = `
   GROUP BY event.id
   ORDER BY event.event_date ASC;
 `;
+
+export const deleteEventById = `DELETE FROM event
+WHERE id = $1;`;
+
+export const removeEventSubscription = `DELETE FROM
+subscription WHERE event_id = $1
+AND user_id = $2;`;
