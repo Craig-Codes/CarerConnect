@@ -154,3 +154,6 @@ WHERE id = $1;`;
 export const removeEventSubscription = `DELETE FROM
 subscription WHERE event_id = $1
 AND user_id = $2;`;
+
+export const insertEvent = `INSERT INTO event (user_id, title, description, event_date, is_online, location, max_attendees)
+VALUES ($1, $2, $3, $4, $5, $6, $7);`;

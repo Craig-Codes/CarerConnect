@@ -70,7 +70,7 @@ export const addThread = async (req: Request, res: Response) => {
     }
 
     // Get the threadTitle from request parameters
-    const threadTitle = req.body.threadTitle;
+    const threadTitle = stringInputValidator(req.body.threadTitle);
 
     // Add the new thread
     try {
@@ -154,7 +154,7 @@ export const addPost = async (req: Request, res: Response) => {
     }
 
     // Get the post content from request parameters
-    const content = req.body.content;
+    const content = stringInputValidator(req.body.content);
 
     // Add the new post
     try {

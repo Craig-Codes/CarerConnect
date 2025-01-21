@@ -17,6 +17,7 @@ import {
 } from "./Controllers/Forum/forum";
 import { userAuthorisationMiddlewear } from "./Middlewear/loggedInUserAuthorisation";
 import {
+  addEvent,
   deleteEvent,
   getEvents,
   getUserSubscribedEvents,
@@ -68,6 +69,7 @@ app.get("/api/event", getEvents);
 app.get("/api/event/user/:id", getUserSubscribedEvents);
 app.delete("/api/event/:id", adminAuthorisationMiddlewear, deleteEvent);
 app.delete("/api/event/subscription/:eventId", unsubscribeEvent);
+app.post("/api/event", addEvent);
 
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);
