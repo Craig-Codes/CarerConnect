@@ -21,6 +21,7 @@ import {
   deleteEvent,
   getEvents,
   getUserSubscribedEvents,
+  subscribeEvent,
   unsubscribeEvent,
 } from "./Controllers/Events/events";
 
@@ -70,6 +71,7 @@ app.get("/api/event/user/:id", getUserSubscribedEvents);
 app.delete("/api/event/:id", adminAuthorisationMiddlewear, deleteEvent);
 app.delete("/api/event/subscription/:eventId", unsubscribeEvent);
 app.post("/api/event", addEvent);
+app.post("/api/event/:id", subscribeEvent);
 
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);

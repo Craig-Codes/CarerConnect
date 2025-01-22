@@ -5,8 +5,12 @@ import {
   findAllEventsOffline,
   findAllEventsOnline,
   findUserEventSubscriptions,
+  getEventMaxAttendeesById,
+  getEventSubscribersById,
+  getNumberOfEventSubscribersById,
   insertEvent,
   removeEventSubscription,
+  subscribeToEventById,
 } from "../../Database/queries";
 import { Request, Response } from "express";
 import { getUserId } from "../User/user";
@@ -137,7 +141,7 @@ export const addEvent = async (req: Request, res: Response) => {
 
     // Add the new event
     try {
-      await database.query(insertEvent, [
+      const event = await database.query(insertEvent, [
         userId,
         title,
         description,
@@ -146,6 +150,12 @@ export const addEvent = async (req: Request, res: Response) => {
         location,
         maxAttendees,
       ]);
+
+      const eventId = event.rows[0].id;
+
+      // subscribe owner to new event: TODO
+      await database.query(subscribeToEventById, [eventId, userId]);
+
       return res.status(200).json({ message: "Event successfully added" });
     } catch (error) {
       return res.status(500).json({ message: "Failed to create event" });
@@ -155,4 +165,53 @@ export const addEvent = async (req: Request, res: Response) => {
   }
 };
 
-export const subscribeEvent = async (req: Request, res: Response) => {};
+export const subscribeEvent = async (req: Request, res: Response) => {
+  try {
+    const token = req.cookies.CarerConnect_user_token;
+    const eventId = Number(req.params.id); // convert value to number
+    const userId = await getUserId(token); // Decode token to get the users id
+
+    // validate number input
+    if (isNaN(eventId) || eventId === undefined) {
+      return res.status(500).json({
+        message: "Failed to subscribe to event, inputs not as expected",
+      });
+    }
+    // Check max attendees! Can't subscribe if already full.
+    const currentSubscribers = (
+      await database.query(getNumberOfEventSubscribersById, [eventId])
+    ).rows[0].count;
+    const maxAttendees = (
+      await database.query(getEventMaxAttendeesById, [eventId])
+    ).rows[0].max_attendees;
+
+    // If there are less people currently subscribed than allowed to the event, subscribe the user
+    if (currentSubscribers >= maxAttendees) {
+      // 422 Unprocessable Entity - request understood and params correct
+      return res.status(422).json({
+        message: "Failed to subscribe to event",
+      });
+    }
+
+    // Check a user isn't already subscribbed to an event
+    const subscriberQuery = await database.query(getEventSubscribersById, [
+      eventId,
+    ]);
+    const subscribers = subscriberQuery.rows.map((row) => row.user_id);
+
+    const isSubscribed = subscribers.includes(userId);
+
+    if (isSubscribed) {
+      return res.status(422).json({
+        message: "Failed to subscribe to event - already subscribed",
+      });
+    }
+    // Subscibe to the event
+    await database.query(subscribeToEventById, [eventId, userId]);
+    return res.status(200).json({
+      message: "Successfully subscribbed to event",
+    });
+  } catch (error) {
+    return res.status(500).json({ message: "Failed to subscribe to event" });
+  }
+};

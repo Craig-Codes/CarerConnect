@@ -156,4 +156,18 @@ subscription WHERE event_id = $1
 AND user_id = $2;`;
 
 export const insertEvent = `INSERT INTO event (user_id, title, description, event_date, is_online, location, max_attendees)
-VALUES ($1, $2, $3, $4, $5, $6, $7);`;
+VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id;`;
+
+export const getNumberOfEventSubscribersById = `SELECT COUNT(event_id) FROM subscription
+WHERE event_id = $1;`;
+
+export const getEventSubscribersById = `
+  SELECT user_id FROM subscription
+  WHERE event_id = $1;
+`;
+
+export const getEventMaxAttendeesById = `SELECT max_attendees FROM event
+WHERE id = $1; `;
+
+export const subscribeToEventById = `INSERT INTO subscription (event_id, user_id)
+VALUES ($1, $2)`;
