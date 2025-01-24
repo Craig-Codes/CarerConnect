@@ -66,12 +66,20 @@ app.post("/api/forum/post", userAuthorisationMiddlewear, addPost);
 app.patch("/api/forum/post/:id", userAuthorisationMiddlewear, editPost);
 
 // Events routes
-app.get("/api/event", getEvents);
-app.get("/api/event/user/:id", getUserSubscribedEvents);
+app.get("/api/event", userAuthorisationMiddlewear, getEvents);
+app.get(
+  "/api/event/user/:id",
+  userAuthorisationMiddlewear,
+  getUserSubscribedEvents
+);
 app.delete("/api/event/:id", adminAuthorisationMiddlewear, deleteEvent);
-app.delete("/api/event/subscription/:eventId", unsubscribeEvent);
-app.post("/api/event", addEvent);
-app.post("/api/event/:id", subscribeEvent);
+app.delete(
+  "/api/event/subscription/:eventId",
+  userAuthorisationMiddlewear,
+  unsubscribeEvent
+);
+app.post("/api/event", userAuthorisationMiddlewear, addEvent);
+app.post("/api/event/:id", userAuthorisationMiddlewear, subscribeEvent);
 
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);

@@ -155,6 +155,7 @@ export const removeEventSubscription = `DELETE FROM
 subscription WHERE event_id = $1
 AND user_id = $2;`;
 
+// Return clause used to ensure we get the event id which can then be used to subscribe the creator to their event automatically
 export const insertEvent = `INSERT INTO event (user_id, title, description, event_date, is_online, location, max_attendees)
 VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id;`;
 
