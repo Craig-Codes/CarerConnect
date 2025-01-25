@@ -5,6 +5,7 @@ import { User, UserContext } from "./components/Context";
 import { AppRoutes } from "./components/Routes/AppRoutes";
 import { isLoggedIn } from "./utils/utils";
 import { fetchWrapper } from "./utils/fetchWrapper";
+import { LayoutWrapper } from "./components/LayoutWrapper";
 
 const App = () => {
   // Default user is set initially
@@ -43,7 +44,9 @@ const App = () => {
     // This allows any page to access the user information
     <UserContext.Provider value={{ user, setUser }}>
       <BrowserRouter>
-        <AppRoutes />
+        <LayoutWrapper>
+          <AppRoutes />
+        </LayoutWrapper>
       </BrowserRouter>
     </UserContext.Provider>
   );

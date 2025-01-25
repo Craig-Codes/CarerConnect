@@ -1,66 +1,75 @@
-import Stack from "@mui/material/Stack";
-import Button from "@mui/material/Button";
 // import { useEffect, useState } from "react";
-import NavBar from "../components/NavBar";
-import { useContext } from "react";
+import { useContext, useEffect, useState } from "react";
 import { UserContext } from "../components/Context";
+import { WelcomeBlock } from "../components/WelcomeBlock";
+import { fetchWrapper } from "../utils/fetchWrapper";
+import { formatDate } from "../utils/utils";
+import { Alert } from "@mui/material";
 
-// interface User {
-//   id: number;
-//   username: string;
-//   email: string;
-//   password: string;
-//   is_admin: boolean;
-// }
+// Define how each meetup object should be shaped
+type Meetup = {
+  id: number;
+  title: string;
+  description: string;
+  event_date: string;
+  is_online: boolean;
+  location: string;
+  max_attendees: number;
+  subscriber_count: number;
+};
 
 export const HomePage = () => {
-  const { user } = useContext(UserContext);
-  console.log("home page: ", user);
+  const { user } = useContext(UserContext); // stores the global user object
+  const [meetups, setMeetups] = useState<Meetup[]>([]); // stores the users meetups
 
-  // const [users, setUsers] = useState<User[] | null>(null);
-  // const [fetchError, setFetchError] = useState("");
+  // useEffect React hook fires when component is first renders
+  // used to fetch the users event data from the api
+  useEffect(() => {
+    // Check if meetups are already loaded to prevent redundant API calls
+    if (meetups.length === 0) {
+      const fetchMeetups = async () => {
+        try {
+          const eventData = await fetchWrapper("GET", "event/user");
 
-  // useEffect(() => {
-  //   const fetchEquipment = async () => {
-  //     console.log("Process env ==== ", import.meta.env.VITE_API_URL);
-  //     try {
-  //       const response = await fetch(`${import.meta.env.VITE_API_URL}user`);
-  //       if (!response.ok) {
-  //         setFetchError("Failed to fetch users!");
-  //       }
-  //       const retrievedUsers: User[] = await response.json();
-  //       setUsers(retrievedUsers);
-  //       console.log(retrievedUsers);
-  //     } catch (error) {
-  //       setFetchError("Failed to retrieve users!");
-  //     }
-  //   };
-  //   fetchEquipment();
-  // }, []);
+          // Map the eventData to the expected format and update state only once
+          const formattedMeetups = eventData.map((meetup: Meetup) => ({
+            id: meetup.id,
+            title: meetup.title,
+            description: meetup.description,
+            event_date: formatDate(meetup.event_date),
+            is_online: meetup.is_online,
+            location: meetup.location,
+            max_attendees: Number(meetup.max_attendees),
+            subscriber_count: Number(meetup.subscriber_count),
+          }));
+
+          // Update meetups state with the formatted data
+          setMeetups(formattedMeetups);
+        } catch (error) {
+          console.error("Failed to fetch user data:", error);
+        }
+      };
+
+      fetchMeetups();
+    }
+  }, [meetups.length]); // Dependency array ensures the effect only runs once when the component mounts or meetups is empty
+
+  console.log(meetups);
 
   return (
     <>
-      <NavBar />
-      <h2>Hi, {user.username}</h2>
-      <Stack spacing={2} direction="row">
-        <Button variant="text">Text</Button>
-        <Button variant="contained" color="secondary">
-          Contained
-        </Button>
-        <Button variant="outlined">Outlined</Button>
-      </Stack>
-      {/* {fetchError && <p>{fetchError}</p>}
-      <ul>
-        {users ? (
-          users.map((user) => (
-            <li key={user.username}>
-              {user.username} - {user.email}
-            </li>
-          ))
-        ) : (
-          <p>Loading users...</p>
-        )}
-      </ul> */}
+      <WelcomeBlock username={user.username} />
+      {/* conditionally render the meetups cards if a user has subscribed meetups */}
+      {meetups.length > 0 ? (
+        meetups.map((meetup) => {
+          return <p key={meetup.id}>{meetup.title}</p>;
+        })
+      ) : (
+        <Alert severity="info" sx={{ marginTop: "20px" }}>
+          You have not subscribed to any events yet - Your subscribbed events
+          will be shown here.
+        </Alert>
+      )}
     </>
   );
 };

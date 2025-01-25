@@ -68,7 +68,7 @@ app.patch("/api/forum/post/:id", userAuthorisationMiddlewear, editPost);
 // Events routes
 app.get("/api/event", userAuthorisationMiddlewear, getEvents);
 app.get(
-  "/api/event/user/:id",
+  "/api/event/user",
   userAuthorisationMiddlewear,
   getUserSubscribedEvents
 );

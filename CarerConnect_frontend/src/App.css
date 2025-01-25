@@ -1,7 +1,7 @@
 #root {
-  max-width: 1280px;
+  /* max-width: 1280px; */
   margin: 0 auto;
-  padding: 2rem;
+  padding: 3rem;
   text-align: center;
 }
 
@@ -45,4 +45,10 @@ button:active {
 
 .read-the-docs {
   color: #888;
+}
+
+@media only screen and (max-width: 900px) {
+  #root {
+    padding: 1rem;
+  }
 }

@@ -37,12 +37,11 @@ export const getEvents = async (req: Request, res: Response) => {
 };
 
 export const getUserSubscribedEvents = async (req: Request, res: Response) => {
-  // Get the path parameter for users id
-  const userId = Number(req.params.id);
+  const token = req.cookies.CarerConnect_user_token;
+  const userId = await getUserId(token); // Decode token to get the users id
 
-  if (isNaN(userId)) {
-    // 400 - Bad request status code
-    return res.status(400).json({ message: "Expected a user ID" });
+  if (userId === 0) {
+    return res.status(400).json({ message: "invalid user id" });
   }
 
   try {
