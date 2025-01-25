@@ -1,6 +1,7 @@
 // Define how each meetup object should be shaped
 export type Meetup = {
   id: number;
+  user_id: number;
   title: string;
   description: string;
   event_date: string;

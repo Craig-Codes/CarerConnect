@@ -1,5 +1,6 @@
 import { ReactNode } from "react";
 import NavBar from "../NavBar";
+import { Box } from "@mui/material";
 
 interface LayoutProps {
   children: ReactNode;
@@ -10,7 +11,13 @@ export const LayoutWrapper = ({ children }: LayoutProps) => {
   return (
     <>
       <NavBar />
-      {children}
+      <Box
+        sx={{
+          marginTop: { xs: "75px", md: "56px" },
+        }}
+      >
+        {children}
+      </Box>
     </>
   );
 };

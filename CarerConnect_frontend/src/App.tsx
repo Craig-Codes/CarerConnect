@@ -10,6 +10,7 @@ import { LayoutWrapper } from "./components/LayoutWrapper";
 const App = () => {
   // Default user is set initially
   const [user, setUser] = useState<User>({
+    id: 0,
     email: "",
     username: "",
     isAdmin: false,
@@ -26,6 +27,7 @@ const App = () => {
           // We set the result into the user varaible, which is passed into the apps
           // context, essentially allowing any page to access this information
           setUser({
+            id: userData.user.id,
             email: userData.user.email,
             isAdmin: userData.user.isAdmin,
             username: userData.user.username,

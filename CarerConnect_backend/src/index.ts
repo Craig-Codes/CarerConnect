@@ -79,7 +79,11 @@ app.delete(
   unsubscribeEvent
 );
 app.post("/api/event", userAuthorisationMiddlewear, addEvent);
-app.post("/api/event/:id", userAuthorisationMiddlewear, subscribeEvent);
+app.post(
+  "/api/event/subscription/:id",
+  userAuthorisationMiddlewear,
+  subscribeEvent
+);
 
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);

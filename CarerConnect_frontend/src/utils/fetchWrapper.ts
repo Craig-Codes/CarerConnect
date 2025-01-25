@@ -24,7 +24,6 @@ export const fetchWrapper = async (
     const jsonResult = await result.json();
     return jsonResult;
   } catch (error) {
-    console.error(error); // Log the error
-    throw new Error("Failed to fetch data");
+    return error;
   }
 };

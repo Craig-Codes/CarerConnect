@@ -9,6 +9,9 @@ let theme = createTheme({
     secondary: {
       main: "#330066",
     },
+    info: {
+      main: "#417671",
+    },
     error: {
       main: colors.red.A700,
     },
@@ -26,6 +29,9 @@ theme = createTheme(theme, {
           color: theme.palette.secondary.main,
         },
         subtitle1: {
+          color: theme.palette.secondary.main,
+        },
+        body1: {
           color: theme.palette.secondary.main,
         },
       },
