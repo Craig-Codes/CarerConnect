@@ -7,6 +7,7 @@ import { formatDate } from "../utils/utils";
 import { Alert, Box, Paper, Typography } from "@mui/material";
 import { Meetup } from "../utils/Types/types";
 import { EventCard } from "../components/EventCard";
+import { toast, ToastContainer } from "react-toastify";
 
 export const HomePage = () => {
   const { user } = useContext(UserContext); // stores the global user object
@@ -49,11 +50,23 @@ export const HomePage = () => {
       // Delete the selected subscription
       await fetchWrapper("DELETE", `event/subscription/${eventId}`);
       await fetchMeetups(); // Fetch the updated user subsciptions
-      console.log("successfully unsubscibed");
+      // Use toast box to inform user they have successfully unsubscribed
+      toast.success("Successfully unsubscribed from event");
     } catch {
-      //
-      console.log("failed to unscubscibe");
+      toast.error("Failed to unsubscibe from event, please try again");
     }
+  };
+
+  const handleDeleteEvent = async (eventId: number) => {
+    console.log(eventId);
+  };
+
+  const handleEditEvent = async (
+    eventId: number,
+    eventTitle: string,
+    eventDescription: string
+  ) => {
+    console.log(eventId, eventDescription, eventTitle);
   };
 
   return (
@@ -86,6 +99,8 @@ export const HomePage = () => {
                 event={meetup}
                 user={user}
                 unsubscibeEvent={handleUnsubscribe}
+                deleteEvent={handleDeleteEvent}
+                editEvent={handleEditEvent}
               />
             ))}
           </Box>
@@ -96,6 +111,8 @@ export const HomePage = () => {
           will be shown here.
         </Alert>
       )}
+      {/* Toast Container shows error and success messages to users */}
+      <ToastContainer />
     </>
   );
 };

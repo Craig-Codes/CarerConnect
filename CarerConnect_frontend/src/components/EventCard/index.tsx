@@ -11,9 +11,17 @@ interface EventCardProps {
   event: Meetup;
   user: User; // users details required for conditional render of edit / delete buttons
   unsubscibeEvent: (eventId: number) => void;
+  deleteEvent: (eventId: number) => void;
+  editEvent: (eventId: number, title: string, description: string) => void;
 }
 
-export const EventCard = ({ event, user, unsubscibeEvent }: EventCardProps) => {
+export const EventCard = ({
+  event,
+  user,
+  unsubscibeEvent,
+  deleteEvent,
+  editEvent,
+}: EventCardProps) => {
   // Handle the confirmation modal open / close
   const [modalOpen, setModalOpen] = useState(false);
   const handleModalOpen = () => setModalOpen(true);
@@ -28,10 +36,14 @@ export const EventCard = ({ event, user, unsubscibeEvent }: EventCardProps) => {
 
   const handleEdit = () => {
     console.log("handle Edit");
+    // Open edit modal
+    editEvent(event.id, "test", "test");
   };
 
   const handleDelete = () => {
     console.log("handle Delete");
+    // open delete modal
+    deleteEvent(event.id);
   };
 
   return (

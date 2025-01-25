@@ -38,6 +38,7 @@ export default function NavBar() {
   const handleLogout = () => {
     handleClose();
     setUser({
+      id: 0,
       username: "",
       email: "",
       isAdmin: false,
