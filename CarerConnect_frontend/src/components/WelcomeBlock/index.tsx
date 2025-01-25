@@ -7,8 +7,13 @@ interface WelcomeBlockProps {
 
 export const WelcomeBlock = ({ username }: WelcomeBlockProps) => {
   return (
-    <Paper elevation={2} sx={{ padding: "1vw", width: "80vw" }}>
-      <Typography variant="h4">Hello {username}</Typography>
+    <Paper elevation={2} sx={{ padding: "1vw" }}>
+      <Typography
+        variant="h4"
+        sx={{ paddingTop: "20px", paddingBottom: "10px" }}
+      >
+        Hello {username}
+      </Typography>
       <Box
         sx={{
           padding: "15px",

@@ -14,13 +14,18 @@ let theme = createTheme({
     },
   },
 });
-theme = responsiveFontSizes(theme);
 
 theme = createTheme(theme, {
   components: {
     MuiTypography: {
       styleOverrides: {
         h4: {
+          color: theme.palette.secondary.main,
+        },
+        h6: {
+          color: theme.palette.secondary.main,
+        },
+        subtitle1: {
           color: theme.palette.secondary.main,
         },
       },
@@ -94,5 +99,7 @@ theme = createTheme(theme, {
     },
   },
 });
+
+theme = responsiveFontSizes(theme);
 
 export default theme;

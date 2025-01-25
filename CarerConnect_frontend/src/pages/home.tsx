@@ -4,19 +4,9 @@ import { UserContext } from "../components/Context";
 import { WelcomeBlock } from "../components/WelcomeBlock";
 import { fetchWrapper } from "../utils/fetchWrapper";
 import { formatDate } from "../utils/utils";
-import { Alert } from "@mui/material";
-
-// Define how each meetup object should be shaped
-type Meetup = {
-  id: number;
-  title: string;
-  description: string;
-  event_date: string;
-  is_online: boolean;
-  location: string;
-  max_attendees: number;
-  subscriber_count: number;
-};
+import { Alert, Box, Paper, Typography } from "@mui/material";
+import { Meetup } from "../utils/Types/types";
+import { EventCard } from "../components/EventCard";
 
 export const HomePage = () => {
   const { user } = useContext(UserContext); // stores the global user object
@@ -59,14 +49,32 @@ export const HomePage = () => {
   return (
     <>
       <WelcomeBlock username={user.username} />
-      {/* conditionally render the meetups cards if a user has subscribed meetups */}
+      {/* Conditionally render the meetups cards if a user has subscribed meetups */}
       {meetups.length > 0 ? (
-        meetups.map((meetup) => {
-          return <p key={meetup.id}>{meetup.title}</p>;
-        })
+        <Paper
+          elevation={2}
+          sx={{
+            padding: "2vw",
+            marginTop: "20px",
+            textAlign: "left",
+          }}
+        >
+          <Typography variant="h4">My Events</Typography>
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: { xs: "column", sm: "row" },
+              gap: "2vw",
+            }}
+          >
+            {meetups.map((meetup) => (
+              <EventCard key={meetup.id} event={meetup} />
+            ))}
+          </Box>
+        </Paper>
       ) : (
         <Alert severity="info" sx={{ marginTop: "20px" }}>
-          You have not subscribed to any events yet - Your subscribbed events
+          You have not subscribed to any events yet - Your subscribed events
           will be shown here.
         </Alert>
       )}
