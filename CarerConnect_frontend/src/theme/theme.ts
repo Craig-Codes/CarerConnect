@@ -1,4 +1,5 @@
 import { colors } from "@mui/material";
+import { grey } from "@mui/material/colors";
 import { createTheme, responsiveFontSizes } from "@mui/material/styles";
 
 let theme = createTheme({
@@ -8,9 +9,6 @@ let theme = createTheme({
     },
     secondary: {
       main: "#330066",
-    },
-    info: {
-      main: "#417671",
     },
     error: {
       main: colors.red.A700,
@@ -40,7 +38,7 @@ theme = createTheme(theme, {
       styleOverrides: {
         root: {
           "&:hover": {
-            backgroundColor: "#BDBDBD",
+            backgroundColor: grey[300],
           },
         },
       },

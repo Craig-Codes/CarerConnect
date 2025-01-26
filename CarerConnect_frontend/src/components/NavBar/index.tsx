@@ -160,13 +160,14 @@ export default function NavBar() {
                   open={Boolean(anchorEl)}
                   onClose={handleClose}
                   anchorOrigin={{
-                    vertical: "top",
+                    vertical: "bottom",
                     horizontal: "right",
                   }}
                   transformOrigin={{
                     vertical: "top",
-                    horizontal: "right",
+                    horizontal: "left",
                   }}
+                  sx={{ marginTop: "10px" }}
                 >
                   <MenuItem>
                     <Typography variant="h6" color="secondary">

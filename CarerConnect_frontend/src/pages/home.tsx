@@ -58,7 +58,15 @@ export const HomePage = () => {
   };
 
   const handleDeleteEvent = async (eventId: number) => {
-    console.log(eventId);
+    try {
+      // Delete the selected meetup if admin
+      await fetchWrapper("DELETE", `event/${eventId}`);
+      await fetchMeetups(); // Fetch the updated user subsciptions
+      // Use toast box to inform user they have successfully unsubscribed
+      toast.success("Successfully deleted meetup event");
+    } catch {
+      toast.error("Failed to delete event, please try again");
+    }
   };
 
   const handleEditEvent = async (

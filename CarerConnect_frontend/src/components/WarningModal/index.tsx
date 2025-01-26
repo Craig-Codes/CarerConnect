@@ -4,6 +4,7 @@ import Modal from "@mui/material/Modal";
 import Fade from "@mui/material/Fade";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
+import theme from "../../theme/theme";
 
 const style = {
   position: "absolute",
@@ -35,7 +36,10 @@ export const WarningModal = ({
       aria-labelledby="transition-modal-title"
       aria-describedby="transition-modal-description"
       open={open} // Control modal visibility with this prop
-      onClose={handleClose}
+      onClose={() => {
+        // default to false on close
+        handleClose(false);
+      }}
       closeAfterTransition
       slots={{ backdrop: Backdrop }}
       slotProps={{
@@ -45,7 +49,13 @@ export const WarningModal = ({
       }}
     >
       <Fade in={open}>
-        <Box sx={style}>
+        <Box
+          sx={{
+            ...style,
+            borderColor: theme.palette.secondary.main,
+            width: "50vw",
+          }}
+        >
           <Typography id="transition-modal-title" variant="h6" component="h2">
             {title}
           </Typography>

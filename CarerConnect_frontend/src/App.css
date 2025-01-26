@@ -43,10 +43,6 @@ button:active {
   padding: 2em;
 }
 
-.read-the-docs {
-  color: #888;
-}
-
 @media only screen and (max-width: 900px) {
   #root {
     padding: 1rem;

@@ -23,14 +23,24 @@ export const EventCard = ({
   editEvent,
 }: EventCardProps) => {
   // Handle the confirmation modal open / close
-  const [modalOpen, setModalOpen] = useState(false);
-  const handleModalOpen = () => setModalOpen(true);
+  const [unsubscribeModalOpen, setUnsubscribeModalOpen] = useState(false);
+  const handleUnsubscribeModalOpen = () => setUnsubscribeModalOpen(true);
+
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const handleDeleteModalOpen = () => setDeleteModalOpen(true);
 
   // Function to close the modal
-  const handleModalClose = async (unsubscribe: boolean) => {
-    setModalOpen(false);
+  const handleUnsubscribeModalClose = async (unsubscribe: boolean) => {
+    setUnsubscribeModalOpen(false);
     if (unsubscribe) {
       unsubscibeEvent(event.id);
+    }
+  };
+
+  const handleDeleteModalClose = async (shouldDelete: boolean) => {
+    setDeleteModalOpen(false);
+    if (shouldDelete) {
+      deleteEvent(event.id);
     }
   };
 
@@ -38,12 +48,6 @@ export const EventCard = ({
     console.log("handle Edit");
     // Open edit modal
     editEvent(event.id, "test", "test");
-  };
-
-  const handleDelete = () => {
-    console.log("handle Delete");
-    // open delete modal
-    deleteEvent(event.id);
   };
 
   return (
@@ -87,7 +91,7 @@ export const EventCard = ({
           {user.isAdmin && (
             <DeleteIcon
               color="error"
-              onClick={handleDelete}
+              onClick={handleDeleteModalOpen}
               sx={{
                 cursor: "pointer", // Change the cursor to a hand on hover
                 "&:hover": {
@@ -140,16 +144,22 @@ export const EventCard = ({
             marginTop: "20px",
             alignContent: "center",
           }}
-          onClick={handleModalOpen}
+          onClick={handleUnsubscribeModalOpen}
         >
           Unsubscribe
         </Button>
       )}
       <WarningModal
-        open={modalOpen}
-        handleClose={handleModalClose}
+        open={unsubscribeModalOpen}
+        handleClose={handleUnsubscribeModalClose}
         title="Unsubscribe"
-        content="Are you sure you want to unsubscribe?"
+        content="Are you sure you want to unsubscribe from event?"
+      />
+      <WarningModal
+        open={deleteModalOpen}
+        handleClose={handleDeleteModalClose}
+        title="Delete"
+        content="Are you sure you want to delete meetup event?"
       />
     </Paper>
   );
