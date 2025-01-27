@@ -6,13 +6,22 @@ import theme from "../../theme/theme";
 import { User } from "../Context";
 import { useState } from "react";
 import { WarningModal } from "../WarningModal";
+import { EditEventModal } from "../EditEventModal";
 
 interface EventCardProps {
   event: Meetup;
   user: User; // users details required for conditional render of edit / delete buttons
   unsubscibeEvent: (eventId: number) => void;
   deleteEvent: (eventId: number) => void;
-  editEvent: (eventId: number, title: string, description: string) => void;
+  editEvent: (
+    // Make into a type
+    eventId: number,
+    formContent?: string
+    // dateTime: string,
+    // isOnline: boolean,
+    // location: string,
+    // description: string
+  ) => void;
 }
 
 export const EventCard = ({
@@ -29,6 +38,9 @@ export const EventCard = ({
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const handleDeleteModalOpen = () => setDeleteModalOpen(true);
 
+  const [editModalOpen, setEditModalOpen] = useState(false);
+  const handleEditModalOpen = () => setEditModalOpen(true);
+
   // Function to close the modal
   const handleUnsubscribeModalClose = async (unsubscribe: boolean) => {
     setUnsubscribeModalOpen(false);
@@ -44,10 +56,15 @@ export const EventCard = ({
     }
   };
 
-  const handleEdit = () => {
+  const handleEditModalClose = async (
+    shouldEdit: boolean,
+    content?: string
+  ) => {
     console.log("handle Edit");
-    // Open edit modal
-    editEvent(event.id, "test", "test");
+    setEditModalOpen(false);
+    if (shouldEdit) {
+      editEvent(event.id, content);
+    }
   };
 
   return (
@@ -75,18 +92,19 @@ export const EventCard = ({
           }}
         >
           {/* User can only edit the event if they created it */}
-          {user.id === event.user_id && (
-            <ModeEditIcon
-              color="success"
-              onClick={handleEdit}
-              sx={{
-                cursor: "pointer", // Change the cursor to a hand on hover
-                "&:hover": {
-                  opacity: 0.5, // Add slight opacity change on hover
-                },
-              }}
-            />
-          )}
+          {user.id === event.user_id ||
+            (user.isAdmin && (
+              <ModeEditIcon
+                color="success"
+                onClick={handleEditModalOpen}
+                sx={{
+                  cursor: "pointer", // Change the cursor to a hand on hover
+                  "&:hover": {
+                    opacity: 0.5, // Add slight opacity change on hover
+                  },
+                }}
+              />
+            ))}
           {/* User can only delete the event if they are an admin */}
           {user.isAdmin && (
             <DeleteIcon
@@ -160,6 +178,11 @@ export const EventCard = ({
         handleClose={handleDeleteModalClose}
         title="Delete"
         content="Are you sure you want to delete meetup event?"
+      />
+      <EditEventModal
+        open={editModalOpen}
+        handleClose={handleEditModalClose}
+        currentEventData={event}
       />
     </Paper>
   );

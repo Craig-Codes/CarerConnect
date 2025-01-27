@@ -32,6 +32,33 @@ theme = createTheme(theme, {
         body1: {
           color: theme.palette.secondary.main,
         },
+        body2: {
+          color: theme.palette.error.main,
+        },
+      },
+    },
+    MuiOutlinedInput: {
+      styleOverrides: {
+        root: {
+          "&.Mui-error .MuiOutlinedInput-notchedOutline": {
+            borderColor: theme.palette.error.main, // Red border on error
+          },
+          "&.Mui-focused.Mui-error .MuiOutlinedInput-notchedOutline": {
+            borderColor: theme.palette.error.main, // Red border when focused on error
+          },
+          "&:hover.Mui-error .MuiOutlinedInput-notchedOutline": {
+            borderColor: theme.palette.error.main, // Red border on hover when there's an error
+          },
+        },
+      },
+    },
+    MuiFormHelperText: {
+      styleOverrides: {
+        root: {
+          "&.Mui-error": {
+            color: theme.palette.error.main, // Red helper text on error
+          },
+        },
       },
     },
     MuiMenuItem: {

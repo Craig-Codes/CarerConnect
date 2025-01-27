@@ -69,12 +69,8 @@ export const HomePage = () => {
     }
   };
 
-  const handleEditEvent = async (
-    eventId: number,
-    eventTitle: string,
-    eventDescription: string
-  ) => {
-    console.log(eventId, eventDescription, eventTitle);
+  const handleEditEvent = async (eventId: number, updatedContent?: string) => {
+    console.log("From the PAGE!", eventId, updatedContent);
   };
 
   return (

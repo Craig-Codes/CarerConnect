@@ -53,7 +53,7 @@ export const WarningModal = ({
           sx={{
             ...style,
             borderColor: theme.palette.secondary.main,
-            width: "50vw",
+            width: { xs: "70vw", md: "50vw" },
           }}
         >
           <Typography id="transition-modal-title" variant="h6" component="h2">
