@@ -6,7 +6,7 @@ import theme from "../../theme/theme";
 import { User } from "../Context";
 import { useState } from "react";
 import { WarningModal } from "../WarningModal";
-import { EditEventModal } from "../EditEventModal";
+import { EditEventModal, EditSubscriptionFormInputs } from "../EditEventModal";
 
 interface EventCardProps {
   event: Meetup;
@@ -16,7 +16,7 @@ interface EventCardProps {
   editEvent: (
     // Make into a type
     eventId: number,
-    formContent?: string
+    formContent?: EditSubscriptionFormInputs
     // dateTime: string,
     // isOnline: boolean,
     // location: string,
@@ -58,7 +58,7 @@ export const EventCard = ({
 
   const handleEditModalClose = async (
     shouldEdit: boolean,
-    content?: string
+    content?: EditSubscriptionFormInputs
   ) => {
     console.log("handle Edit");
     setEditModalOpen(false);

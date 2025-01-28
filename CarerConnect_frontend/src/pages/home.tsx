@@ -8,6 +8,7 @@ import { Alert, Box, Paper, Typography } from "@mui/material";
 import { Meetup } from "../utils/Types/types";
 import { EventCard } from "../components/EventCard";
 import { toast, ToastContainer } from "react-toastify";
+import { EditSubscriptionFormInputs } from "../components/EditEventModal";
 
 export const HomePage = () => {
   const { user } = useContext(UserContext); // stores the global user object
@@ -69,8 +70,20 @@ export const HomePage = () => {
     }
   };
 
-  const handleEditEvent = async (eventId: number, updatedContent?: string) => {
-    console.log("From the PAGE!", eventId, updatedContent);
+  const handleEditEvent = async (
+    eventId: number,
+    updatedContent?: EditSubscriptionFormInputs
+  ) => {
+    try {
+      // Update the event title and description fields
+      // Anything else, and the event needs to be deleted and re-created so as not to mess around the schedules or subscribers
+      await fetchWrapper("PATCH", `event/${eventId}`, updatedContent);
+      await fetchMeetups(); // Fetch the updated user subsciptions
+      // Use toast box to inform user they have successfully unsubscribed
+      toast.success("Successfully updated meetup event");
+    } catch {
+      toast.error("Failed to update event, please try again");
+    }
   };
 
   return (

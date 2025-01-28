@@ -23,6 +23,7 @@ import {
   getUserSubscribedEvents,
   subscribeEvent,
   unsubscribeEvent,
+  updateEvent,
 } from "./Controllers/Events/events";
 
 export const app = express();
@@ -72,6 +73,7 @@ app.get(
   userAuthorisationMiddlewear,
   getUserSubscribedEvents
 );
+app.patch("/api/event/:id", userAuthorisationMiddlewear, updateEvent);
 app.delete("/api/event/:id", adminAuthorisationMiddlewear, deleteEvent);
 app.delete(
   "/api/event/subscription/:eventId",

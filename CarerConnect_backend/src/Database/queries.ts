@@ -171,4 +171,12 @@ export const getEventMaxAttendeesById = `SELECT max_attendees FROM event
 WHERE id = $1; `;
 
 export const subscribeToEventById = `INSERT INTO subscription (event_id, user_id)
-VALUES ($1, $2)`;
+VALUES ($1, $2);`;
+
+export const getEventUserId = `SELECT user_id 
+FROM event
+WHERE id = $1;`;
+
+export const updateEventById = `UPDATE event
+SET title=$2, description=$3
+WHERE id=$1;`;

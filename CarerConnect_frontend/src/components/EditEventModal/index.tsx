@@ -7,9 +7,9 @@ import Typography from "@mui/material/Typography";
 import theme from "../../theme/theme";
 import { TextField } from "@mui/material";
 import { Meetup } from "../../utils/Types/types";
-import { useForm, SubmitHandler, Controller } from "react-hook-form";
-import { DateTimePicker, LocalizationProvider } from "@mui/x-date-pickers";
-import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
+import { useForm, SubmitHandler } from "react-hook-form";
+// import {  LocalizationProvider } from "@mui/x-date-pickers";
+// import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 
 const style = {
   position: "absolute",
@@ -25,13 +25,13 @@ const style = {
 
 interface EditEventModalProps {
   open: boolean;
-  handleClose: (remove: boolean, content?: string) => void;
+  handleClose: (remove: boolean, content?: EditSubscriptionFormInputs) => void;
   currentEventData: Meetup;
 }
 
-type FormInputs = {
+export type EditSubscriptionFormInputs = {
   title: string;
-  dateTime: Date; // Use Date type instead of string
+  description: string;
 };
 
 export const EditEventModal = ({
@@ -43,75 +43,82 @@ export const EditEventModal = ({
     register,
     handleSubmit,
     formState: { errors },
-    control,
-  } = useForm<FormInputs>({
+    // control,
+  } = useForm<EditSubscriptionFormInputs>({
     defaultValues: {
       title: currentEventData.title,
-      dateTime: new Date(currentEventData.event_date), // Convert the event date to a Date object
+      description: currentEventData.description,
+      // dateTime: new Date(currentEventData.event_date), // Convert the event date to a Date object
     },
   });
 
-  const onSubmit: SubmitHandler<FormInputs> = (data) => {
-    handleClose(true, data.dateTime);
+  const onSubmit: SubmitHandler<EditSubscriptionFormInputs> = (data) => {
+    handleClose(true, { title: data.title, description: data.description });
   };
 
   return (
-    <LocalizationProvider dateAdapter={AdapterDateFns}>
-      <Modal
-        aria-labelledby="transition-modal-title"
-        aria-describedby="transition-modal-description"
-        open={open}
-        onClose={() => {
-          handleClose(false);
-        }}
-        closeAfterTransition
-        slots={{ backdrop: Backdrop }}
-        slotProps={{
-          backdrop: {
-            timeout: 500,
-          },
-        }}
-      >
-        <Fade in={open}>
-          <Box
-            sx={{
-              ...style,
-              borderColor: theme.palette.secondary.main,
-              width: { xs: "70vw", md: "50vw" },
-            }}
+    // <LocalizationProvider dateAdapter={AdapterDateFns}>
+    <Modal
+      aria-labelledby="transition-modal-title"
+      aria-describedby="transition-modal-description"
+      open={open}
+      onClose={() => {
+        handleClose(false);
+      }}
+      closeAfterTransition
+      slots={{ backdrop: Backdrop }}
+      slotProps={{
+        backdrop: {
+          timeout: 500,
+        },
+      }}
+    >
+      <Fade in={open}>
+        <Box
+          sx={{
+            ...style,
+            borderColor: theme.palette.secondary.main,
+            width: { xs: "70vw", md: "50vw" },
+          }}
+        >
+          <Typography
+            id="transition-modal-title"
+            variant="h6"
+            component="h2"
+            sx={{ paddingBottom: "10px" }}
           >
-            <Typography id="transition-modal-title" variant="h6" component="h2">
-              Edit Event
-            </Typography>
-            <form onSubmit={handleSubmit(onSubmit)}>
-              {/* Title field */}
-              <TextField
-                variant="outlined"
-                margin="normal"
-                required
-                fullWidth
-                id="title"
-                label="Title"
-                {...register("title", {
-                  required: "Title is required",
-                  minLength: {
-                    value: 3,
-                    message: "Title must be at least 3 characters long",
-                  },
-                  maxLength: {
-                    value: 125,
-                    message: "Title cannot exceed 125 characters",
-                  },
-                })}
-                type="text"
-                name="title"
-                autoFocus
-                aria-invalid={errors.title ? "true" : "false"}
-                helperText={errors.title?.message}
-                error={!!errors.title}
-              />
-              {/* Date picker with Date type for value */}
-              <Controller
+            Edit Event
+          </Typography>
+          <form onSubmit={handleSubmit(onSubmit)}>
+            {/* Title field */}
+            <TextField
+              variant="outlined"
+              margin="normal"
+              required
+              fullWidth
+              id="title"
+              label="Title"
+              {...register("title", {
+                required: "Title is required",
+                minLength: {
+                  value: 3,
+                  message: "Title must be at least 3 characters long",
+                },
+                maxLength: {
+                  value: 125,
+                  message: "Title cannot exceed 125 characters",
+                },
+              })}
+              type="text"
+              name="title"
+              autoFocus
+              aria-invalid={errors.title ? "true" : "false"}
+              helperText={errors.title?.message}
+              error={!!errors.title}
+              sx={{ paddingBottom: "10px" }}
+            />
+            {/* Date picker with Date type for value */}
+            {/* <Controller
                 name="dateTime"
                 control={control}
                 rules={{ required: "A date and time is required" }}
@@ -138,18 +145,46 @@ export const EditEventModal = ({
                       },
                     }}
                   />
-                )}
-              />
-              <br />
-              <br />
-              <Box sx={{ paddingTop: "25px" }}>
-                <Button type="submit">Submit</Button>
-                <Button onClick={() => handleClose(false)}>Cancel</Button>
-              </Box>
-            </form>
-          </Box>
-        </Fade>
-      </Modal>
-    </LocalizationProvider>
+                )} */}
+            {/* /> */}
+            {/* Description input */}
+            <TextField
+              variant="outlined"
+              margin="normal"
+              required
+              fullWidth
+              multiline // Make input box multiline
+              minRows={2}
+              maxRows={4}
+              id="description"
+              label="Description"
+              {...register("description", {
+                required: "Description is required",
+                minLength: {
+                  value: 3,
+                  message: "Description must be at least 3 characters long",
+                },
+                maxLength: {
+                  value: 255,
+                  message: "Description cannot exceed 255 characters",
+                },
+              })}
+              type="text"
+              name="description"
+              autoFocus
+              aria-invalid={errors.description ? "true" : "false"}
+              helperText={errors.description?.message}
+              error={!!errors.description}
+            />
+            <br />
+            <Box sx={{ paddingTop: "25px" }}>
+              <Button type="submit">Submit</Button>
+              <Button onClick={() => handleClose(false)}>Cancel</Button>
+            </Box>
+          </form>
+        </Box>
+      </Fade>
+    </Modal>
+    // </LocalizationProvider>
   );
 };

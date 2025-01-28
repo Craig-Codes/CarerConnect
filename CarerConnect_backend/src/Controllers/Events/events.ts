@@ -7,14 +7,17 @@ import {
   findUserEventSubscriptions,
   getEventMaxAttendeesById,
   getEventSubscribersById,
+  getEventUserId,
   getNumberOfEventSubscribersById,
   insertEvent,
   removeEventSubscription,
   subscribeToEventById,
+  updateEventById,
 } from "../../Database/queries";
 import { Request, Response } from "express";
 import { getUserId } from "../User/user";
 import { stringInputValidator } from "../../Validators/input";
+import { getUserIsAdmin } from "../../Validators/token";
 
 export const getEvents = async (req: Request, res: Response) => {
   try {
@@ -212,5 +215,43 @@ export const subscribeEvent = async (req: Request, res: Response) => {
     });
   } catch (error) {
     return res.status(500).json({ message: "Failed to subscribe to event" });
+  }
+};
+
+// Update event
+// Only title an description, if want to change things such as date or location, need to delete event and recreate
+export const updateEvent = async (req: Request, res: Response) => {
+  try {
+    const token = req.cookies.CarerConnect_user_token;
+    const userId = await getUserId(token); // Decode token to get the users id
+
+    const title = stringInputValidator(req.body.title);
+    const description = stringInputValidator(req.body.description);
+    const eventId = Number(req.params.id); // convert value to number
+
+    // validate number input
+    if (isNaN(eventId) || eventId === undefined) {
+      return res.status(500).json({
+        message: "Failed to update event, inputs not as expected",
+      });
+    }
+
+    // if user is admin, they can update the event details OR if user is the event creator
+    const isAdmin = await getUserIsAdmin(token);
+    const eventCreator = (await database.query(getEventUserId, [eventId]))
+      .rows[0].id;
+    const isCreator = eventCreator === userId ? true : false;
+
+    if (isAdmin || isCreator) {
+      try {
+        // try to patch event
+        await database.query(updateEventById, [eventId, title, description]);
+        return res.status(200).json({ message: "Event successfully updated" });
+      } catch {
+        return res.status(500).json({ message: "Failed to update event" });
+      }
+    }
+  } catch {
+    return res.status(500).json({ message: "Failed to update event" });
   }
 };
