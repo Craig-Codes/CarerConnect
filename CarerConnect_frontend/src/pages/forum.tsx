@@ -16,7 +16,6 @@ import { fetchWrapper } from "../utils/fetchWrapper";
 
 export const ForumPage = () => {
   const { user } = useContext(UserContext);
-  console.log("forum: ", user);
 
   const [forumCategoryData, setForumCategoryData] = useState({});
 

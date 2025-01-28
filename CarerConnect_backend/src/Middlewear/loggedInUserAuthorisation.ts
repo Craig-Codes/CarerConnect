@@ -10,7 +10,6 @@ export const userAuthorisationMiddlewear = async (
 ) => {
   const token = req.cookies.CarerConnect_user_token; // Get the cookie
   // Check that the token is a valid token which can be decoded
-  console.log("validating token");
   const validatedToken = await tokenIsValid(token);
   // If we don't find a token, return a 401 - Unorthorised status
 

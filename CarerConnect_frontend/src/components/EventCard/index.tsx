@@ -60,7 +60,6 @@ export const EventCard = ({
     shouldEdit: boolean,
     content?: EditSubscriptionFormInputs
   ) => {
-    console.log("handle Edit");
     setEditModalOpen(false);
     if (shouldEdit) {
       editEvent(event.id, content);

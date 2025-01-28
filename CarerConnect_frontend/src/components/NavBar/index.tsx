@@ -20,7 +20,7 @@ export default function NavBar() {
   const [mobileMenuAnchorEl, setMobileMenuAnchorEl] =
     useState<null | HTMLElement>(null);
 
-  const pages = ["Home", "Meetups", "Forum"];
+  const pages = ["Home", "Events", "Forum"];
 
   const handleMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);

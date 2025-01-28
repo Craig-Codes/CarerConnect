@@ -78,8 +78,6 @@ export const unsubscribeEvent = async (req: Request, res: Response) => {
 
     // Delete the subscription from the user using a composite key of eventId and userId
     try {
-      console.log("eventId: ", eventId);
-      console.log("userId: ", userId);
       await database.query(removeEventSubscription, [eventId, userId]);
       return res
         .status(200)
@@ -108,7 +106,6 @@ export const deleteEvent = async (req: Request, res: Response) => {
 
   try {
     const event = await database.query(deleteEventById, [eventId]);
-    console.log(event);
     return res.status(200).json({
       message: "Event deleted",
     });

@@ -99,7 +99,6 @@ export const registerUser = async (req: Request, res: Response) => {
   try {
     // Retrieve the user inputs from POST method body
     const { username, email, password } = req.body;
-    console.log("Trying to create new user: ", username, password, email);
     // Input validation
     // Validate username (must be 50 characters or less)
     if (username.length > 50) {
@@ -117,13 +116,11 @@ export const registerUser = async (req: Request, res: Response) => {
     // TLD (top-level domain) follows the dot and must not contain spaces or "@".
 
     if (!emailRegex.test(email)) {
-      console.log("Invalid email");
       return res.status(400).json({ message: "Invalid email address" });
     }
 
     // Validate password (must be longer than 5 characters)
     if (password.length <= 5) {
-      console.log("invalid password");
       return res
         .status(400)
         .json({ message: "Password must be longer than 5 characters" });
@@ -159,7 +156,6 @@ export const registerUser = async (req: Request, res: Response) => {
       isAdmin: newUser.rows[0].is_admin,
     });
   } catch (error) {
-    console.log("failed to register: ", error);
     res.status(400).json({ message: "Failed to register" });
   }
 };

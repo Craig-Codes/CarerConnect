@@ -12,9 +12,8 @@ import { UserContext } from "../components/Context";
 //   is_admin: boolean;
 // }
 
-export const MeetupsPage = () => {
+export const EventsPage = () => {
   const { user } = useContext(UserContext);
-  console.log("meetups page: ", user);
 
   // const [users, setUsers] = useState<User[] | null>(null);
   // const [fetchError, setFetchError] = useState("");
