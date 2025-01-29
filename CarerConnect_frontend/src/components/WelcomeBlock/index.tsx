@@ -13,7 +13,12 @@ export const WelcomeBlock = ({ username }: WelcomeBlockProps) => {
     <Paper elevation={2} sx={{ padding: "1vw" }}>
       <Typography
         variant="h4"
-        sx={{ paddingTop: "20px", paddingBottom: "10px" }}
+        sx={{
+          paddingTop: "20px",
+          paddingBottom: "10px",
+          paddingLeft: "12px",
+          paddingRight: "12px",
+        }}
       >
         Hello {username}
       </Typography>

@@ -11,7 +11,7 @@ import { EditEventModal, EditSubscriptionFormInputs } from "../EditEventModal";
 interface EventCardProps {
   event: Meetup;
   user: User; // users details required for conditional render of edit / delete buttons
-  unsubscibeEvent: (eventId: number) => void;
+  unsubscribeEvent: (eventId: number) => void;
   deleteEvent: (eventId: number) => void;
   editEvent: (
     // Make into a type
@@ -27,7 +27,7 @@ interface EventCardProps {
 export const EventCard = ({
   event,
   user,
-  unsubscibeEvent,
+  unsubscribeEvent,
   deleteEvent,
   editEvent,
 }: EventCardProps) => {
@@ -45,7 +45,7 @@ export const EventCard = ({
   const handleUnsubscribeModalClose = async (unsubscribe: boolean) => {
     setUnsubscribeModalOpen(false);
     if (unsubscribe) {
-      unsubscibeEvent(event.id);
+      unsubscribeEvent(event.id);
     }
   };
 
@@ -73,7 +73,6 @@ export const EventCard = ({
         padding: "2vw",
         marginTop: "20px",
         textAlign: "left",
-        maxWidth: { xs: "300px", md: "400px", lg: "450px", xl: "500px" },
       }}
     >
       <Box
@@ -128,7 +127,10 @@ export const EventCard = ({
       >
         {event.event_date}
       </Typography>
-      <Typography variant="body1" sx={{ paddingTop: "5px" }}>
+      <Typography
+        variant="body1"
+        sx={{ paddingTop: "5px", paddingBottom: "5px" }}
+      >
         Event Location:&nbsp;
         {event.is_online ? (
           <Link
@@ -147,8 +149,16 @@ export const EventCard = ({
           </span>
         )}
       </Typography>
-      <Typography variant="body1">{event.description}</Typography>
-      <Typography variant="body1">
+      <Typography
+        variant="body1"
+        sx={{ paddingTop: "5px", paddingBottom: "5px" }}
+      >
+        {event.description}
+      </Typography>
+      <Typography
+        variant="body1"
+        sx={{ paddingTop: "5px", paddingBottom: "5px" }}
+      >
         Participants: {event.subscriber_count} of {event.max_attendees}
       </Typography>
       {/* If user is the event onwer, cannot unsubscribe */}

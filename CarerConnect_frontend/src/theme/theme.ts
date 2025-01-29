@@ -28,6 +28,7 @@ theme = createTheme(theme, {
         },
         subtitle1: {
           color: theme.palette.secondary.main,
+          fontWeight: 800,
         },
         body1: {
           color: theme.palette.secondary.main,

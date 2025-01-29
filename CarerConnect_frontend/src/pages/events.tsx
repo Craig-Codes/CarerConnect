@@ -1,63 +1,85 @@
-import Stack from "@mui/material/Stack";
 import Button from "@mui/material/Button";
 // import { useEffect, useState } from "react";
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { UserContext } from "../components/Context";
+import theme from "../theme/theme";
+import useFetchMeetups from "../hooks/useFetchMeetups";
+import { EventCard } from "../components/EventCard";
+import { fetchWrapper } from "../utils/fetchWrapper";
+import { toast, ToastContainer } from "react-toastify";
+import { EditSubscriptionFormInputs } from "../components/EditEventModal";
+import { Box } from "@mui/material";
+import { Meetup } from "../utils/Types/types";
 
-// interface User {
-//   id: number;
-//   username: string;
-//   email: string;
-//   password: string;
-//   is_admin: boolean;
-// }
+// TODO - create create event modal with form - pass props to it
 
 export const EventsPage = () => {
   const { user } = useContext(UserContext);
+  const { meetups, fetchMeetups } = useFetchMeetups({ all: true }); // fetch all events, not user specifc
+  // state to handle open and closing the create event modal
+  const [createEventModal, setCreateEventModalOpen] = useState(false);
+  // function to handle the opening of the createEventModal
+  const handleCreateEventModalOpen = () => setCreateEventModalOpen(true);
+  // function to handle the logic when the modal is closed
+  const handleCreateEventModalClose = async (create: boolean) => {
+    setCreateEventModalOpen(false); // close the modal
+    if (create) {
+      // create the event (using event. to get props? or just use event?)
+    }
+  };
 
-  // const [users, setUsers] = useState<User[] | null>(null);
-  // const [fetchError, setFetchError] = useState("");
+  const handleUnsubscribe = async (eventId: number) => {
+    try {
+      await fetchWrapper("DELETE", `event/subscription/${eventId}`);
+      await fetchMeetups();
+      toast.success("Successfully unsubscribed from event");
+    } catch {
+      toast.error("Failed to unsubscribe from event, please try again");
+    }
+  };
 
-  // useEffect(() => {
-  //   const fetchEquipment = async () => {
-  //     console.log("Process env ==== ", import.meta.env.VITE_API_URL);
-  //     try {
-  //       const response = await fetch(`${import.meta.env.VITE_API_URL}user`);
-  //       if (!response.ok) {
-  //         setFetchError("Failed to fetch users!");
-  //       }
-  //       const retrievedUsers: User[] = await response.json();
-  //       setUsers(retrievedUsers);
-  //       console.log(retrievedUsers);
-  //     } catch (error) {
-  //       setFetchError("Failed to retrieve users!");
-  //     }
-  //   };
-  //   fetchEquipment();
-  // }, []);
+  const handleDeleteEvent = async (eventId: number) => {
+    try {
+      await fetchWrapper("DELETE", `event/${eventId}`);
+      await fetchMeetups();
+      toast.success("Successfully deleted meetup event");
+    } catch {
+      toast.error("Failed to delete event, please try again");
+    }
+  };
+
+  const handleEditEvent = async (
+    eventId: number,
+    updatedContent?: EditSubscriptionFormInputs
+  ) => {
+    try {
+      await fetchWrapper("PATCH", `event/${eventId}`, updatedContent);
+      await fetchMeetups();
+      toast.success("Successfully updated meetup event");
+    } catch {
+      toast.error("Failed to update event, please try again");
+    }
+  };
 
   return (
-    <>
-      <h2>Hi, {user.username} - MEETUPS PAGE</h2>
-      <Stack spacing={2} direction="row">
-        <Button variant="text">Text</Button>
-        <Button variant="contained" color="secondary">
-          Contained
-        </Button>
-        <Button variant="outlined">Outlined</Button>
-      </Stack>
-      {/* {fetchError && <p>{fetchError}</p>}
-      <ul>
-        {users ? (
-          users.map((user) => (
-            <li key={user.username}>
-              {user.username} - {user.email}
-            </li>
-          ))
-        ) : (
-          <p>Loading users...</p>
-        )}
-      </ul> */}
-    </>
+    <Box sx={{ width: "80vw" }}>
+      <Button
+        variant="contained"
+        sx={{ backgroundColor: theme.palette.secondary.main }}
+      >
+        Create New Event
+      </Button>
+      {meetups.map((meetup: Meetup) => (
+        <EventCard
+          key={meetup.id}
+          event={meetup}
+          user={user}
+          unsubscribeEvent={handleUnsubscribe}
+          deleteEvent={handleDeleteEvent}
+          editEvent={handleEditEvent}
+        />
+      ))}
+      <ToastContainer />
+    </Box>
   );
 };
