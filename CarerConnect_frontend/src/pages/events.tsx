@@ -3,19 +3,26 @@ import Button from "@mui/material/Button";
 import { useContext, useState } from "react";
 import { UserContext } from "../components/Context";
 import theme from "../theme/theme";
-import useFetchMeetups from "../hooks/useFetchMeetups";
 import { EventCard } from "../components/EventCard";
 import { fetchWrapper } from "../utils/fetchWrapper";
 import { toast, ToastContainer } from "react-toastify";
 import { EditSubscriptionFormInputs } from "../components/EditEventModal";
 import { Box } from "@mui/material";
 import { Meetup } from "../utils/Types/types";
+import useFetchMeetups from "../hooks/useFetchMeetups";
 
 // TODO - create create event modal with form - pass props to it
 
 export const EventsPage = () => {
   const { user } = useContext(UserContext);
-  const { meetups, fetchMeetups } = useFetchMeetups({ all: true }); // fetch all events, not user specifc
+  const { meetups: allMeetups, fetchMeetups: fetchAllMeetups } =
+    useFetchMeetups({ all: true }); // Fetch all meetups
+  const { meetups: subscribedMeetups, fetchMeetups: fetchSubscribedMeetups } =
+    useFetchMeetups(); // Fetch meetups user has subscribed to
+
+  // Generate an array of all the subscribed event ids
+  const subscribedMeetupIds = subscribedMeetups.map((meetup) => meetup.id);
+
   // state to handle open and closing the create event modal
   const [createEventModal, setCreateEventModalOpen] = useState(false);
   // function to handle the opening of the createEventModal
@@ -31,17 +38,23 @@ export const EventsPage = () => {
   const handleUnsubscribe = async (eventId: number) => {
     try {
       await fetchWrapper("DELETE", `event/subscription/${eventId}`);
-      await fetchMeetups();
+      await fetchAllMeetups();
+      await fetchSubscribedMeetups();
       toast.success("Successfully unsubscribed from event");
     } catch {
       toast.error("Failed to unsubscribe from event, please try again");
     }
   };
 
+  const handleSubscribe = async (eventId: number) => {
+    console.log(eventId);
+  };
+
   const handleDeleteEvent = async (eventId: number) => {
     try {
       await fetchWrapper("DELETE", `event/${eventId}`);
-      await fetchMeetups();
+      await fetchAllMeetups();
+      await fetchSubscribedMeetups();
       toast.success("Successfully deleted meetup event");
     } catch {
       toast.error("Failed to delete event, please try again");
@@ -54,7 +67,8 @@ export const EventsPage = () => {
   ) => {
     try {
       await fetchWrapper("PATCH", `event/${eventId}`, updatedContent);
-      await fetchMeetups();
+      await fetchAllMeetups();
+      await fetchSubscribedMeetups();
       toast.success("Successfully updated meetup event");
     } catch {
       toast.error("Failed to update event, please try again");
@@ -69,14 +83,16 @@ export const EventsPage = () => {
       >
         Create New Event
       </Button>
-      {meetups.map((meetup: Meetup) => (
+      {allMeetups.map((meetup: Meetup) => (
         <EventCard
           key={meetup.id}
           event={meetup}
           user={user}
           unsubscribeEvent={handleUnsubscribe}
+          subscribeEvent={handleSubscribe}
           deleteEvent={handleDeleteEvent}
           editEvent={handleEditEvent}
+          currentlySubscribedEvents={subscribedMeetupIds}
         />
       ))}
       <ToastContainer />

@@ -12,16 +12,13 @@ interface EventCardProps {
   event: Meetup;
   user: User; // users details required for conditional render of edit / delete buttons
   unsubscribeEvent: (eventId: number) => void;
+  subscribeEvent: (eventId: number) => void;
   deleteEvent: (eventId: number) => void;
   editEvent: (
-    // Make into a type
     eventId: number,
     formContent?: EditSubscriptionFormInputs
-    // dateTime: string,
-    // isOnline: boolean,
-    // location: string,
-    // description: string
   ) => void;
+  currentlySubscribedEvents?: number[];
 }
 
 export const EventCard = ({
@@ -30,6 +27,8 @@ export const EventCard = ({
   unsubscribeEvent,
   deleteEvent,
   editEvent,
+  subscribeEvent,
+  currentlySubscribedEvents,
 }: EventCardProps) => {
   // Handle the confirmation modal open / close
   const [unsubscribeModalOpen, setUnsubscribeModalOpen] = useState(false);
@@ -40,6 +39,9 @@ export const EventCard = ({
 
   const [editModalOpen, setEditModalOpen] = useState(false);
   const handleEditModalOpen = () => setEditModalOpen(true);
+
+  const [subscribeModalOpen, setSubscribeModalOpen] = useState(false);
+  const handleSubscribeModalOpen = () => setSubscribeModalOpen(true);
 
   // Function to close the modal
   const handleUnsubscribeModalClose = async (unsubscribe: boolean) => {
@@ -63,6 +65,55 @@ export const EventCard = ({
     setEditModalOpen(false);
     if (shouldEdit) {
       editEvent(event.id, content);
+    }
+  };
+
+  const handleSubscribeModalClose = async (unsubscribe: boolean) => {
+    setSubscribeModalOpen(false);
+    if (unsubscribe) {
+      subscribeEvent(event.id);
+    }
+  };
+
+  // Function uses logic to decide which button is shown to the user
+  const conditionallyRenderButton = () => {
+    // If the user is the evnt owner, they cannot unsubscribe so no button is shown
+    if (event.user_id === user.id) {
+      return <></>;
+    }
+    // if the user is current subscribed, show the unsubscribe button
+    else if (currentlySubscribedEvents?.includes(event.id)) {
+      return (
+        <Button
+          variant="outlined"
+          sx={{
+            color: theme.palette.secondary.main,
+            borderColor: theme.palette.secondary.main,
+            marginTop: "20px",
+            alignContent: "center",
+          }}
+          onClick={handleUnsubscribeModalOpen}
+        >
+          Unsubscribe
+        </Button>
+      );
+    }
+    // The user is not subscibed, show the subscribe button
+    else {
+      return (
+        <Button
+          variant="outlined"
+          sx={{
+            color: theme.palette.secondary.main,
+            borderColor: theme.palette.secondary.main,
+            marginTop: "20px",
+            alignContent: "center",
+          }}
+          onClick={handleSubscribeModalOpen}
+        >
+          Subscribe
+        </Button>
+      );
     }
   };
 
@@ -161,21 +212,7 @@ export const EventCard = ({
       >
         Participants: {event.subscriber_count} of {event.max_attendees}
       </Typography>
-      {/* If user is the event onwer, cannot unsubscribe */}
-      {event.user_id !== user.id && (
-        <Button
-          variant="outlined"
-          sx={{
-            color: theme.palette.secondary.main,
-            borderColor: theme.palette.secondary.main,
-            marginTop: "20px",
-            alignContent: "center",
-          }}
-          onClick={handleUnsubscribeModalOpen}
-        >
-          Unsubscribe
-        </Button>
-      )}
+      {conditionallyRenderButton()}
       <WarningModal
         open={unsubscribeModalOpen}
         handleClose={handleUnsubscribeModalClose}
@@ -187,6 +224,12 @@ export const EventCard = ({
         handleClose={handleDeleteModalClose}
         title="Delete"
         content="Are you sure you want to delete meetup event?"
+      />
+      <WarningModal
+        open={subscribeModalOpen}
+        handleClose={handleSubscribeModalClose}
+        title="Subscribe"
+        content="Are you sure you want to subscribe to meetup event?"
       />
       <EditEventModal
         open={editModalOpen}

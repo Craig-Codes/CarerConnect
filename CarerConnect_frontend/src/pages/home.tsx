@@ -22,6 +22,11 @@ export const HomePage = () => {
     }
   };
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const handleSubscribe = async (_eventId: number) => {
+    return null; // function not required in home page, as users are unable to subscribe here
+  };
+
   const handleDeleteEvent = async (eventId: number) => {
     try {
       await fetchWrapper("DELETE", `event/${eventId}`);
@@ -73,6 +78,7 @@ export const HomePage = () => {
                 event={meetup}
                 user={user}
                 unsubscribeEvent={handleUnsubscribe}
+                subscribeEvent={handleSubscribe}
                 deleteEvent={handleDeleteEvent}
                 editEvent={handleEditEvent}
               />
