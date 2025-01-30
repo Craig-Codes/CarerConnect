@@ -53,6 +53,7 @@ export const getUser = async (req: Request, res: Response) => {
     const result = await database.query(findUserQuery, [userEmail]);
     res.status(200).json({
       user: {
+        id: result.rows[0].id,
         email: result.rows[0].email,
         username: result.rows[0].username,
         isAdmin: result.rows[0].is_admin,

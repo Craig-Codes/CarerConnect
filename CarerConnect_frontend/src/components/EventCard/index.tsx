@@ -68,21 +68,28 @@ export const EventCard = ({
     }
   };
 
-  const handleSubscribeModalClose = async (unsubscribe: boolean) => {
+  const handleSubscribeModalClose = async (subscribe: boolean) => {
     setSubscribeModalOpen(false);
-    if (unsubscribe) {
+    if (subscribe) {
       subscribeEvent(event.id);
     }
   };
 
   // Function uses logic to decide which button is shown to the user
   const conditionallyRenderButton = () => {
+    console.log("subscirbed events array: ", currentlySubscribedEvents);
     // If the user is the evnt owner, they cannot unsubscribe so no button is shown
     if (event.user_id === user.id) {
       return <></>;
     }
     // if the user is current subscribed, show the unsubscribe button
-    else if (currentlySubscribedEvents?.includes(event.id)) {
+    // OR
+    // if the current subscribed array is undefined, we are using component on the
+    // home page, and all events displayed have already been subscibed to
+    else if (
+      currentlySubscribedEvents?.includes(event.id) ||
+      currentlySubscribedEvents === undefined
+    ) {
       return (
         <Button
           variant="outlined"
@@ -98,6 +105,7 @@ export const EventCard = ({
         </Button>
       );
     }
+
     // The user is not subscibed, show the subscribe button
     else {
       return (
@@ -140,20 +148,19 @@ export const EventCard = ({
             gap: "10px",
           }}
         >
-          {/* User can only edit the event if they created it */}
-          {user.id === event.user_id ||
-            (user.isAdmin && (
-              <ModeEditIcon
-                color="success"
-                onClick={handleEditModalOpen}
-                sx={{
-                  cursor: "pointer", // Change the cursor to a hand on hover
-                  "&:hover": {
-                    opacity: 0.5, // Add slight opacity change on hover
-                  },
-                }}
-              />
-            ))}
+          {/* User can only edit the event if they created it or are an administrator */}
+          {(event.user_id === user.id || user.isAdmin) && (
+            <ModeEditIcon
+              color="success"
+              onClick={handleEditModalOpen}
+              sx={{
+                cursor: "pointer", // Change the cursor to a hand on hover
+                "&:hover": {
+                  opacity: 0.5, // Add slight opacity change on hover
+                },
+              }}
+            />
+          )}
           {/* User can only delete the event if they are an admin */}
           {user.isAdmin && (
             <DeleteIcon
