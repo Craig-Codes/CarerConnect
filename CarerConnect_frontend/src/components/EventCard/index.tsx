@@ -77,7 +77,6 @@ export const EventCard = ({
 
   // Function uses logic to decide which button is shown to the user
   const conditionallyRenderButton = () => {
-    console.log("subscirbed events array: ", currentlySubscribedEvents);
     // If the user is the evnt owner, they cannot unsubscribe so no button is shown
     if (event.user_id === user.id) {
       return <></>;

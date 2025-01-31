@@ -47,7 +47,14 @@ export const EventsPage = () => {
   };
 
   const handleSubscribe = async (eventId: number) => {
-    console.log(eventId);
+    try {
+      await fetchWrapper("POST", `event/subscription/${eventId}`);
+      await fetchAllMeetups();
+      await fetchSubscribedMeetups();
+      toast.success("Successfully subscibed to meetup event");
+    } catch {
+      toast.error("Failed to subscribe to meetup event, please try again");
+    }
   };
 
   const handleDeleteEvent = async (eventId: number) => {

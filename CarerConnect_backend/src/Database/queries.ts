@@ -137,15 +137,18 @@ GROUP BY event.id
 ORDER BY event.event_date ASC;
 `;
 
+// Sub query is used to count each events total subscribers
+// Not only the current user as a subscriber, stopping the count from always being 1
 export const findUserEventSubscriptions = `
   SELECT 
     event.*,
-    COUNT(subscription.id) AS subscriber_count
-  FROM event
-  LEFT JOIN subscription ON event.id = subscription.event_id
-  WHERE event.event_date > CURRENT_TIMESTAMP AND subscription.user_id = $1
-  GROUP BY event.id
-  ORDER BY event.event_date ASC;
+    (SELECT COUNT(*) FROM subscription WHERE subscription.event_id = event.id) AS subscriber_count
+FROM event
+LEFT JOIN subscription ON event.id = subscription.event_id
+WHERE event.event_date > CURRENT_TIMESTAMP 
+AND subscription.user_id = $1
+GROUP BY event.id
+ORDER BY event.event_date ASC;
 `;
 
 export const deleteEventById = `DELETE FROM event
