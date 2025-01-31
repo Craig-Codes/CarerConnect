@@ -10,8 +10,10 @@ import { EditSubscriptionFormInputs } from "../components/EditEventModal";
 import { Box } from "@mui/material";
 import { Meetup } from "../utils/Types/types";
 import useFetchMeetups from "../hooks/useFetchMeetups";
-
-// TODO - create create event modal with form - pass props to it
+import {
+  CreateEventModal,
+  CreateSubscriptionFormInputs,
+} from "../components/Context/CreateEventModal";
 
 export const EventsPage = () => {
   const { user } = useContext(UserContext);
@@ -24,15 +26,25 @@ export const EventsPage = () => {
   const subscribedMeetupIds = subscribedMeetups.map((meetup) => meetup.id);
 
   // state to handle open and closing the create event modal
-  const [createEventModal, setCreateEventModalOpen] = useState(false);
+  const [createEventModalOpen, setCreateEventModalOpen] = useState(false);
   // function to handle the opening of the createEventModal
   const handleCreateEventModalOpen = () => setCreateEventModalOpen(true);
+
   // function to handle the logic when the modal is closed
-  const handleCreateEventModalClose = async (create: boolean) => {
+  const handleCreateEventModalClose = async (
+    create: boolean,
+    eventContent?: CreateSubscriptionFormInputs
+  ) => {
     setCreateEventModalOpen(false); // close the modal
     if (create) {
-      // create the event (using event. to get props? or just use event?)
+      handleCreateEvent(eventContent!);
     }
+  };
+
+  const handleCreateEvent = async (
+    eventContent: CreateSubscriptionFormInputs
+  ) => {
+    console.log(eventContent);
   };
 
   const handleUnsubscribe = async (eventId: number) => {
@@ -83,26 +95,33 @@ export const EventsPage = () => {
   };
 
   return (
-    <Box sx={{ width: "80vw" }}>
-      <Button
-        variant="contained"
-        sx={{ backgroundColor: theme.palette.secondary.main }}
-      >
-        Create New Event
-      </Button>
-      {allMeetups.map((meetup: Meetup) => (
-        <EventCard
-          key={meetup.id}
-          event={meetup}
-          user={user}
-          unsubscribeEvent={handleUnsubscribe}
-          subscribeEvent={handleSubscribe}
-          deleteEvent={handleDeleteEvent}
-          editEvent={handleEditEvent}
-          currentlySubscribedEvents={subscribedMeetupIds}
-        />
-      ))}
-      <ToastContainer />
-    </Box>
+    <>
+      <Box sx={{ width: "80vw" }}>
+        <Button
+          variant="contained"
+          sx={{ backgroundColor: theme.palette.secondary.main }}
+          onClick={handleCreateEventModalOpen}
+        >
+          Create New Event
+        </Button>
+        {allMeetups.map((meetup: Meetup) => (
+          <EventCard
+            key={meetup.id}
+            event={meetup}
+            user={user}
+            unsubscribeEvent={handleUnsubscribe}
+            subscribeEvent={handleSubscribe}
+            deleteEvent={handleDeleteEvent}
+            editEvent={handleEditEvent}
+            currentlySubscribedEvents={subscribedMeetupIds}
+          />
+        ))}
+        <ToastContainer />
+      </Box>
+      <CreateEventModal
+        open={createEventModalOpen}
+        handleClose={handleCreateEventModalClose}
+      />
+    </>
   );
 };

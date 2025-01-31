@@ -8,8 +8,6 @@ import theme from "../../theme/theme";
 import { TextField } from "@mui/material";
 import { Meetup } from "../../utils/Types/types";
 import { useForm, SubmitHandler } from "react-hook-form";
-// import {  LocalizationProvider } from "@mui/x-date-pickers";
-// import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 
 const style = {
   position: "absolute",
@@ -43,12 +41,10 @@ export const EditEventModal = ({
     register,
     handleSubmit,
     formState: { errors },
-    // control,
   } = useForm<EditSubscriptionFormInputs>({
     defaultValues: {
       title: currentEventData.title,
       description: currentEventData.description,
-      // dateTime: new Date(currentEventData.event_date), // Convert the event date to a Date object
     },
   });
 
@@ -57,7 +53,6 @@ export const EditEventModal = ({
   };
 
   return (
-    // <LocalizationProvider dateAdapter={AdapterDateFns}>
     <Modal
       aria-labelledby="transition-modal-title"
       aria-describedby="transition-modal-description"
@@ -117,37 +112,6 @@ export const EditEventModal = ({
               error={!!errors.title}
               sx={{ paddingBottom: "10px" }}
             />
-            {/* Date picker with Date type for value */}
-            {/* <Controller
-                name="dateTime"
-                control={control}
-                rules={{ required: "A date and time is required" }}
-                render={({ field }) => (
-                  <DateTimePicker
-                    label="Event Date & Time"
-                    {...field}
-                    onChange={(value) => {
-                      // Coerce the value to Date
-                      const coercedDate = value ? new Date(value) : null;
-                      if (
-                        coercedDate instanceof Date &&
-                        !isNaN(coercedDate.getTime())
-                      ) {
-                        field.onChange(coercedDate); // Pass the Date object
-                      } else {
-                        field.onChange(value); // If invalid, pass value as is
-                      }
-                    }}
-                    slotProps={{
-                      textField: {
-                        error: !!errors.dateTime,
-                        helperText: errors.dateTime?.message,
-                      },
-                    }}
-                  />
-                )} */}
-            {/* /> */}
-            {/* Description input */}
             <TextField
               variant="outlined"
               margin="normal"
@@ -185,6 +149,5 @@ export const EditEventModal = ({
         </Box>
       </Fade>
     </Modal>
-    // </LocalizationProvider>
   );
 };
