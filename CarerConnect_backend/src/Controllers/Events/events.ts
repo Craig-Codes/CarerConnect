@@ -116,20 +116,24 @@ export const deleteEvent = async (req: Request, res: Response) => {
 };
 
 export const addEvent = async (req: Request, res: Response) => {
+  console.log(req.body);
   try {
     const token = req.cookies.CarerConnect_user_token;
     const userId = await getUserId(token); // Decode token to get the users id
 
     const title = stringInputValidator(req.body.title);
     const description = stringInputValidator(req.body.description);
-    const date = new Date(req.body.date);
+    const date = new Date(req.body.dateTime);
     const isOnline = req.body.isOnline === "true"; // convert string into true or false value
     const location = stringInputValidator(req.body.location);
-    const maxAttendees = Number(req.body.attendees); // convert value to number
+    const maxAttendees = Number(req.body.participants); // convert value to number
+    console.log(title, description, date, isOnline, location, maxAttendees);
 
     // validate inputs not already checked
     if (
+      // maxAttendees must be a number above 2
       isNaN(maxAttendees) ||
+      maxAttendees < 2 ||
       maxAttendees === undefined ||
       date === undefined
     ) {
@@ -152,7 +156,6 @@ export const addEvent = async (req: Request, res: Response) => {
 
       const eventId = event.rows[0].id;
 
-      // subscribe owner to new event: TODO
       await database.query(subscribeToEventById, [eventId, userId]);
 
       return res.status(200).json({ message: "Event successfully added" });

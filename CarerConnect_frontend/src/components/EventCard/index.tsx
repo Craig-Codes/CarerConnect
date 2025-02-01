@@ -30,6 +30,7 @@ export const EventCard = ({
   subscribeEvent,
   currentlySubscribedEvents,
 }: EventCardProps) => {
+  console.log(user.id, event.user_id);
   // Handle the confirmation modal open / close
   const [unsubscribeModalOpen, setUnsubscribeModalOpen] = useState(false);
   const handleUnsubscribeModalOpen = () => setUnsubscribeModalOpen(true);

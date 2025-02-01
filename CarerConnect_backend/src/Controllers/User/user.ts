@@ -84,6 +84,7 @@ export const loginUser = async (req: Request, res: Response) => {
       });
 
       res.status(200).json({
+        id: user.rows[0].id,
         email: user.rows[0].email,
         username: user.rows[0].username,
         isAdmin: user.rows[0].is_admin,
@@ -152,6 +153,7 @@ export const registerUser = async (req: Request, res: Response) => {
     });
 
     res.status(200).json({
+      id: newUser.rows[0].id,
       email: newUser.rows[0].email,
       username: newUser.rows[0].username,
       isAdmin: newUser.rows[0].is_admin,

@@ -158,19 +158,18 @@ export const CreateEventModal = ({
                 )}
               />
               {/* Online? */}
-              <Box sx={{ paddingBottom: "15px" }}>
+              <Box sx={{ paddingBottom: "10px" }}>
                 <Controller
-                  name="online" // Name of the field in form state
-                  control={control} // Pass the form's control
+                  name="online"
+                  control={control}
                   defaultValue={false}
-                  rules={{ required: "Please select an option" }} // Validation rule
                   render={({ field }) => (
                     <FormControl error={!!errors.online}>
                       <FormLabel id="online-radio-button-group">
-                        Online?
+                        Is the event online?
                       </FormLabel>
                       <RadioGroup
-                        {...field} // Spread field props for controlled component
+                        {...field}
                         aria-labelledby="online-radio-buttons-group-label"
                       >
                         <FormControlLabel
@@ -270,10 +269,9 @@ export const CreateEventModal = ({
                 aria-invalid={errors.participants ? "true" : "false"}
                 helperText={errors.participants?.message}
                 error={!!errors.participants}
-                sx={{ paddingBottom: "15px" }}
               />
               <br />
-              <Box sx={{ paddingTop: "25px" }}>
+              <Box sx={{ paddingTop: "10px" }}>
                 <Button type="submit">Submit</Button>
                 <Button onClick={() => handleClose(false)}>Cancel</Button>
               </Box>

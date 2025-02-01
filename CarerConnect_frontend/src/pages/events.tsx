@@ -17,6 +17,7 @@ import {
 
 export const EventsPage = () => {
   const { user } = useContext(UserContext);
+  console.log(user);
   const { meetups: allMeetups, fetchMeetups: fetchAllMeetups } =
     useFetchMeetups({ all: true }); // Fetch all meetups
   const { meetups: subscribedMeetups, fetchMeetups: fetchSubscribedMeetups } =
@@ -45,6 +46,14 @@ export const EventsPage = () => {
     eventContent: CreateSubscriptionFormInputs
   ) => {
     console.log(eventContent);
+    try {
+      await fetchWrapper("POST", `event`, eventContent);
+      await fetchAllMeetups();
+      await fetchSubscribedMeetups();
+      toast.success("Successfully created event");
+    } catch {
+      toast.error("Failed to create event, please try again");
+    }
   };
 
   const handleUnsubscribe = async (eventId: number) => {
