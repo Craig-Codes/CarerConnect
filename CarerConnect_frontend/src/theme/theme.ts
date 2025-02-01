@@ -1,5 +1,6 @@
 import { colors } from "@mui/material";
-import { createTheme } from "@mui/material/styles";
+import { grey } from "@mui/material/colors";
+import { createTheme, responsiveFontSizes } from "@mui/material/styles";
 
 let theme = createTheme({
   palette: {
@@ -17,11 +18,55 @@ let theme = createTheme({
 
 theme = createTheme(theme, {
   components: {
+    MuiTypography: {
+      styleOverrides: {
+        h4: {
+          color: theme.palette.secondary.main,
+        },
+        h6: {
+          color: theme.palette.secondary.main,
+        },
+        subtitle1: {
+          color: theme.palette.secondary.main,
+          fontWeight: 800,
+        },
+        body1: {
+          color: theme.palette.secondary.main,
+        },
+        body2: {
+          color: theme.palette.error.main,
+        },
+      },
+    },
+    MuiOutlinedInput: {
+      styleOverrides: {
+        root: {
+          "&.Mui-error .MuiOutlinedInput-notchedOutline": {
+            borderColor: theme.palette.error.main, // Red border on error
+          },
+          "&.Mui-focused.Mui-error .MuiOutlinedInput-notchedOutline": {
+            borderColor: theme.palette.error.main, // Red border when focused on error
+          },
+          "&:hover.Mui-error .MuiOutlinedInput-notchedOutline": {
+            borderColor: theme.palette.error.main, // Red border on hover when there's an error
+          },
+        },
+      },
+    },
+    MuiFormHelperText: {
+      styleOverrides: {
+        root: {
+          "&.Mui-error": {
+            color: theme.palette.error.main, // Red helper text on error
+          },
+        },
+      },
+    },
     MuiMenuItem: {
       styleOverrides: {
         root: {
           "&:hover": {
-            backgroundColor: "#BDBDBD",
+            backgroundColor: grey[300],
           },
         },
       },
@@ -86,5 +131,7 @@ theme = createTheme(theme, {
     },
   },
 });
+
+theme = responsiveFontSizes(theme);
 
 export default theme;

@@ -1,7 +1,6 @@
 import Stack from "@mui/material/Stack";
 import Button from "@mui/material/Button";
 // import { useEffect, useState } from "react";
-import NavBar from "../components/NavBar";
 import { useContext, useEffect, useState } from "react";
 import { UserContext } from "../components/Context";
 import { isLoggedIn } from "../utils/utils";
@@ -17,7 +16,6 @@ import { fetchWrapper } from "../utils/fetchWrapper";
 
 export const ForumPage = () => {
   const { user } = useContext(UserContext);
-  console.log("forum: ", user);
 
   const [forumCategoryData, setForumCategoryData] = useState({});
 
@@ -66,7 +64,6 @@ export const ForumPage = () => {
 
   return (
     <>
-      <NavBar />
       <h2>Hi, {user.username} - FORUM PAGE</h2>
       <Stack spacing={2} direction="row">
         <Button variant="text">Text</Button>

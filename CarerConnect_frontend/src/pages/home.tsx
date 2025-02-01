@@ -1,66 +1,97 @@
-import Stack from "@mui/material/Stack";
-import Button from "@mui/material/Button";
-// import { useEffect, useState } from "react";
-import NavBar from "../components/NavBar";
 import { useContext } from "react";
 import { UserContext } from "../components/Context";
-
-// interface User {
-//   id: number;
-//   username: string;
-//   email: string;
-//   password: string;
-//   is_admin: boolean;
-// }
+import { WelcomeBlock } from "../components/WelcomeBlock";
+import { Alert, Box, Paper, Typography } from "@mui/material";
+import { EventCard } from "../components/EventCard";
+import { toast, ToastContainer } from "react-toastify";
+import { EditSubscriptionFormInputs } from "../components/EditEventModal";
+import { fetchWrapper } from "../utils/fetchWrapper";
+import useFetchMeetups from "../hooks/useFetchMeetups";
 
 export const HomePage = () => {
   const { user } = useContext(UserContext);
-  console.log("home page: ", user);
+  const { meetups, fetchMeetups } = useFetchMeetups();
 
-  // const [users, setUsers] = useState<User[] | null>(null);
-  // const [fetchError, setFetchError] = useState("");
+  const handleUnsubscribe = async (eventId: number) => {
+    try {
+      await fetchWrapper("DELETE", `event/subscription/${eventId}`);
+      await fetchMeetups();
+      toast.success("Successfully unsubscribed from event");
+    } catch {
+      toast.error("Failed to unsubscribe from event, please try again");
+    }
+  };
 
-  // useEffect(() => {
-  //   const fetchEquipment = async () => {
-  //     console.log("Process env ==== ", import.meta.env.VITE_API_URL);
-  //     try {
-  //       const response = await fetch(`${import.meta.env.VITE_API_URL}user`);
-  //       if (!response.ok) {
-  //         setFetchError("Failed to fetch users!");
-  //       }
-  //       const retrievedUsers: User[] = await response.json();
-  //       setUsers(retrievedUsers);
-  //       console.log(retrievedUsers);
-  //     } catch (error) {
-  //       setFetchError("Failed to retrieve users!");
-  //     }
-  //   };
-  //   fetchEquipment();
-  // }, []);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const handleSubscribe = async (_eventId: number) => {
+    return null; // function not required in home page, as users are unable to subscribe here
+  };
+
+  const handleDeleteEvent = async (eventId: number) => {
+    try {
+      await fetchWrapper("DELETE", `event/${eventId}`);
+      await fetchMeetups();
+      toast.success("Successfully deleted meetup event");
+    } catch {
+      toast.error("Failed to delete event, please try again");
+    }
+  };
+
+  const handleEditEvent = async (
+    eventId: number,
+    updatedContent?: EditSubscriptionFormInputs
+  ) => {
+    try {
+      await fetchWrapper("PATCH", `event/${eventId}`, updatedContent);
+      await fetchMeetups();
+      toast.success("Successfully updated meetup event");
+    } catch {
+      toast.error("Failed to update event, please try again");
+    }
+  };
 
   return (
     <>
-      <NavBar />
-      <h2>Hi, {user.username}</h2>
-      <Stack spacing={2} direction="row">
-        <Button variant="text">Text</Button>
-        <Button variant="contained" color="secondary">
-          Contained
-        </Button>
-        <Button variant="outlined">Outlined</Button>
-      </Stack>
-      {/* {fetchError && <p>{fetchError}</p>}
-      <ul>
-        {users ? (
-          users.map((user) => (
-            <li key={user.username}>
-              {user.username} - {user.email}
-            </li>
-          ))
-        ) : (
-          <p>Loading users...</p>
-        )}
-      </ul> */}
+      <WelcomeBlock username={user.username} />
+      {meetups.length > 0 ? (
+        <Paper
+          elevation={2}
+          sx={{
+            padding: "2vw",
+            marginTop: "20px",
+            textAlign: "left",
+          }}
+        >
+          <Typography variant="h4">My Events</Typography>
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: { xs: "column", sm: "row" },
+              gap: "2vw",
+              flexWrap: "wrap",
+              justifyContent: "center",
+            }}
+          >
+            {meetups.map((meetup) => (
+              <EventCard
+                key={meetup.id}
+                event={meetup}
+                user={user}
+                unsubscribeEvent={handleUnsubscribe}
+                subscribeEvent={handleSubscribe}
+                deleteEvent={handleDeleteEvent}
+                editEvent={handleEditEvent}
+              />
+            ))}
+          </Box>
+        </Paper>
+      ) : (
+        <Alert severity="info" sx={{ marginTop: "20px" }}>
+          You have not subscribed to any events yet - Your subscribed events
+          will be shown here.
+        </Alert>
+      )}
+      <ToastContainer />
     </>
   );
 };

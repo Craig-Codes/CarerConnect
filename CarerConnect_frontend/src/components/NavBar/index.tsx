@@ -20,7 +20,7 @@ export default function NavBar() {
   const [mobileMenuAnchorEl, setMobileMenuAnchorEl] =
     useState<null | HTMLElement>(null);
 
-  const pages = ["Home", "Meetups", "Forum"];
+  const pages = ["Home", "Events", "Forum"];
 
   const handleMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
@@ -38,6 +38,7 @@ export default function NavBar() {
   const handleLogout = () => {
     handleClose();
     setUser({
+      id: 0,
       username: "",
       email: "",
       isAdmin: false,
@@ -159,13 +160,14 @@ export default function NavBar() {
                   open={Boolean(anchorEl)}
                   onClose={handleClose}
                   anchorOrigin={{
-                    vertical: "top",
+                    vertical: "bottom",
                     horizontal: "right",
                   }}
                   transformOrigin={{
                     vertical: "top",
-                    horizontal: "right",
+                    horizontal: "left",
                   }}
+                  sx={{ marginTop: "10px" }}
                 >
                   <MenuItem>
                     <Typography variant="h6" color="secondary">

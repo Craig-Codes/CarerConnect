@@ -23,6 +23,7 @@ import {
   getUserSubscribedEvents,
   subscribeEvent,
   unsubscribeEvent,
+  updateEvent,
 } from "./Controllers/Events/events";
 
 export const app = express();
@@ -68,10 +69,11 @@ app.patch("/api/forum/post/:id", userAuthorisationMiddlewear, editPost);
 // Events routes
 app.get("/api/event", userAuthorisationMiddlewear, getEvents);
 app.get(
-  "/api/event/user/:id",
+  "/api/event/user",
   userAuthorisationMiddlewear,
   getUserSubscribedEvents
 );
+app.patch("/api/event/:id", userAuthorisationMiddlewear, updateEvent);
 app.delete("/api/event/:id", adminAuthorisationMiddlewear, deleteEvent);
 app.delete(
   "/api/event/subscription/:eventId",
@@ -79,7 +81,11 @@ app.delete(
   unsubscribeEvent
 );
 app.post("/api/event", userAuthorisationMiddlewear, addEvent);
-app.post("/api/event/:id", userAuthorisationMiddlewear, subscribeEvent);
+app.post(
+  "/api/event/subscription/:id",
+  userAuthorisationMiddlewear,
+  subscribeEvent
+);
 
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);

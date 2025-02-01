@@ -7,14 +7,17 @@ import {
   findUserEventSubscriptions,
   getEventMaxAttendeesById,
   getEventSubscribersById,
+  getEventUserId,
   getNumberOfEventSubscribersById,
   insertEvent,
   removeEventSubscription,
   subscribeToEventById,
+  updateEventById,
 } from "../../Database/queries";
 import { Request, Response } from "express";
 import { getUserId } from "../User/user";
 import { stringInputValidator } from "../../Validators/input";
+import { getUserIsAdmin } from "../../Validators/token";
 
 export const getEvents = async (req: Request, res: Response) => {
   try {
@@ -37,12 +40,11 @@ export const getEvents = async (req: Request, res: Response) => {
 };
 
 export const getUserSubscribedEvents = async (req: Request, res: Response) => {
-  // Get the path parameter for users id
-  const userId = Number(req.params.id);
+  const token = req.cookies.CarerConnect_user_token;
+  const userId = await getUserId(token); // Decode token to get the users id
 
-  if (isNaN(userId)) {
-    // 400 - Bad request status code
-    return res.status(400).json({ message: "Expected a user ID" });
+  if (userId === 0) {
+    return res.status(400).json({ message: "invalid user id" });
   }
 
   try {
@@ -76,8 +78,6 @@ export const unsubscribeEvent = async (req: Request, res: Response) => {
 
     // Delete the subscription from the user using a composite key of eventId and userId
     try {
-      console.log("eventId: ", eventId);
-      console.log("userId: ", userId);
       await database.query(removeEventSubscription, [eventId, userId]);
       return res
         .status(200)
@@ -106,7 +106,6 @@ export const deleteEvent = async (req: Request, res: Response) => {
 
   try {
     const event = await database.query(deleteEventById, [eventId]);
-    console.log(event);
     return res.status(200).json({
       message: "Event deleted",
     });
@@ -123,14 +122,16 @@ export const addEvent = async (req: Request, res: Response) => {
 
     const title = stringInputValidator(req.body.title);
     const description = stringInputValidator(req.body.description);
-    const date = new Date(req.body.date);
-    const isOnline = req.body.isOnline === "true"; // convert string into true or false value
+    const date = new Date(req.body.dateTime);
+    const isOnline = req.body.online === "true"; // convert string into true or false value
     const location = stringInputValidator(req.body.location);
-    const maxAttendees = Number(req.body.attendees); // convert value to number
+    const maxAttendees = Number(req.body.participants); // convert value to number
 
     // validate inputs not already checked
     if (
+      // maxAttendees must be a number above 2
       isNaN(maxAttendees) ||
+      maxAttendees < 2 ||
       maxAttendees === undefined ||
       date === undefined
     ) {
@@ -153,7 +154,6 @@ export const addEvent = async (req: Request, res: Response) => {
 
       const eventId = event.rows[0].id;
 
-      // subscribe owner to new event: TODO
       await database.query(subscribeToEventById, [eventId, userId]);
 
       return res.status(200).json({ message: "Event successfully added" });
@@ -213,5 +213,43 @@ export const subscribeEvent = async (req: Request, res: Response) => {
     });
   } catch (error) {
     return res.status(500).json({ message: "Failed to subscribe to event" });
+  }
+};
+
+// Update event
+// Only title an description, if want to change things such as date or location, need to delete event and recreate
+export const updateEvent = async (req: Request, res: Response) => {
+  try {
+    const token = req.cookies.CarerConnect_user_token;
+    const userId = await getUserId(token); // Decode token to get the users id
+
+    const title = stringInputValidator(req.body.title);
+    const description = stringInputValidator(req.body.description);
+    const eventId = Number(req.params.id); // convert value to number
+
+    // validate number input
+    if (isNaN(eventId) || eventId === undefined) {
+      return res.status(500).json({
+        message: "Failed to update event, inputs not as expected",
+      });
+    }
+
+    // if user is admin, they can update the event details OR if user is the event creator
+    const isAdmin = await getUserIsAdmin(token);
+    const eventCreator = (await database.query(getEventUserId, [eventId]))
+      .rows[0].user_id;
+    const isCreator = eventCreator === userId ? true : false;
+
+    if (isAdmin || isCreator) {
+      try {
+        // try to patch event
+        await database.query(updateEventById, [eventId, title, description]);
+        return res.status(200).json({ message: "Event successfully updated" });
+      } catch {
+        return res.status(500).json({ message: "Failed to update event" });
+      }
+    }
+  } catch {
+    return res.status(500).json({ message: "Failed to update event" });
   }
 };

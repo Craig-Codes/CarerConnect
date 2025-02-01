@@ -6,17 +6,18 @@ import * as Jwt from "jsonwebtoken"; // Use * as to mock all exports
 jest.mock("../../Database/db", () => ({
   connectDatabase: jest.fn(), // Mock connectDatabase
   database: {
-    query: jest.fn(), // Mock database.query
+    query: jest.fn(), // Mock any database queries in the test suite with an empty function
   },
 }));
 
+// middlewear checking for a valid token needs to be ignored to test route
 jest.mock("../../Middlewear/loggedInUserAuthorisation", () => ({
   userAuthorisationMiddlewear: (_req: any, _res: any, next: () => any) =>
     next(), // Bypass middleware
 }));
 
 jest.mock("jsonwebtoken", () => ({
-  ...jest.requireActual("jsonwebtoken"), // Preserve other functions of jsonwebtoken
+  ...jest.requireActual("jsonwebtoken"), // returns a mock function when the module is used
   verify: jest.fn(), // Mock verify function
 }));
 
@@ -34,6 +35,7 @@ describe("GET /api/user", () => {
       email: "test@example.com",
     }));
 
+    // call the end point using the setup mock values
     const response = await request(app)
       .get("/api/user")
       .set("Cookie", ["CarerConnect_user_token=validToken"]);

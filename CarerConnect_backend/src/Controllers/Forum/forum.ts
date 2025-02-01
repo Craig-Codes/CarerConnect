@@ -122,7 +122,6 @@ export const getThreadPosts = async (req: Request, res: Response) => {
     const thread = (await database.query(findThreadByCategory, [categoryId]))
       .rows;
     const threadId = Number(thread[0].id);
-    console.log(threadId);
     const posts = (await database.query(findPostByThread, [threadId])).rows;
 
     return res.status(200).json({

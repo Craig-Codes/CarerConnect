@@ -53,6 +53,7 @@ export const getUser = async (req: Request, res: Response) => {
     const result = await database.query(findUserQuery, [userEmail]);
     res.status(200).json({
       user: {
+        id: result.rows[0].id,
         email: result.rows[0].email,
         username: result.rows[0].username,
         isAdmin: result.rows[0].is_admin,
@@ -83,6 +84,7 @@ export const loginUser = async (req: Request, res: Response) => {
       });
 
       res.status(200).json({
+        id: user.rows[0].id,
         email: user.rows[0].email,
         username: user.rows[0].username,
         isAdmin: user.rows[0].is_admin,
@@ -99,7 +101,6 @@ export const registerUser = async (req: Request, res: Response) => {
   try {
     // Retrieve the user inputs from POST method body
     const { username, email, password } = req.body;
-    console.log("Trying to create new user: ", username, password, email);
     // Input validation
     // Validate username (must be 50 characters or less)
     if (username.length > 50) {
@@ -117,13 +118,11 @@ export const registerUser = async (req: Request, res: Response) => {
     // TLD (top-level domain) follows the dot and must not contain spaces or "@".
 
     if (!emailRegex.test(email)) {
-      console.log("Invalid email");
       return res.status(400).json({ message: "Invalid email address" });
     }
 
     // Validate password (must be longer than 5 characters)
     if (password.length <= 5) {
-      console.log("invalid password");
       return res
         .status(400)
         .json({ message: "Password must be longer than 5 characters" });
@@ -154,12 +153,12 @@ export const registerUser = async (req: Request, res: Response) => {
     });
 
     res.status(200).json({
+      id: newUser.rows[0].id,
       email: newUser.rows[0].email,
       username: newUser.rows[0].username,
       isAdmin: newUser.rows[0].is_admin,
     });
   } catch (error) {
-    console.log("failed to register: ", error);
     res.status(400).json({ message: "Failed to register" });
   }
 };

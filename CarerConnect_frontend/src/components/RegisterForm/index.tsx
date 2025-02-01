@@ -84,6 +84,7 @@ export default function RegisterForm() {
     if (!result.message) {
       // Update the User Context across the application to the users details
       setUser(() => ({
+        id: result.id,
         email: result.email,
         isAdmin: result.isAdmin,
         username: result.username,

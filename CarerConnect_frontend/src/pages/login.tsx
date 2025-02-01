@@ -1,6 +1,4 @@
 import { AppBar, Box, Paper, Tab, Tabs, useTheme } from "@mui/material";
-// import Footer from "../components/Footer";
-import NavBar from "../components/NavBar";
 import LoginForm from "../components/LoginForm";
 import { useState } from "react";
 import RegisterForm from "../components/RegisterForm";
@@ -45,7 +43,6 @@ export const LoginPage = () => {
 
   return (
     <>
-      <NavBar />
       <Paper id="login-paper" elevation={5} sx={{ padding: "40px" }}>
         <AppBar position="static">
           <Tabs

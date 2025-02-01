@@ -5,10 +5,12 @@ import { User, UserContext } from "./components/Context";
 import { AppRoutes } from "./components/Routes/AppRoutes";
 import { isLoggedIn } from "./utils/utils";
 import { fetchWrapper } from "./utils/fetchWrapper";
+import { LayoutWrapper } from "./components/LayoutWrapper";
 
 const App = () => {
   // Default user is set initially
   const [user, setUser] = useState<User>({
+    id: 0,
     email: "",
     username: "",
     isAdmin: false,
@@ -25,6 +27,7 @@ const App = () => {
           // We set the result into the user varaible, which is passed into the apps
           // context, essentially allowing any page to access this information
           setUser({
+            id: userData.user.id,
             email: userData.user.email,
             isAdmin: userData.user.isAdmin,
             username: userData.user.username,
@@ -43,7 +46,9 @@ const App = () => {
     // This allows any page to access the user information
     <UserContext.Provider value={{ user, setUser }}>
       <BrowserRouter>
-        <AppRoutes />
+        <LayoutWrapper>
+          <AppRoutes />
+        </LayoutWrapper>
       </BrowserRouter>
     </UserContext.Provider>
   );
