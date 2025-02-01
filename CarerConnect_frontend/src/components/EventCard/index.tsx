@@ -30,7 +30,6 @@ export const EventCard = ({
   subscribeEvent,
   currentlySubscribedEvents,
 }: EventCardProps) => {
-  console.log(user.id, event.user_id);
   // Handle the confirmation modal open / close
   const [unsubscribeModalOpen, setUnsubscribeModalOpen] = useState(false);
   const handleUnsubscribeModalOpen = () => setUnsubscribeModalOpen(true);
@@ -154,6 +153,7 @@ export const EventCard = ({
               color="success"
               onClick={handleEditModalOpen}
               sx={{
+                marginLeft: "10px",
                 cursor: "pointer", // Change the cursor to a hand on hover
                 "&:hover": {
                   opacity: 0.5, // Add slight opacity change on hover

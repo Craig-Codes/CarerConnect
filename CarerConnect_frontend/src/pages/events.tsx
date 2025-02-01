@@ -1,6 +1,5 @@
 import Button from "@mui/material/Button";
-// import { useEffect, useState } from "react";
-import { useContext, useState } from "react";
+import { useContext, useState, MouseEvent } from "react";
 import { UserContext } from "../components/Context";
 import theme from "../theme/theme";
 import { EventCard } from "../components/EventCard";
@@ -17,7 +16,6 @@ import {
 
 export const EventsPage = () => {
   const { user } = useContext(UserContext);
-  console.log(user);
   const { meetups: allMeetups, fetchMeetups: fetchAllMeetups } =
     useFetchMeetups({ all: true }); // Fetch all meetups
   const { meetups: subscribedMeetups, fetchMeetups: fetchSubscribedMeetups } =
@@ -29,7 +27,10 @@ export const EventsPage = () => {
   // state to handle open and closing the create event modal
   const [createEventModalOpen, setCreateEventModalOpen] = useState(false);
   // function to handle the opening of the createEventModal
-  const handleCreateEventModalOpen = () => setCreateEventModalOpen(true);
+  const handleCreateEventModalOpen = (event: MouseEvent<HTMLButtonElement>) => {
+    setCreateEventModalOpen(true);
+    event.currentTarget.blur(); // This removes the focus from the button whilst toast is showing
+  };
 
   // function to handle the logic when the modal is closed
   const handleCreateEventModalClose = async (
@@ -45,7 +46,6 @@ export const EventsPage = () => {
   const handleCreateEvent = async (
     eventContent: CreateSubscriptionFormInputs
   ) => {
-    console.log(eventContent);
     try {
       await fetchWrapper("POST", `event`, eventContent);
       await fetchAllMeetups();
@@ -109,7 +109,7 @@ export const EventsPage = () => {
         <Button
           variant="contained"
           sx={{ backgroundColor: theme.palette.secondary.main }}
-          onClick={handleCreateEventModalOpen}
+          onClick={(event) => handleCreateEventModalOpen(event)}
         >
           Create New Event
         </Button>

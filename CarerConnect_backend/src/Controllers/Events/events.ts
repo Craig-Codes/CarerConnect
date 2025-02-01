@@ -116,7 +116,6 @@ export const deleteEvent = async (req: Request, res: Response) => {
 };
 
 export const addEvent = async (req: Request, res: Response) => {
-  console.log(req.body);
   try {
     const token = req.cookies.CarerConnect_user_token;
     const userId = await getUserId(token); // Decode token to get the users id
@@ -127,7 +126,6 @@ export const addEvent = async (req: Request, res: Response) => {
     const isOnline = req.body.isOnline === "true"; // convert string into true or false value
     const location = stringInputValidator(req.body.location);
     const maxAttendees = Number(req.body.participants); // convert value to number
-    console.log(title, description, date, isOnline, location, maxAttendees);
 
     // validate inputs not already checked
     if (
@@ -239,7 +237,7 @@ export const updateEvent = async (req: Request, res: Response) => {
     // if user is admin, they can update the event details OR if user is the event creator
     const isAdmin = await getUserIsAdmin(token);
     const eventCreator = (await database.query(getEventUserId, [eventId]))
-      .rows[0].id;
+      .rows[0].user_id;
     const isCreator = eventCreator === userId ? true : false;
 
     if (isAdmin || isCreator) {

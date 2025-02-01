@@ -10,7 +10,6 @@ import useFetchMeetups from "../hooks/useFetchMeetups";
 
 export const HomePage = () => {
   const { user } = useContext(UserContext);
-  console.log(user);
   const { meetups, fetchMeetups } = useFetchMeetups();
 
   const handleUnsubscribe = async (eventId: number) => {

@@ -50,7 +50,7 @@ export const WelcomeBlock = ({ username }: WelcomeBlockProps) => {
             marginLeft: "1vw",
           }}
           onClick={() => {
-            navigate(`/meetups`, {
+            navigate(`/events`, {
               replace: true,
             });
           }}
