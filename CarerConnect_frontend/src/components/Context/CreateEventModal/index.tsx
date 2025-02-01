@@ -4,7 +4,15 @@ import Modal from "@mui/material/Modal";
 import Fade from "@mui/material/Fade";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
-import { TextField } from "@mui/material";
+import {
+  FormControl,
+  FormControlLabel,
+  FormHelperText,
+  FormLabel,
+  Radio,
+  RadioGroup,
+  TextField,
+} from "@mui/material";
 import { useForm, SubmitHandler, Controller } from "react-hook-form";
 import theme from "../../../theme/theme";
 import { DateTimePicker, LocalizationProvider } from "@mui/x-date-pickers";
@@ -33,7 +41,10 @@ interface CreateEventModalProps {
 export type CreateSubscriptionFormInputs = {
   title: string;
   description: string;
+  online: boolean;
   dateTime: Date;
+  location: string;
+  participants: number;
 };
 
 export const CreateEventModal = ({
@@ -53,6 +64,9 @@ export const CreateEventModal = ({
       title: data.title,
       description: data.description,
       dateTime: data.dateTime,
+      location: data.description,
+      participants: data.participants,
+      online: data.online,
     });
   };
 
@@ -115,7 +129,7 @@ export const CreateEventModal = ({
                 aria-invalid={errors.title ? "true" : "false"}
                 helperText={errors.title?.message}
                 error={!!errors.title}
-                sx={{ paddingBottom: "10px" }}
+                sx={{ paddingBottom: "30px" }}
               />
               {/* Date picker with Date type for value */}
               <Controller
@@ -125,7 +139,9 @@ export const CreateEventModal = ({
                 render={({ field }) => (
                   <DateTimePicker
                     label="Event Date & Time"
+                    format="dd/MM/yy HH:mm"
                     {...field}
+                    sx={{ paddingBottom: "20px" }}
                     value={field.value ?? new Date()} // ensure value is always a date
                     onChange={(value) => {
                       // Coerce the value to Date
@@ -141,6 +157,67 @@ export const CreateEventModal = ({
                   />
                 )}
               />
+              {/* Online? */}
+              <Box sx={{ paddingBottom: "15px" }}>
+                <Controller
+                  name="online" // Name of the field in form state
+                  control={control} // Pass the form's control
+                  defaultValue={false}
+                  rules={{ required: "Please select an option" }} // Validation rule
+                  render={({ field }) => (
+                    <FormControl error={!!errors.online}>
+                      <FormLabel id="online-radio-button-group">
+                        Online?
+                      </FormLabel>
+                      <RadioGroup
+                        {...field} // Spread field props for controlled component
+                        aria-labelledby="online-radio-buttons-group-label"
+                      >
+                        <FormControlLabel
+                          value={false}
+                          control={<Radio />}
+                          label="No"
+                        />
+                        <FormControlLabel
+                          value={true}
+                          control={<Radio />}
+                          label="Yes"
+                        />
+                      </RadioGroup>
+                      {errors.online && (
+                        <FormHelperText>{errors.online.message}</FormHelperText>
+                      )}
+                    </FormControl>
+                  )}
+                />
+              </Box>
+              {/* Location */}
+              <TextField
+                variant="outlined"
+                margin="normal"
+                required
+                fullWidth
+                id="location"
+                label="Location or Link"
+                {...register("location", {
+                  required: "Location is required",
+                  minLength: {
+                    value: 3,
+                    message: "Location must be at least 3 characters long",
+                  },
+                  maxLength: {
+                    value: 125,
+                    message: "Location cannot exceed 125 characters",
+                  },
+                })}
+                type="text"
+                name="location"
+                autoFocus
+                aria-invalid={errors.location ? "true" : "false"}
+                helperText={errors.location?.message}
+                error={!!errors.location}
+                sx={{ paddingBottom: "15px" }}
+              />
               {/* Description input */}
               <TextField
                 variant="outlined"
@@ -150,6 +227,7 @@ export const CreateEventModal = ({
                 multiline // Make input box multiline
                 minRows={2}
                 maxRows={4}
+                sx={{ paddingBottom: "15px" }}
                 id="description"
                 label="Description"
                 {...register("description", {
@@ -169,6 +247,30 @@ export const CreateEventModal = ({
                 aria-invalid={errors.description ? "true" : "false"}
                 helperText={errors.description?.message}
                 error={!!errors.description}
+              />
+              {/* Participants */}
+              <TextField
+                variant="outlined"
+                margin="normal"
+                required
+                fullWidth
+                defaultValue={2}
+                type="number"
+                id="participants"
+                label="Number of participants"
+                {...register("participants", {
+                  required: "Number of particpants is required",
+                  min: {
+                    value: 2,
+                    message: "There must be at least 2 participants",
+                  },
+                })}
+                name="participants"
+                autoFocus
+                aria-invalid={errors.participants ? "true" : "false"}
+                helperText={errors.participants?.message}
+                error={!!errors.participants}
+                sx={{ paddingBottom: "15px" }}
               />
               <br />
               <Box sx={{ paddingTop: "25px" }}>
