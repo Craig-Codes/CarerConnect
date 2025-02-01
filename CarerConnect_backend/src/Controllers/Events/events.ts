@@ -123,7 +123,7 @@ export const addEvent = async (req: Request, res: Response) => {
     const title = stringInputValidator(req.body.title);
     const description = stringInputValidator(req.body.description);
     const date = new Date(req.body.dateTime);
-    const isOnline = req.body.isOnline === "true"; // convert string into true or false value
+    const isOnline = req.body.online === "true"; // convert string into true or false value
     const location = stringInputValidator(req.body.location);
     const maxAttendees = Number(req.body.participants); // convert value to number
 

@@ -1,12 +1,18 @@
 import Button from "@mui/material/Button";
-import { useContext, useState, MouseEvent } from "react";
+import {
+  useContext,
+  useState,
+  MouseEvent,
+  SyntheticEvent,
+  useEffect,
+} from "react";
 import { UserContext } from "../components/Context";
 import theme from "../theme/theme";
 import { EventCard } from "../components/EventCard";
 import { fetchWrapper } from "../utils/fetchWrapper";
 import { toast, ToastContainer } from "react-toastify";
 import { EditSubscriptionFormInputs } from "../components/EditEventModal";
-import { Box } from "@mui/material";
+import { Box, Tab, Tabs } from "@mui/material";
 import { Meetup } from "../utils/Types/types";
 import useFetchMeetups from "../hooks/useFetchMeetups";
 import {
@@ -16,6 +22,14 @@ import {
 
 export const EventsPage = () => {
   const { user } = useContext(UserContext);
+
+  const [tab, setTab] = useState("all");
+  const handleTabChange = (_event: SyntheticEvent, newValue: string) => {
+    setTab(newValue);
+  };
+  // State stores the current event cards which are conditionally rendered based on the tab selected
+  const [eventCards, setEventCards] = useState<JSX.Element[]>([]);
+
   const { meetups: allMeetups, fetchMeetups: fetchAllMeetups } =
     useFetchMeetups({ all: true }); // Fetch all meetups
   const { meetups: subscribedMeetups, fetchMeetups: fetchSubscribedMeetups } =
@@ -103,6 +117,42 @@ export const EventsPage = () => {
     }
   };
 
+  // When tab changed, re-render the events cards based on the tab value or when the allMeetups array is updated
+  useEffect(() => {
+    const renderEventCards = () => {
+      let events: Meetup[] = allMeetups;
+      switch (tab) {
+        case "all":
+          events = allMeetups;
+          break;
+        case "online":
+          events = allMeetups.filter((event) => event.is_online);
+          break;
+        case "offline":
+          events = allMeetups.filter((event) => !event.is_online);
+          break;
+        case "available":
+          events = allMeetups.filter(
+            (event) => event.subscriber_count < event.max_attendees
+          );
+          break;
+      }
+      return events.map((meetup: Meetup) => (
+        <EventCard
+          key={meetup.id}
+          event={meetup}
+          user={user}
+          unsubscribeEvent={handleUnsubscribe}
+          subscribeEvent={handleSubscribe}
+          deleteEvent={handleDeleteEvent}
+          editEvent={handleEditEvent}
+          currentlySubscribedEvents={subscribedMeetupIds}
+        />
+      ));
+    };
+    setEventCards(renderEventCards());
+  }, [allMeetups, tab]);
+
   return (
     <>
       <Box sx={{ width: "80vw" }}>
@@ -113,18 +163,21 @@ export const EventsPage = () => {
         >
           Create New Event
         </Button>
-        {allMeetups.map((meetup: Meetup) => (
-          <EventCard
-            key={meetup.id}
-            event={meetup}
-            user={user}
-            unsubscribeEvent={handleUnsubscribe}
-            subscribeEvent={handleSubscribe}
-            deleteEvent={handleDeleteEvent}
-            editEvent={handleEditEvent}
-            currentlySubscribedEvents={subscribedMeetupIds}
-          />
-        ))}
+        <Box sx={{ paddingTop: "25px" }}>
+          <Tabs
+            value={tab}
+            onChange={handleTabChange}
+            textColor="secondary"
+            indicatorColor="secondary"
+            aria-label="secondary tabs example"
+          >
+            <Tab value="all" label="All Events" />
+            <Tab value="available" label="Available Events" />
+            <Tab value="online" label="Online Events" />
+            <Tab value="offline" label="In Person Events" />
+          </Tabs>
+        </Box>
+        {eventCards}
         <ToastContainer />
       </Box>
       <CreateEventModal
