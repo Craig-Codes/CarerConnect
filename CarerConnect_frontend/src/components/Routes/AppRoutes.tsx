@@ -34,7 +34,10 @@ export const AppRoutes = () => {
         element={user.username ? <EventsPage /> : <LoginPage />}
       />
       <Route path="/login" element={<LoginPage />} />
-      <Route path="/category/:id" element={<ForumCategoryPage />} />
+      <Route
+        path="/category/:id"
+        element={user.username ? <ForumCategoryPage /> : <LoginPage />}
+      />
     </Routes>
   );
 };

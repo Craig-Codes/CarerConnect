@@ -4,7 +4,7 @@ import { getUserIsAdmin } from "../Validators/token";
 const jwt = Jwt;
 
 // Function checks that a user has admin permissions to access the route
-export const adminAuthorisationMiddlewear = async (
+export const adminAuthorisationMiddleware = async (
   req: any,
   res: any,
   next: any

@@ -3,7 +3,7 @@ import cors from "cors";
 import cookieParser from "cookie-parser";
 import { connectDatabase } from "./Database/db";
 import { getUser, loginUser, registerUser } from "./Controllers/User/user";
-import { adminAuthorisationMiddlewear } from "./Middlewear/adminAuthorisation";
+import { adminAuthorisationMiddleware } from "./Middleware/adminAuthorisation";
 import {
   addPost,
   addThread,
@@ -15,7 +15,7 @@ import {
   getThreadPosts,
   getThreads,
 } from "./Controllers/Forum/forum";
-import { userAuthorisationMiddlewear } from "./Middlewear/loggedInUserAuthorisation";
+import { userAuthorisationMiddleware } from "./Middleware/loggedInUserAuthorisation";
 import {
   addEvent,
   deleteEvent,
@@ -49,41 +49,41 @@ app.get("/", (req, res) => {
 // require that a user is an administrator
 // userAuthorisationMiddlewear used to protect certain routes which
 // require a user to be logged in
-app.get("/api/user", userAuthorisationMiddlewear, getUser);
+app.get("/api/user", userAuthorisationMiddleware, getUser);
 app.post("/api/user", loginUser);
 app.post("/api/user/register", registerUser);
 
 // Forum routes
-app.get("/api/forum", userAuthorisationMiddlewear, getCategories);
+app.get("/api/forum", userAuthorisationMiddleware, getCategories);
 
-app.get("/api/forum/threads/:id", userAuthorisationMiddlewear, getThreads);
-app.delete("/api/forum/thread/:id", adminAuthorisationMiddlewear, deleteThread);
-app.post("/api/forum/thread", userAuthorisationMiddlewear, addThread);
-app.patch("/api/forum/thread/:id", userAuthorisationMiddlewear, editThread);
+app.get("/api/forum/threads/:id", userAuthorisationMiddleware, getThreads);
+app.delete("/api/forum/thread/:id", adminAuthorisationMiddleware, deleteThread);
+app.post("/api/forum/thread", userAuthorisationMiddleware, addThread);
+app.patch("/api/forum/thread/:id", userAuthorisationMiddleware, editThread);
 
-app.get("/api/forum/thread/:id", userAuthorisationMiddlewear, getThreadPosts);
-app.delete("/api/forum/post/:id", adminAuthorisationMiddlewear, deletePost);
-app.post("/api/forum/post", userAuthorisationMiddlewear, addPost);
-app.patch("/api/forum/post/:id", userAuthorisationMiddlewear, editPost);
+app.get("/api/forum/thread/:id", userAuthorisationMiddleware, getThreadPosts);
+app.delete("/api/forum/post/:id", adminAuthorisationMiddleware, deletePost);
+app.post("/api/forum/post", userAuthorisationMiddleware, addPost);
+app.patch("/api/forum/post/:id", userAuthorisationMiddleware, editPost);
 
 // Events routes
-app.get("/api/event", userAuthorisationMiddlewear, getEvents);
+app.get("/api/event", userAuthorisationMiddleware, getEvents);
 app.get(
   "/api/event/user",
-  userAuthorisationMiddlewear,
+  userAuthorisationMiddleware,
   getUserSubscribedEvents
 );
-app.patch("/api/event/:id", userAuthorisationMiddlewear, updateEvent);
-app.delete("/api/event/:id", adminAuthorisationMiddlewear, deleteEvent);
+app.patch("/api/event/:id", userAuthorisationMiddleware, updateEvent);
+app.delete("/api/event/:id", adminAuthorisationMiddleware, deleteEvent);
 app.delete(
   "/api/event/subscription/:eventId",
-  userAuthorisationMiddlewear,
+  userAuthorisationMiddleware,
   unsubscribeEvent
 );
-app.post("/api/event", userAuthorisationMiddlewear, addEvent);
+app.post("/api/event", userAuthorisationMiddleware, addEvent);
 app.post(
   "/api/event/subscription/:id",
-  userAuthorisationMiddlewear,
+  userAuthorisationMiddleware,
   subscribeEvent
 );
 

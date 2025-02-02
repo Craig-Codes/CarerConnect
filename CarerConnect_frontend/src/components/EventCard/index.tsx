@@ -7,6 +7,7 @@ import { User } from "../Context";
 import { useState } from "react";
 import { WarningModal } from "../WarningModal";
 import { EditEventModal, EditSubscriptionFormInputs } from "../EditEventModal";
+import { grey } from "@mui/material/colors";
 
 interface EventCardProps {
   event: Meetup;
@@ -135,6 +136,7 @@ export const EventCard = ({
         padding: "2vw",
         marginTop: "20px",
         textAlign: "left",
+        "&:hover": { backgroundColor: grey[200] },
       }}
     >
       <Box

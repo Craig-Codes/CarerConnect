@@ -3,7 +3,7 @@ import { tokenIsValid } from "../Validators/token";
 const jwt = Jwt;
 
 // Function checks that a user has a valid JWT and is therefore logged in
-export const userAuthorisationMiddlewear = async (
+export const userAuthorisationMiddleware = async (
   req: any,
   res: any,
   next: any
