@@ -44,7 +44,7 @@ export const getThreads = async (req: Request, res: Response) => {
   try {
     const threads = (await database.query(findThreadsByCategory, [categoryId]))
       .rows;
-    return res.status(200).json({ threads: threads, category: categoryId });
+    return res.status(200).json(threads);
   } catch (error) {
     // If we have a valid id but can't find a resources, return a 404 error
     return res.status(404).json({ message: "Category id does not exist" });

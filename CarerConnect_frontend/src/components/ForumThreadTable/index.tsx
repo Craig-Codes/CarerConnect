@@ -11,26 +11,21 @@ import {
 import theme from "../../theme/theme";
 import { grey } from "@mui/material/colors";
 import { useNavigate } from "react-router-dom";
+import { ThreadTableRow } from "../../pages/forumCategory";
 
-type CategoryTableRow = {
-  id: number;
-  category_title: string;
-  category_description: string;
-  post_count: number;
-  thread_count: number;
-};
-
-interface ForumCategoryTableProps {
+interface ForumThreadTableProps {
   username: string;
-  categories: CategoryTableRow[];
+  threads: ThreadTableRow[];
 }
 
-export const ForumCategoryTable = ({
+export const ForumThreadTable = ({
   username,
-  categories = [],
-}: ForumCategoryTableProps) => {
+  threads: threadData,
+}: ForumThreadTableProps) => {
   // Use react-router-dom to navigate to correct page when user clicks a table row
   const navigate = useNavigate();
+
+  console.log("Threads form table component: ", threadData);
 
   return (
     <TableContainer
@@ -38,7 +33,7 @@ export const ForumCategoryTable = ({
       // dynamic table sizing based on screen size
       sx={{ width: { xs: "90vw", lg: "80vw" } }}
     >
-      <Table aria-label="forum category table">
+      <Table aria-label="forum thread table">
         <TableHead>
           <TableRow>
             <TableCell
@@ -49,7 +44,7 @@ export const ForumCategoryTable = ({
                 padding: "20px",
               }}
             >
-              {username}, Welcome to the CarerConnect forums!
+              {threadData[0].category_title}
             </TableCell>
             <TableCell
               align="center"
@@ -78,17 +73,17 @@ export const ForumCategoryTable = ({
           </TableRow>
         </TableHead>
         <TableBody>
-          {categories.map((category) => (
+          {threadData.map((thread) => (
             <TableRow
-              key={category.id}
-              onClick={() => navigate(`/category/${category.id}`)}
+              key={thread.id}
+              onClick={() => navigate(`/category/${thread.id}`)}
               sx={{
                 cursor: "pointer",
                 "&:hover": { backgroundColor: grey[200] },
               }}
             >
               <TableCell component="th" scope="row">
-                <Typography>{category.category_title}</Typography>
+                <Typography>{thread.thread_title}</Typography>
                 <Typography
                   variant="caption"
                   sx={{
@@ -96,7 +91,7 @@ export const ForumCategoryTable = ({
                     fontStyle: "italic",
                   }}
                 >
-                  {category.category_description}
+                  {thread.created_at}
                 </Typography>
               </TableCell>
               <TableCell
@@ -108,7 +103,7 @@ export const ForumCategoryTable = ({
                   borderLeft: `1px solid ${grey[600]}`,
                 }}
               >
-                {category.thread_count}
+                {thread.post_count}
               </TableCell>
               <TableCell
                 align="center"
@@ -119,7 +114,7 @@ export const ForumCategoryTable = ({
                   borderLeft: `1px solid ${grey[600]}`,
                 }}
               >
-                {category.post_count}
+                Delete
               </TableCell>
             </TableRow>
           ))}
