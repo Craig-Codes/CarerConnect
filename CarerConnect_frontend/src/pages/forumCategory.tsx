@@ -59,7 +59,7 @@ export const ForumCategoryPage = () => {
       <Typography>
         Here, you can fetch and display details for category {id}.
       </Typography>
-      <ForumThreadTable username={user.username} threads={allThreads || []} />
+      <ForumThreadTable isAdmin={user.isAdmin} threads={allThreads || []} />
     </Container>
   );
 };

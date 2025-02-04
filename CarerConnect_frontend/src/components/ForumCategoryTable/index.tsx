@@ -27,10 +27,15 @@ interface ForumCategoryTableProps {
 
 export const ForumCategoryTable = ({
   username,
-  categories = [],
+  categories,
 }: ForumCategoryTableProps) => {
   // Use react-router-dom to navigate to correct page when user clicks a table row
   const navigate = useNavigate();
+
+  // Check if categories is defined and has elements
+  if (!categories || categories.length === 0) {
+    return <Typography>Loading...</Typography>;
+  }
 
   return (
     <TableContainer

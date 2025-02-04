@@ -14,18 +14,21 @@ import { useNavigate } from "react-router-dom";
 import { ThreadTableRow } from "../../pages/forumCategory";
 
 interface ForumThreadTableProps {
-  username: string;
+  isAdmin: boolean;
   threads: ThreadTableRow[];
 }
 
 export const ForumThreadTable = ({
-  username,
+  isAdmin,
   threads: threadData,
 }: ForumThreadTableProps) => {
   // Use react-router-dom to navigate to correct page when user clicks a table row
   const navigate = useNavigate();
 
-  console.log("Threads form table component: ", threadData);
+  // Check if threadData is defined and has elements
+  if (!threadData || threadData.length === 0) {
+    return <Typography>Loading...</Typography>;
+  }
 
   return (
     <TableContainer
