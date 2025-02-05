@@ -18,7 +18,7 @@ import useFetchMeetups from "../hooks/useFetchMeetups";
 import {
   CreateEventModal,
   CreateSubscriptionFormInputs,
-} from "../components/Context/CreateEventModal";
+} from "../components/CreateEventModal";
 
 export const EventsPage = () => {
   const { user } = useContext(UserContext);

@@ -14,7 +14,7 @@ import {
   TextField,
 } from "@mui/material";
 import { useForm, SubmitHandler, Controller } from "react-hook-form";
-import theme from "../../../theme/theme";
+import theme from "../../theme/theme";
 import { DateTimePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 

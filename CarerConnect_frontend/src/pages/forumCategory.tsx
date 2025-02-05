@@ -1,10 +1,13 @@
 import { useNavigate, useParams } from "react-router-dom";
-import { Typography, Container } from "@mui/material";
-import { useContext, useEffect, useState } from "react";
+import { Button } from "@mui/material";
+import { useContext, useEffect, useState, MouseEvent } from "react";
 import { isLoggedIn } from "../utils/utils";
 import { fetchWrapper } from "../utils/fetchWrapper";
 import { ForumThreadTable } from "../components/ForumThreadTable";
 import { UserContext } from "../components/Context";
+import theme from "../theme/theme";
+import { toast, ToastContainer } from "react-toastify";
+import { CreateThreadModal } from "../components/CreateThreadModal";
 
 export type ThreadTableRow = {
   id: number;
@@ -21,6 +24,44 @@ export const ForumCategoryPage = () => {
 
   const { id } = useParams<{ id: string }>(); // Get the category ID from the URL
   const [allThreads, setAllThreads] = useState<ThreadTableRow[]>();
+
+  // state to handle open and closing the create event modal
+  const [createThreadModalOpen, setCreateThreadModalOpen] = useState(false);
+  // function to handle the opening of the createEventModal
+  const handleCreateThreadModalOpen = (
+    event: MouseEvent<HTMLButtonElement>
+  ) => {
+    setCreateThreadModalOpen(true);
+    event.currentTarget.blur(); // This removes the focus from the button whilst toast is showing
+  };
+
+  // function to handle the logic when the modal is closed
+  const handleCreateThreadModalClose = async (
+    create: boolean,
+    threadContent?: unknown
+  ) => {
+    setCreateThreadModalOpen(false); // close the modal
+    if (create) {
+      handleCreateThread(threadContent!);
+    }
+  };
+
+  const handleCreateThread = async (eventContent: unknown) => {
+    console.log(eventContent);
+    try {
+      // await fetchWrapper("POST", `event`, eventContent);
+      // await fetchAllMeetups();
+      // await fetchSubscribedMeetups();
+      toast.success("Successfully created thread");
+    } catch {
+      toast.error("Failed to create thread, please try again");
+    }
+  };
+
+  // function attempts to delete the thread, making a delete request to the API with the threadsId
+  const handleThreadDelete = (threadId: number) => {
+    console.log("deleting thread: ", threadId);
+  };
 
   // When the id changes, this code triggers
   useEffect(() => {
@@ -47,20 +88,35 @@ export const ForumCategoryPage = () => {
     };
 
     fetchThreads();
-  }, [id, navigate]);
-
-  console.log(allThreads);
+  }, [id, navigate]); // fetch new data on id change or navigation
 
   return (
-    <Container>
-      <Typography variant="h4" gutterBottom>
-        Category ID: {id}
-      </Typography>
-      <Typography>
-        Here, you can fetch and display details for category {id}.
-      </Typography>
-      <ForumThreadTable isAdmin={user.isAdmin} threads={allThreads || []} />
-    </Container>
+    <>
+      <Button
+        variant="contained"
+        sx={{
+          backgroundColor: theme.palette.secondary.main,
+          marginBottom: "25px",
+        }}
+        onClick={(event) => handleCreateThreadModalOpen(event)}
+      >
+        Create New Thread
+      </Button>
+      {/* Dislay the forum thread table, passing in the retrieved threads associated
+      with the selected category */}
+      <ForumThreadTable
+        isAdmin={user.isAdmin}
+        threads={allThreads || []}
+        deleteEvent={handleThreadDelete}
+      />
+      {/* Toast container used to show success or fail messages to the user */}
+      <ToastContainer />
+      {/* Modal used to input new thread information */}
+      <CreateThreadModal
+        open={createThreadModalOpen}
+        handleClose={handleCreateThreadModalClose}
+      />
+    </>
   );
 };
 
