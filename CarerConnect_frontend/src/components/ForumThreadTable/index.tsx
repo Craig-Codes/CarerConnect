@@ -47,7 +47,7 @@ export const ForumThreadTable = ({
 
   // Check if threadData is defined and has elements
   if (!threadData || threadData.length === 0) {
-    return <Typography>Loading...</Typography>;
+    return <Typography>No threads found</Typography>;
   }
 
   return (

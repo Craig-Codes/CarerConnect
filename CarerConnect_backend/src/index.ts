@@ -58,12 +58,12 @@ app.get("/api/forum", userAuthorisationMiddleware, getCategories);
 
 app.get("/api/forum/threads/:id", userAuthorisationMiddleware, getThreads);
 app.delete("/api/forum/thread/:id", adminAuthorisationMiddleware, deleteThread);
-app.post("/api/forum/thread", userAuthorisationMiddleware, addThread);
+app.post("/api/forum/thread/:id", userAuthorisationMiddleware, addThread);
 app.patch("/api/forum/thread/:id", userAuthorisationMiddleware, editThread);
 
 app.get("/api/forum/thread/:id", userAuthorisationMiddleware, getThreadPosts);
 app.delete("/api/forum/post/:id", adminAuthorisationMiddleware, deletePost);
-app.post("/api/forum/post", userAuthorisationMiddleware, addPost);
+app.post("/api/forum/post/:id", userAuthorisationMiddleware, addPost);
 app.patch("/api/forum/post/:id", userAuthorisationMiddleware, editPost);
 
 // Events routes

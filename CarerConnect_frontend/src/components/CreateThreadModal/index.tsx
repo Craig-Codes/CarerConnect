@@ -24,13 +24,11 @@ const style = {
 
 interface CreateThreadModalProps {
   open: boolean;
-  handleClose: (remove: boolean, content?: unknown) => void;
+  handleClose: (remove: boolean, content?: CreateThreadFormInputs) => void;
 }
 
 export type CreateThreadFormInputs = {
   title: string;
-  description: string;
-  dateTime: Date;
 };
 
 export const CreateThreadModal = ({
@@ -47,8 +45,6 @@ export const CreateThreadModal = ({
   const onSubmit: SubmitHandler<CreateThreadFormInputs> = (data) => {
     handleClose(true, {
       title: data.title,
-      description: data.description,
-      dateTime: data.dateTime,
     });
   };
 
@@ -101,7 +97,7 @@ export const CreateThreadModal = ({
                     message: "Title must be at least 3 characters long",
                   },
                   maxLength: {
-                    value: 125,
+                    value: 255,
                     message: "Title cannot exceed 125 characters",
                   },
                 })}
@@ -111,37 +107,7 @@ export const CreateThreadModal = ({
                 aria-invalid={errors.title ? "true" : "false"}
                 helperText={errors.title?.message}
                 error={!!errors.title}
-                sx={{ paddingBottom: "30px" }}
-              />
-              {/* Description input */}
-              <TextField
-                variant="outlined"
-                margin="normal"
-                required
-                fullWidth
-                multiline // Make input box multiline
-                minRows={2}
-                maxRows={4}
-                sx={{ paddingBottom: "15px" }}
-                id="description"
-                label="Description"
-                {...register("description", {
-                  required: "Description is required",
-                  minLength: {
-                    value: 3,
-                    message: "Description must be at least 3 characters long",
-                  },
-                  maxLength: {
-                    value: 255,
-                    message: "Description cannot exceed 255 characters",
-                  },
-                })}
-                type="text"
-                name="description"
-                autoFocus
-                aria-invalid={errors.description ? "true" : "false"}
-                helperText={errors.description?.message}
-                error={!!errors.description}
+                sx={{ paddingBottom: "10px" }}
               />
               <Box sx={{ paddingTop: "10px" }}>
                 <Button type="submit">Submit</Button>

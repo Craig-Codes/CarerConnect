@@ -7,7 +7,10 @@ import { ForumThreadTable } from "../components/ForumThreadTable";
 import { UserContext } from "../components/Context";
 import theme from "../theme/theme";
 import { toast, ToastContainer } from "react-toastify";
-import { CreateThreadModal } from "../components/CreateThreadModal";
+import {
+  CreateThreadFormInputs,
+  CreateThreadModal,
+} from "../components/CreateThreadModal";
 
 export type ThreadTableRow = {
   id: number;
@@ -38,7 +41,7 @@ export const ForumCategoryPage = () => {
   // function to handle the logic when the modal is closed
   const handleCreateThreadModalClose = async (
     create: boolean,
-    threadContent?: unknown
+    threadContent?: CreateThreadFormInputs
   ) => {
     setCreateThreadModalOpen(false); // close the modal
     if (create) {
@@ -46,12 +49,11 @@ export const ForumCategoryPage = () => {
     }
   };
 
-  const handleCreateThread = async (eventContent: unknown) => {
+  const handleCreateThread = async (eventContent: CreateThreadFormInputs) => {
     console.log(eventContent);
     try {
-      // await fetchWrapper("POST", `event`, eventContent);
-      // await fetchAllMeetups();
-      // await fetchSubscribedMeetups();
+      await fetchWrapper("POST", `forum/thread/${id}`, eventContent);
+      await fetchThreads();
       toast.success("Successfully created thread");
     } catch {
       toast.error("Failed to create thread, please try again");
@@ -63,6 +65,21 @@ export const ForumCategoryPage = () => {
     console.log("deleting thread: ", threadId);
   };
 
+  const fetchThreads = async () => {
+    // If a CarerConnect cookie is found we send a HTTP request to the API
+    // to retrieve the logged in users details
+    if (isLoggedIn()) {
+      try {
+        // API request to get the threads by chosen category id
+        const request = await fetchWrapper("GET", `forum/threads/${id}`);
+        // set the allThreads state to the found results array
+        setAllThreads(request);
+      } catch (error) {
+        console.error("Failed to fetch threads data:", error);
+      }
+    }
+  };
+
   // When the id changes, this code triggers
   useEffect(() => {
     // Check that the category is valid, if not redirect to forum category page
@@ -71,21 +88,6 @@ export const ForumCategoryPage = () => {
     if (!isValidId) {
       navigate("/forum", { replace: true });
     }
-
-    const fetchThreads = async () => {
-      // If a CarerConnect cookie is found we send a HTTP request to the API
-      // to retrieve the logged in users details
-      if (isLoggedIn()) {
-        try {
-          // API request to get the threads by chosen category id
-          const request = await fetchWrapper("GET", `forum/threads/${id}`);
-          // set the allThreads state to the found results array
-          setAllThreads(request);
-        } catch (error) {
-          console.error("Failed to fetch threads data:", error);
-        }
-      }
-    };
 
     fetchThreads();
   }, [id, navigate]); // fetch new data on id change or navigation

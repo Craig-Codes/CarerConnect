@@ -52,6 +52,7 @@ export const getThreads = async (req: Request, res: Response) => {
 };
 
 export const addThread = async (req: Request, res: Response) => {
+  console.log("Adding thrad");
   try {
     const token = req.cookies.CarerConnect_user_token;
     const userId = await getUserId(token); // Decode token to get the users id
@@ -61,7 +62,7 @@ export const addThread = async (req: Request, res: Response) => {
     }
 
     // Get categoryId from request paramaters
-    const categoryId = Number(req.body.categoryId);
+    const categoryId = Number(req.params.id);
 
     // If the conversion produces NaN, the input was not a valid integer value
     if (isNaN(categoryId)) {
@@ -70,7 +71,7 @@ export const addThread = async (req: Request, res: Response) => {
     }
 
     // Get the threadTitle from request parameters
-    const threadTitle = stringInputValidator(req.body.threadTitle);
+    const threadTitle = stringInputValidator(req.body.title);
 
     // Add the new thread
     try {
