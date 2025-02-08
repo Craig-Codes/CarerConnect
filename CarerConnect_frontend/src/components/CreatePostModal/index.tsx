@@ -24,7 +24,7 @@ const style = {
 
 interface CreatePostModalProps {
   open: boolean;
-  handleClose: (remove: boolean, content?: CreatePostFormInputs) => void;
+  handleClose: (create: boolean, postContent?: CreatePostFormInputs) => void;
 }
 
 export type CreatePostFormInputs = {

@@ -5,23 +5,26 @@ import ModeEditIcon from "@mui/icons-material/ModeEdit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { Fragment, useState } from "react";
 import { EditPostFormInputs, EditPostModal } from "../EditPostModal";
+import { WarningModal } from "../WarningModal";
 
 type ForumPostGroupProps = {
   posts: Post[];
   user: User;
   //   Functions pass selected post id back to parent component where logic happens
-  editPost: (postId: number, formContent?: EditPostFormInputs) => void;
-  deletePost?: (post: Post) => void;
+  editPost: (postId: number, formContent: EditPostFormInputs) => void;
+  deletePost: (postId: number) => void;
 };
 
 export const ForumPostGroup = ({
   user,
   posts,
-  // deleteEvent,
+  deletePost,
   editPost,
 }: ForumPostGroupProps) => {
   const [editModalOpen, setEditModalOpen] = useState(false);
   const handleEditModalOpen = () => setEditModalOpen(true);
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const handleDeleteModalOpen = () => setDeleteModalOpen(true);
 
   const [currentPost, setCurrentPost] = useState<Post>(posts[0]);
 
@@ -31,7 +34,14 @@ export const ForumPostGroup = ({
   ) => {
     setEditModalOpen(false);
     if (shouldEdit) {
-      editPost(currentPost.id, content);
+      editPost(currentPost.id, content!);
+    }
+  };
+
+  const handleDeleteModalClose = async (shouldEdit: boolean) => {
+    setDeleteModalOpen(false);
+    if (shouldEdit) {
+      deletePost(currentPost.id);
     }
   };
 
@@ -43,6 +53,9 @@ export const ForumPostGroup = ({
           padding: "1vw 2vw",
           marginTop: "20px",
           textAlign: "left",
+          wordWrap: "break-word",
+          overflowWrap: "break-word",
+          wordBreak: "break-all",
         }}
       >
         {posts.map((post) => {
@@ -87,6 +100,7 @@ export const ForumPostGroup = ({
                         handleEditModalOpen();
                       }}
                       sx={{
+                        paddingLeft: "20px",
                         cursor: "pointer", // Change the cursor to a hand on hover
                         "&:hover": {
                           opacity: 0.5, // Add slight opacity change on hover
@@ -99,8 +113,8 @@ export const ForumPostGroup = ({
                     <DeleteIcon
                       color="error"
                       onClick={() => {
-                        console.log("Selected delete icon");
-                        deletePost(post);
+                        setCurrentPost(post);
+                        handleDeleteModalOpen();
                       }}
                       sx={{
                         cursor: "pointer", // Change the cursor to a hand on hover
@@ -124,6 +138,12 @@ export const ForumPostGroup = ({
         open={editModalOpen}
         handleClose={handleEditModalClose}
         post={currentPost}
+      />
+      <WarningModal
+        open={deleteModalOpen}
+        handleClose={handleDeleteModalClose}
+        title="Delete"
+        content="Are you sure you want to delete post?"
       />
     </>
   );

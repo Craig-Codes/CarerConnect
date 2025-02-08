@@ -10,6 +10,7 @@ import { EditEventModal, EditSubscriptionFormInputs } from "../EditEventModal";
 import { grey } from "@mui/material/colors";
 
 interface EventCardProps {
+  width?: string; // optional parameter to control width on different pages
   event: Meetup;
   user: User; // users details required for conditional render of edit / delete buttons
   unsubscribeEvent: (eventId: number) => void;
@@ -23,6 +24,7 @@ interface EventCardProps {
 }
 
 export const EventCard = ({
+  width = "auto",
   event,
   user,
   unsubscribeEvent,
@@ -137,6 +139,7 @@ export const EventCard = ({
         marginTop: "20px",
         textAlign: "left",
         "&:hover": { backgroundColor: grey[200] },
+        maxWidth: width,
       }}
     >
       <Box

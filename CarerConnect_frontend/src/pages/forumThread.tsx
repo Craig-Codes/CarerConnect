@@ -58,7 +58,7 @@ export const ForumThreadPage = () => {
 
   const handleCreatePost = async (eventContent: CreatePostFormInputs) => {
     try {
-      // Create the post body obejct to provide the API the correct inputs necessary to create a new post
+      // Create the post body object to provide the API the correct inputs necessary to create a new post
       const postBody = {
         content: eventContent.content,
         threadId: id,
@@ -71,8 +71,32 @@ export const ForumThreadPage = () => {
     }
   };
 
-  const handleEditPost = (postId: number, formContent?: EditPostFormInputs) => {
-    console.log(postId, formContent);
+  const handleEditPost = async (
+    postId: number,
+    formContent: EditPostFormInputs
+  ) => {
+    try {
+      // Create the post body object to provide the API the updated inputs necessary to update post
+      const postBody = {
+        content: formContent.content,
+        postId: postId,
+      };
+      await fetchWrapper("PATCH", `forum/post/${postId}`, postBody);
+      await fetchPosts();
+      toast.success("Successfully edited post");
+    } catch {
+      toast.error("Failed to edit post, please try again");
+    }
+  };
+
+  const handleDeletePost = async (postId: number) => {
+    try {
+      await fetchWrapper("DELETE", `forum/post/${postId}`);
+      await fetchPosts();
+      toast.success("Successfully deleted post");
+    } catch {
+      toast.error("Failed to delete post, please try again");
+    }
   };
 
   const fetchPosts = async () => {
@@ -120,6 +144,7 @@ export const ForumThreadPage = () => {
       <Box
         sx={{
           padding: "15px",
+          maxWidth: "80vw",
         }}
       >
         <Button
@@ -157,7 +182,7 @@ export const ForumThreadPage = () => {
             posts={allPosts}
             user={user}
             editPost={handleEditPost}
-            // deletePost={handleEditClick}
+            deletePost={handleDeletePost}
           />
           {/* Add a second create button to save the user having to scroll back up to the top of the page */}
           <Button

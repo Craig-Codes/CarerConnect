@@ -78,9 +78,11 @@ WHERE
 
 // Query retrieves all posts belonging to a thread
 // join to get the username instead of user_id
+// Ensure posts always arrive with the most recent at the bottom
 export const findPostsByThread = `SELECT post.*, person.username FROM post 
 LEFT JOIN person
-ON post.user_id=person.id WHERE thread_id = $1;`;
+ON post.user_id=person.id WHERE thread_id = $1
+ORDER BY post.created_at ASC;`;
 
 export const deleteThreadById = `DELETE FROM thread
 WHERE id = $1;`;
