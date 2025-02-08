@@ -83,7 +83,7 @@ export const ForumCategoryPage = () => {
         const threads = request.map((thread: Thread) => ({
           ...thread, // bring all properties into new object
           // fornate the date ISO string using day.js library
-          created_at: dayjs().format("D MMMM YY - HH:mm"),
+          created_at: dayjs(thread.created_at).format("D MMMM YY - HH:mm"),
         }));
         // set the allThreads state to the found results array
         setAllThreads(threads);
@@ -116,7 +116,6 @@ export const ForumCategoryPage = () => {
           variant="outlined"
           startIcon={<ArrowBackIosNewIcon />}
           sx={{
-            marginBottom: "25px",
             marginRight: "1vw",
             backgroundColor: "white",
           }}
@@ -129,7 +128,6 @@ export const ForumCategoryPage = () => {
           variant="contained"
           sx={{
             backgroundColor: theme.palette.secondary.main,
-            marginBottom: "25px",
             marginLeft: "1vw",
           }}
           onClick={(event) => handleCreateThreadModalOpen(event)}

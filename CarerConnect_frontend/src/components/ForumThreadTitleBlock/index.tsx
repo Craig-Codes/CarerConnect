@@ -10,7 +10,6 @@ export const ForumThreadTitleBlock = ({
   title,
   createdAt,
 }: ForumThreadTitleBlockProps) => {
-  console.log("Hitting title block");
   return (
     <Paper
       elevation={2}

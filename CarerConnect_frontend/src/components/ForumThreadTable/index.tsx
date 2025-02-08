@@ -55,7 +55,7 @@ export const ForumThreadTable = ({
       <TableContainer
         component={Paper}
         // dynamic table sizing based on screen size
-        sx={{ width: { xs: "90vw", lg: "80vw" } }}
+        sx={{ width: { xs: "90vw", lg: "80vw", marginTop: "20px" } }}
       >
         <Table aria-label="forum thread table">
           <TableHead>

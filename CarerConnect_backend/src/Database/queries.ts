@@ -77,7 +77,10 @@ WHERE
     t.id = $1`;
 
 // Query retrieves all posts belonging to a thread
-export const findPostsByThread = `SELECT * FROM post WHERE thread_id = $1;`;
+// join to get the username instead of user_id
+export const findPostsByThread = `SELECT post.*, person.username FROM post 
+LEFT JOIN person
+ON post.user_id=person.id WHERE thread_id = $1;`;
 
 export const deleteThreadById = `DELETE FROM thread
 WHERE id = $1;`;

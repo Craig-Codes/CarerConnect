@@ -1,4 +1,4 @@
-import { Box, Button, Paper, Typography } from "@mui/material";
+import { Box, Button, Typography } from "@mui/material";
 import { useContext, useEffect, useState, MouseEvent } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { UserContext } from "../components/Context";
@@ -13,10 +13,14 @@ import {
 } from "../components/CreatePostModal";
 import theme from "../theme/theme";
 import { ForumThreadTitleBlock } from "../components/ForumThreadTitleBlock";
+import { ForumPostGroup } from "../components/ForumPostGroup";
+import { EditPostFormInputs } from "../components/EditPostModal";
 
 export type Post = {
   id: number;
   thread_id: number;
+  user_id: number;
+  username: string;
   content: string;
   created_at: string;
 };
@@ -67,6 +71,10 @@ export const ForumThreadPage = () => {
     }
   };
 
+  const handleEditPost = (postId: number, formContent?: EditPostFormInputs) => {
+    console.log(postId, formContent);
+  };
+
   const fetchPosts = async () => {
     // If a CarerConnect cookie is found we send a HTTP request to the API
     // to retrieve the logged in users details
@@ -78,14 +86,16 @@ export const ForumThreadPage = () => {
         const thread = {
           title: request["thread"].title,
           // fornate the date ISO string using day.js library
-          createdAt: dayjs().format("D MMMM YY - HH:mm"),
+          createdAt: dayjs(request["thread"].createdAt).format(
+            "D MMMM YY - HH:mm"
+          ),
         };
         setThread(thread);
         // loop through the posts and map correctly - change date and time into human readable format
         const posts = request["posts"].map((post: Post) => ({
           ...post, // bring all properties into new object
           // fornate the date ISO string using day.js library
-          created_at: dayjs().format("D MMMM YY - HH:mm"),
+          created_at: dayjs(post.created_at).format("D MMMM YY - HH:mm"),
         }));
         // set the allPost state to the found and formatted results array
         setAllPosts(posts);
@@ -94,9 +104,6 @@ export const ForumThreadPage = () => {
       }
     }
   };
-
-  console.log(thread);
-  console.log(allPosts);
 
   // When the id changes, this code triggers
   useEffect(() => {
@@ -107,8 +114,6 @@ export const ForumThreadPage = () => {
       navigate(-1); // navigate back a page
     }
   }, [id, navigate]); // fetch new data on id change or navigation
-
-  console.log(allPosts);
 
   return (
     <>
@@ -121,7 +126,6 @@ export const ForumThreadPage = () => {
           variant="outlined"
           startIcon={<ArrowBackIosNewIcon />}
           sx={{
-            marginBottom: "25px",
             marginRight: "1vw",
             backgroundColor: "white",
           }}
@@ -134,7 +138,6 @@ export const ForumThreadPage = () => {
           variant="contained"
           sx={{
             backgroundColor: theme.palette.secondary.main,
-            marginBottom: "25px",
             marginLeft: "1vw",
           }}
           onClick={(event) => handleCreatePostModalOpen(event)}
@@ -150,14 +153,12 @@ export const ForumThreadPage = () => {
       {/* /* If we have any posts, display them */}
       {allPosts.length > 0 && (
         <>
-          <Paper
-            elevation={2}
-            sx={{
-              padding: "2vw",
-              marginTop: "20px",
-              textAlign: "left",
-            }}
-          ></Paper>
+          <ForumPostGroup
+            posts={allPosts}
+            user={user}
+            editPost={handleEditPost}
+            // deletePost={handleEditClick}
+          />
           {/* Add a second create button to save the user having to scroll back up to the top of the page */}
           <Button
             variant="contained"
