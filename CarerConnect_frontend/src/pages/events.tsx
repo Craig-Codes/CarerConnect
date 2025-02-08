@@ -12,7 +12,7 @@ import { EventCard } from "../components/EventCard";
 import { fetchWrapper } from "../utils/fetchWrapper";
 import { toast, ToastContainer } from "react-toastify";
 import { EditSubscriptionFormInputs } from "../components/EditEventModal";
-import { Box, Tab, Tabs } from "@mui/material";
+import { Box, Tab, Tabs, tabsClasses } from "@mui/material";
 import { Meetup } from "../utils/Types/types";
 import useFetchMeetups from "../hooks/useFetchMeetups";
 import {
@@ -169,7 +169,15 @@ export const EventsPage = () => {
             onChange={handleTabChange}
             textColor="secondary"
             indicatorColor="secondary"
-            aria-label="secondary tabs example"
+            variant="scrollable"
+            scrollButtons="auto"
+            aria-label="scrollable auto tabs filters"
+            allowScrollButtonsMobile
+            sx={{
+              [`& .${tabsClasses.scrollButtons}`]: {
+                color: theme.palette.secondary.main,
+              },
+            }}
           >
             <Tab value="all" label="All Events" />
             <Tab value="available" label="Available Events" />
