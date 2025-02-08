@@ -7,8 +7,10 @@ import { User } from "../Context";
 import { useState } from "react";
 import { WarningModal } from "../WarningModal";
 import { EditEventModal, EditSubscriptionFormInputs } from "../EditEventModal";
+import { grey, teal } from "@mui/material/colors";
 
 interface EventCardProps {
+  width?: string; // optional parameter to control width on different pages
   event: Meetup;
   user: User; // users details required for conditional render of edit / delete buttons
   unsubscribeEvent: (eventId: number) => void;
@@ -22,6 +24,7 @@ interface EventCardProps {
 }
 
 export const EventCard = ({
+  width = "auto",
   event,
   user,
   unsubscribeEvent,
@@ -77,8 +80,8 @@ export const EventCard = ({
 
   // Function uses logic to decide which button is shown to the user
   const conditionallyRenderButton = () => {
-    // If the user is the evnt owner, they cannot unsubscribe so no button is shown
-    if (event.user_id === user.id) {
+    // If the event is already fully subscribed, cannot subscribe so hide the subscribe button
+    if (event.subscriber_count >= event.max_attendees) {
       return <></>;
     }
     // if the user is current subscribed, show the unsubscribe button
@@ -131,6 +134,8 @@ export const EventCard = ({
         padding: "2vw",
         marginTop: "20px",
         textAlign: "left",
+        "&:hover": { backgroundColor: grey[200] },
+        maxWidth: width,
       }}
     >
       <Box
@@ -161,7 +166,7 @@ export const EventCard = ({
               }}
             />
           )}
-          {/* User can only delete the event if they are an admin */}
+          {/* User can only delete the event if they are an admin or created it*/}
           {user.isAdmin && (
             <DeleteIcon
               color="error"
@@ -202,7 +207,7 @@ export const EventCard = ({
             Link
           </Link>
         ) : (
-          <span style={{ display: "inline", color: theme.palette.info.main }}>
+          <span style={{ display: "inline", color: teal[700] }}>
             {event.location}
           </span>
         )}

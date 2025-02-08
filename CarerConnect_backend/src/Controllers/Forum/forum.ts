@@ -9,8 +9,8 @@ import {
   editThreadByIdAndUser,
   editThreadTitle,
   findCategoriesWithThreadAndPostCount,
-  findPostByThread,
-  findThreadByCategory,
+  findPostsByThread,
+  findThreadById,
   findThreadsByCategory,
   insertPost,
   insertThread,
@@ -44,7 +44,7 @@ export const getThreads = async (req: Request, res: Response) => {
   try {
     const threads = (await database.query(findThreadsByCategory, [categoryId]))
       .rows;
-    return res.status(200).json({ threads: threads, category: categoryId });
+    return res.status(200).json(threads);
   } catch (error) {
     // If we have a valid id but can't find a resources, return a 404 error
     return res.status(404).json({ message: "Category id does not exist" });
@@ -52,6 +52,7 @@ export const getThreads = async (req: Request, res: Response) => {
 };
 
 export const addThread = async (req: Request, res: Response) => {
+  console.log("Adding thrad");
   try {
     const token = req.cookies.CarerConnect_user_token;
     const userId = await getUserId(token); // Decode token to get the users id
@@ -61,7 +62,7 @@ export const addThread = async (req: Request, res: Response) => {
     }
 
     // Get categoryId from request paramaters
-    const categoryId = Number(req.body.categoryId);
+    const categoryId = Number(req.params.id);
 
     // If the conversion produces NaN, the input was not a valid integer value
     if (isNaN(categoryId)) {
@@ -70,7 +71,7 @@ export const addThread = async (req: Request, res: Response) => {
     }
 
     // Get the threadTitle from request parameters
-    const threadTitle = stringInputValidator(req.body.threadTitle);
+    const threadTitle = stringInputValidator(req.body.title);
 
     // Add the new thread
     try {
@@ -110,19 +111,17 @@ export const deleteThread = async (req: Request, res: Response) => {
 // Returns a thread with all of its posts
 export const getThreadPosts = async (req: Request, res: Response) => {
   // Get the input :id and convert the string into a number
-  const categoryId = Number(req.params.id);
+  const threadId = Number(req.params.id);
 
   // If the conversion produces NaN, the input was not a valid integer value
-  if (isNaN(categoryId)) {
+  if (isNaN(threadId)) {
     // 400 - Bad request status code
     return res.status(400).json({ message: "Thread id expects a number" });
   }
 
   try {
-    const thread = (await database.query(findThreadByCategory, [categoryId]))
-      .rows;
-    const threadId = Number(thread[0].id);
-    const posts = (await database.query(findPostByThread, [threadId])).rows;
+    const thread = (await database.query(findThreadById, [threadId])).rows[0];
+    const posts = (await database.query(findPostsByThread, [threadId])).rows;
 
     return res.status(200).json({
       thread: thread,

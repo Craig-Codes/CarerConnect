@@ -32,19 +32,24 @@ GROUP BY
 
 // Query retrieves each thread belonging to a particular category (by category id)
 // COUNT is used to count the number of posts associated with a thread
+// JOIN with category table to get category id and title
 export const findThreadsByCategory = `SELECT 
     t.id, 
     t.title AS thread_title, 
     t.created_at, 
-    COUNT(p.id) AS post_count
+    COUNT(p.id) AS post_count,
+    c.id AS category_id,
+    c.title AS category_title
 FROM 
     thread t
 LEFT JOIN 
     post p ON t.id = p.thread_id
+LEFT JOIN
+    category c ON t.category_id = c.id
 WHERE 
     t.category_id = $1
 GROUP BY 
-    t.id, t.title, t.created_at;`;
+    t.id, t.title, t.created_at, c.id, c.title;`;
 
 // Query retrives the details of a particular thread
 export const findThreadByCategory = `SELECT 
@@ -61,8 +66,23 @@ WHERE
 GROUP BY 
     t.id, t.title, t.created_at;`;
 
+// Query retrives the details of a particular thread
+export const findThreadById = `SELECT 
+    t.id, 
+    t.title, 
+    t.created_at
+FROM 
+    thread t
+WHERE 
+    t.id = $1`;
+
 // Query retrieves all posts belonging to a thread
-export const findPostByThread = `SELECT * FROM post WHERE thread_id = $1;`;
+// join to get the username instead of user_id
+// Ensure posts always arrive with the most recent at the bottom
+export const findPostsByThread = `SELECT post.*, person.username FROM post 
+LEFT JOIN person
+ON post.user_id=person.id WHERE thread_id = $1
+ORDER BY post.created_at ASC;`;
 
 export const deleteThreadById = `DELETE FROM thread
 WHERE id = $1;`;

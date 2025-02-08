@@ -1,5 +1,5 @@
-import { encryptPassword, compareHash } from "./hashing";
 import bcrypt from "bcryptjs";
+import { compareHash, encryptPassword } from "./hashing";
 
 describe("Password Utilities", () => {
   const password = "mySecurePassword";

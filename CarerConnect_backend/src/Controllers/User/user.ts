@@ -1,6 +1,6 @@
 import { database } from "../../Database/db";
 import { Request, Response } from "express";
-import { compareHash, encryptPassword } from "./hashing";
+import { compareHash, encryptPassword } from "../../Utils/hashing";
 import { insertUser, findUserQuery } from "../../Database/queries";
 import Jwt, { JwtPayload } from "jsonwebtoken";
 const jwt = Jwt;

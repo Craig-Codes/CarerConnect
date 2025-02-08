@@ -74,6 +74,7 @@ export const HomePage = () => {
           >
             {meetups.map((meetup) => (
               <EventCard
+                width="450px"
                 key={meetup.id}
                 event={meetup}
                 user={user}

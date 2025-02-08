@@ -23,6 +23,7 @@ exports.up = (pgm) => {
       notNull: true,
     },
     password: {
+      // bcrpyt hash is always 60 characters long
       type: "varchar(75)",
       notNull: true,
     },
