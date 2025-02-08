@@ -7,7 +7,7 @@ import { User } from "../Context";
 import { useState } from "react";
 import { WarningModal } from "../WarningModal";
 import { EditEventModal, EditSubscriptionFormInputs } from "../EditEventModal";
-import { grey } from "@mui/material/colors";
+import { grey, teal } from "@mui/material/colors";
 
 interface EventCardProps {
   width?: string; // optional parameter to control width on different pages
@@ -207,7 +207,7 @@ export const EventCard = ({
             Link
           </Link>
         ) : (
-          <span style={{ display: "inline", color: theme.palette.info.main }}>
+          <span style={{ display: "inline", color: teal[700] }}>
             {event.location}
           </span>
         )}
