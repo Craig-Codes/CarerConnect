@@ -27,8 +27,6 @@ export const ForumPage = () => {
     fetchForumCategories();
   }, []);
 
-  console.log(forumCategoryData);
-
   return (
     <ForumCategoryTable
       username={user.username}

@@ -9,8 +9,8 @@ import {
   editThreadByIdAndUser,
   editThreadTitle,
   findCategoriesWithThreadAndPostCount,
-  findPostByThread,
-  findThreadByCategory,
+  findPostsByThread,
+  findThreadById,
   findThreadsByCategory,
   insertPost,
   insertThread,
@@ -111,19 +111,17 @@ export const deleteThread = async (req: Request, res: Response) => {
 // Returns a thread with all of its posts
 export const getThreadPosts = async (req: Request, res: Response) => {
   // Get the input :id and convert the string into a number
-  const categoryId = Number(req.params.id);
+  const threadId = Number(req.params.id);
 
   // If the conversion produces NaN, the input was not a valid integer value
-  if (isNaN(categoryId)) {
+  if (isNaN(threadId)) {
     // 400 - Bad request status code
     return res.status(400).json({ message: "Thread id expects a number" });
   }
 
   try {
-    const thread = (await database.query(findThreadByCategory, [categoryId]))
-      .rows;
-    const threadId = Number(thread[0].id);
-    const posts = (await database.query(findPostByThread, [threadId])).rows;
+    const thread = (await database.query(findThreadById, [threadId])).rows[0];
+    const posts = (await database.query(findPostsByThread, [threadId])).rows;
 
     return res.status(200).json({
       thread: thread,

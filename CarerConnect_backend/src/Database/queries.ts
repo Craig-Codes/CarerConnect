@@ -66,8 +66,18 @@ WHERE
 GROUP BY 
     t.id, t.title, t.created_at;`;
 
+// Query retrives the details of a particular thread
+export const findThreadById = `SELECT 
+    t.id, 
+    t.title, 
+    t.created_at
+FROM 
+    thread t
+WHERE 
+    t.id = $1`;
+
 // Query retrieves all posts belonging to a thread
-export const findPostByThread = `SELECT * FROM post WHERE thread_id = $1;`;
+export const findPostsByThread = `SELECT * FROM post WHERE thread_id = $1;`;
 
 export const deleteThreadById = `DELETE FROM thread
 WHERE id = $1;`;

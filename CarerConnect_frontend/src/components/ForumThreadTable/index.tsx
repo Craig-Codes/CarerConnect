@@ -12,13 +12,13 @@ import theme from "../../theme/theme";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { grey } from "@mui/material/colors";
 import { useNavigate } from "react-router-dom";
-import { ThreadTableRow } from "../../pages/forumCategory";
+import { Thread } from "../../pages/forumCategory";
 import { WarningModal } from "../WarningModal";
 import { useState } from "react";
 
 interface ForumThreadTableProps {
   isAdmin: boolean;
-  threads: ThreadTableRow[];
+  threads: Thread[];
   deleteEvent: (eventId: number) => void;
 }
 
@@ -111,8 +111,7 @@ export const ForumThreadTable = ({
                 <TableCell
                   component="th"
                   scope="row"
-                  onClick={() => console.log(thread.id)}
-                  // navigate(`/category/${thread.id}`)}
+                  onClick={() => navigate(`/thread/${thread.id}`)}
                 >
                   <Typography>{thread.thread_title}</Typography>
                   <Typography
@@ -122,7 +121,7 @@ export const ForumThreadTable = ({
                       fontStyle: "italic",
                     }}
                   >
-                    {thread.created_at}
+                    Created: {thread.created_at}
                   </Typography>
                 </TableCell>
                 <TableCell

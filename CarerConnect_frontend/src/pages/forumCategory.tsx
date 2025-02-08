@@ -12,8 +12,9 @@ import {
   CreateThreadModal,
 } from "../components/CreateThreadModal";
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
+import dayjs from "dayjs";
 
-export type ThreadTableRow = {
+export type Thread = {
   id: number;
   thread_title: string;
   post_count: number;
@@ -27,7 +28,7 @@ export const ForumCategoryPage = () => {
   const { user } = useContext(UserContext);
 
   const { id } = useParams<{ id: string }>(); // Get the category ID from the URL
-  const [allThreads, setAllThreads] = useState<ThreadTableRow[]>();
+  const [allThreads, setAllThreads] = useState<Thread[]>();
 
   // state to handle open and closing the create event modal
   const [createThreadModalOpen, setCreateThreadModalOpen] = useState(false);
@@ -51,7 +52,6 @@ export const ForumCategoryPage = () => {
   };
 
   const handleCreateThread = async (eventContent: CreateThreadFormInputs) => {
-    console.log(eventContent);
     try {
       await fetchWrapper("POST", `forum/thread/${id}`, eventContent);
       await fetchThreads();
@@ -79,8 +79,14 @@ export const ForumCategoryPage = () => {
       try {
         // API request to get the threads by chosen category id
         const request = await fetchWrapper("GET", `forum/threads/${id}`);
+        // loop through the threads and map correctly - change date and time into human readable format
+        const threads = request.map((thread: Thread) => ({
+          ...thread, // bring all properties into new object
+          // fornate the date ISO string using day.js library
+          created_at: dayjs().format("D MMMM YY - HH:mm"),
+        }));
         // set the allThreads state to the found results array
-        setAllThreads(request);
+        setAllThreads(threads);
       } catch (error) {
         console.error("Failed to fetch threads data:", error);
       }

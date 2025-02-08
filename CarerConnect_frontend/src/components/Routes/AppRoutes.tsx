@@ -6,6 +6,7 @@ import { LoginPage } from "../../pages/login";
 import { ForumPage } from "../../pages/forum";
 import { EventsPage } from "../../pages/events";
 import { ForumCategoryPage } from "../../pages/forumCategory";
+import { ForumThreadPage } from "../../pages/forumThread";
 
 // Component handles the app routing, connecting each navigation path to the corresponding page
 export const AppRoutes = () => {
@@ -37,6 +38,10 @@ export const AppRoutes = () => {
       <Route
         path="/category/:id"
         element={user.username ? <ForumCategoryPage /> : <LoginPage />}
+      />
+      <Route
+        path="/thread/:id"
+        element={user.username ? <ForumThreadPage /> : <LoginPage />}
       />
     </Routes>
   );
