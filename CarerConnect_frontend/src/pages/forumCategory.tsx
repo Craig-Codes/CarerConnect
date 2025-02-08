@@ -1,5 +1,5 @@
 import { useNavigate, useParams } from "react-router-dom";
-import { Button } from "@mui/material";
+import { Box, Button } from "@mui/material";
 import { useContext, useEffect, useState, MouseEvent } from "react";
 import { isLoggedIn } from "../utils/utils";
 import { fetchWrapper } from "../utils/fetchWrapper";
@@ -11,6 +11,7 @@ import {
   CreateThreadFormInputs,
   CreateThreadModal,
 } from "../components/CreateThreadModal";
+import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 
 export type ThreadTableRow = {
   id: number;
@@ -61,8 +62,14 @@ export const ForumCategoryPage = () => {
   };
 
   // function attempts to delete the thread, making a delete request to the API with the threadsId
-  const handleThreadDelete = (threadId: number) => {
-    console.log("deleting thread: ", threadId);
+  const handleThreadDelete = async (threadId: number) => {
+    try {
+      await fetchWrapper("DELETE", `forum/thread/${threadId}`);
+      await fetchThreads();
+      toast.success("Successfully deleted thread");
+    } catch {
+      toast.error("Failed to delete thread, please try again");
+    }
   };
 
   const fetchThreads = async () => {
@@ -94,16 +101,36 @@ export const ForumCategoryPage = () => {
 
   return (
     <>
-      <Button
-        variant="contained"
+      <Box
         sx={{
-          backgroundColor: theme.palette.secondary.main,
-          marginBottom: "25px",
+          padding: "15px",
         }}
-        onClick={(event) => handleCreateThreadModalOpen(event)}
       >
-        Create New Thread
-      </Button>
+        <Button
+          variant="outlined"
+          startIcon={<ArrowBackIosNewIcon />}
+          sx={{
+            marginBottom: "25px",
+            marginRight: "1vw",
+            backgroundColor: "white",
+          }}
+          // on click navigate back to the forum page
+          onClick={() => navigate("/forum", { replace: true })}
+        >
+          Back
+        </Button>
+        <Button
+          variant="contained"
+          sx={{
+            backgroundColor: theme.palette.secondary.main,
+            marginBottom: "25px",
+            marginLeft: "1vw",
+          }}
+          onClick={(event) => handleCreateThreadModalOpen(event)}
+        >
+          Create New Thread
+        </Button>
+      </Box>
       {/* Dislay the forum thread table, passing in the retrieved threads associated
       with the selected category */}
       <ForumThreadTable
