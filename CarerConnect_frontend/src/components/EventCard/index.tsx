@@ -80,12 +80,8 @@ export const EventCard = ({
 
   // Function uses logic to decide which button is shown to the user
   const conditionallyRenderButton = () => {
-    // If the user is the evnt owner, they cannot unsubscribe so no button is shown
-    // OR if the event is already fully subscribed
-    if (
-      event.user_id === user.id ||
-      event.subscriber_count >= event.max_attendees
-    ) {
+    // If the event is already fully subscribed, cannot subscribe so hide the subscribe button
+    if (event.subscriber_count >= event.max_attendees) {
       return <></>;
     }
     // if the user is current subscribed, show the unsubscribe button
@@ -170,7 +166,7 @@ export const EventCard = ({
               }}
             />
           )}
-          {/* User can only delete the event if they are an admin */}
+          {/* User can only delete the event if they are an admin or created it*/}
           {user.isAdmin && (
             <DeleteIcon
               color="error"

@@ -90,6 +90,9 @@ export const CreatePostModal = ({
                 fullWidth
                 id="content"
                 label="Content"
+                multiline // Make input box multiline
+                minRows={2}
+                maxRows={4}
                 {...register("content", {
                   required: "Content is required",
                   minLength: {
