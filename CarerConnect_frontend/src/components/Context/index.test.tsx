@@ -12,6 +12,7 @@ const ConsumerComponent = () => {
       <button
         onClick={() =>
           setUser({
+            id: 1,
             email: "test@test.com",
             username: "Updated Username",
             isAdmin: false,
@@ -27,6 +28,7 @@ const ConsumerComponent = () => {
 // Test Component wrapped with the context provider
 const TestComponent = () => {
   const [user, setUser] = useState<User>({
+    id: 1,
     email: "",
     username: "Initial Username",
     isAdmin: false,

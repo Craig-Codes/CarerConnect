@@ -33,6 +33,7 @@ describe("<LoginForm />", () => {
             email: "",
             username: "",
             isAdmin: false,
+            id: 0,
           },
           setUser: mockSetUser,
         }}
@@ -58,6 +59,7 @@ describe("<LoginForm />", () => {
             email: "",
             username: "",
             isAdmin: false,
+            id: 0,
           },
           setUser: mockSetUser,
         }}
@@ -97,6 +99,7 @@ describe("<LoginForm />", () => {
             email: "",
             username: "",
             isAdmin: false,
+            id: 0,
           },
           setUser: mockSetUser,
         }}
@@ -136,6 +139,7 @@ describe("<LoginForm />", () => {
             email: "",
             username: "",
             isAdmin: false,
+            id: 0,
           },
           setUser: mockSetUser,
         }}

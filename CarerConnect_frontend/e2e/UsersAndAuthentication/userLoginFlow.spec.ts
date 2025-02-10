@@ -8,6 +8,10 @@ test("User can login and sees the navbar buttons", async ({ page }) => {
   await page.getByLabel("Password *").press("Tab");
   await page.getByRole("button", { name: "Sign In" }).click();
   await expect(page.getByRole("button", { name: "Home" })).toBeInViewport();
-  await expect(page.getByRole("button", { name: "Meetups" })).toBeInViewport();
-  await expect(page.getByRole("button", { name: "Forum" })).toBeInViewport();
+  await expect(
+    page.getByRole("button", { name: "Events" }).first()
+  ).toBeInViewport();
+  await expect(
+    page.getByRole("button", { name: "Forum" }).first()
+  ).toBeInViewport();
 });

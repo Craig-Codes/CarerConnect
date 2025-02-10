@@ -46,20 +46,26 @@ export default function LoginForm() {
   // Function sends a http fetch request to the API /user endpoint using the POST method
   const submitLoginForm = async (event: FormEvent) => {
     event.preventDefault(); // Prevents the form from submitting and reloading the page
-    const result = await fetchWrapper("POST", "user", {
-      password: password,
-      email: email,
-    });
+    try {
+      // try the fetch
+      const result = await fetchWrapper("POST", "user", {
+        password: password,
+        email: email,
+      });
 
-    if (!result.message) {
-      // Update the User Context across the application to the users details
-      setUser(() => ({
-        id: result.id,
-        email: result.email,
-        isAdmin: result.isAdmin,
-        username: result.username,
-      }));
-    } else {
+      if (!result.message) {
+        // Update the User Context across the application to the users details
+        setUser(() => ({
+          id: result.id,
+          email: result.email,
+          isAdmin: result.isAdmin,
+          username: result.username,
+        }));
+      } else {
+        setLogAlert(true);
+      }
+    } catch {
+      // If error with call, alert user
       setLogAlert(true);
     }
   };
