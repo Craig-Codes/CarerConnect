@@ -15,7 +15,11 @@ import {
 } from "@mui/material";
 import { useForm, SubmitHandler, Controller } from "react-hook-form";
 import theme from "../../theme/theme";
-import { DateTimePicker, LocalizationProvider } from "@mui/x-date-pickers";
+import {
+  DateTimePicker,
+  LocalizationProvider,
+  renderMultiSectionDigitalClockTimeView,
+} from "@mui/x-date-pickers";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 
 const style = {
@@ -147,6 +151,11 @@ export const CreateEventModal = ({
                       // Coerce the value to Date
                       const coercedDate = value ? new Date(value) : new Date();
                       field.onChange(coercedDate); // Pass the Date object to set the value
+                    }}
+                    viewRenderers={{
+                      hours: renderMultiSectionDigitalClockTimeView,
+                      minutes: renderMultiSectionDigitalClockTimeView,
+                      seconds: renderMultiSectionDigitalClockTimeView,
                     }}
                     slotProps={{
                       textField: {

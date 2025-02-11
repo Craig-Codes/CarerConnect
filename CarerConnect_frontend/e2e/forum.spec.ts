@@ -31,6 +31,8 @@ test("Standard user can create a forum post, edit it, and then delete it", async
 });
 
 test("User can create thread, post, and delete thread", async ({ page }) => {
+  // random integer allows for multi threading tests without causing conflicts
+  const randomInt = Math.floor(Math.random() * 100000);
   await page.goto("http://localhost:8080/login");
   await page.getByLabel("Email Address *").fill("user2@example.com");
   await page.getByLabel("Password *").fill("password");
@@ -40,28 +42,33 @@ test("User can create thread, post, and delete thread", async ({ page }) => {
     .getByRole("rowheader", { name: "Health and Well-being Support" })
     .click();
   await page.getByRole("button", { name: "Create New Thread" }).click();
-  await page.getByLabel("Title *").fill("Test Thread");
+  await page.getByLabel("Title *").fill(`Test Thread ${randomInt}`);
   await page.getByRole("button", { name: "Submit" }).click();
-  await expect(page.getByText("Test Thread")).toBeVisible();
+  await expect(page.getByText(`Test Thread ${randomInt}`)).toBeVisible();
   await page.getByRole("button", { name: "Create New Thread" }).click();
-  await page.getByLabel("Title *").fill("Test Thread");
+  // test user cannot create a thread of the same name
+  await page.getByLabel("Title *").fill(`Test Thread ${randomInt}`);
   await page.getByRole("button", { name: "Submit" }).click();
+  await expect(
+    page.getByText("Failed to create thread, please try again")
+  ).toBeVisible();
   await page
-    .getByRole("rowheader", { name: "Test Thread Created: 10" })
+    .getByRole("rowheader", { name: `Test Thread ${randomInt}` })
+    .first()
     .click();
   await page.getByRole("button", { name: "Create New Post" }).click();
   await page.getByLabel("Content *").fill("Test post - delete");
   await page.getByRole("button", { name: "Submit" }).click();
   await page.getByRole("button", { name: "Back" }).click();
-  await page.getByRole("cell", { name: "1" }).click();
+  await page.getByRole("cell", { name: "1" }).first().click();
   await page
-    .getByRole("row", { name: "Test Thread Created: 10" })
+    .getByRole("row", { name: `Test Thread ${randomInt}` })
     .locator("path")
     .click();
   await page.getByRole("button", { name: "Yes" }).click();
   await page.getByText("Successfully deleted thread").click();
-  await expect(page.getByText("Test Thread")).not.toBeVisible();
-  await page.getByLabel("close").click();
+  await expect(page.getByText(`Test Thread ${randomInt}`)).not.toBeVisible();
+  await page.getByLabel("close").first().click();
 });
 
 test("Users can see each others posts, and admin user can delete posts", async ({
@@ -82,13 +89,13 @@ test("Users can see each others posts, and admin user can delete posts", async (
   await page.getByLabel("Content *").fill("Post from standard user");
   await page.getByRole("button", { name: "Submit" }).click();
   await expect(page.getByText("Post from standard user").last()).toBeVisible();
-  await page.getByLabel("close").click();
+  await page.getByRole("button", { name: "FC" }).waitFor({ state: "visible" });
   await page.getByRole("button", { name: "FC" }).click();
   await page.getByText("Logout").click();
   await page.getByLabel("Email Address *").fill("user2@example.com");
   await page.getByLabel("Password *").fill("password");
   await page.getByRole("button", { name: "Sign In" }).click();
-  await page.getByLabel("View Forum page").click();
+  await page.getByRole("button", { name: "FORUM" }).first().click();
   await page
     .getByRole("rowheader", { name: "General Discussion Talk about" })
     .click();

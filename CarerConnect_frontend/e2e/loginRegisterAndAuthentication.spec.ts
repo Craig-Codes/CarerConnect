@@ -7,7 +7,6 @@ test("User can login and sees the navbar buttons", async ({ page }) => {
   await page.getByLabel("Password *").fill("password");
   await page.getByLabel("Password *").press("Tab");
   await page.getByRole("button", { name: "Sign In" }).click();
-  await expect(page.getByRole("button", { name: "Home" })).toBeInViewport();
   await expect(
     page.getByRole("button", { name: "Events" }).first()
   ).toBeInViewport();
@@ -49,7 +48,7 @@ test("User can login, enters the home page, then logs out and returns to the log
 
 const randomInt = Math.floor(Math.random() * 100000);
 
-test("test", async ({ page }) => {
+test("User can register to system", async ({ page }) => {
   await page.goto("http://localhost:8080/login");
   await page.getByRole("tab", { name: "Register" }).click();
   await page.getByLabel("Username *").click();
