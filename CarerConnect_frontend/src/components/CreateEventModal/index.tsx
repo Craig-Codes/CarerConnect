@@ -34,6 +34,7 @@ const style = {
   p: 4,
 };
 
+// Properties passed into the component
 interface CreateEventModalProps {
   open: boolean;
   handleClose: (
@@ -42,6 +43,7 @@ interface CreateEventModalProps {
   ) => void;
 }
 
+// expected subscription input type
 export type CreateSubscriptionFormInputs = {
   title: string;
   description: string;
@@ -60,21 +62,23 @@ export const CreateEventModal = ({
     handleSubmit,
     control,
     formState: { errors },
-    // control,
   } = useForm<CreateSubscriptionFormInputs>();
+  // using React-hook-form to control form inputs and error handling
 
+  // when form submits successfully pass the inputs up to the parent component to make ncessary API calls
   const onSubmit: SubmitHandler<CreateSubscriptionFormInputs> = (data) => {
     handleClose(true, {
       title: data.title,
       description: data.description,
       dateTime: data.dateTime,
-      location: data.description,
+      location: data.location,
       participants: data.participants,
       online: data.online,
     });
   };
 
   return (
+    // Wrapped in localisation provider to ensure data / time is correct for users across the world
     <LocalizationProvider dateAdapter={AdapterDateFns}>
       <Modal
         aria-labelledby="transition-modal-title"
@@ -91,6 +95,7 @@ export const CreateEventModal = ({
           },
         }}
       >
+        {/* stylign for opening modal, and the modal itself */}
         <Fade in={open}>
           <Box
             sx={{
@@ -108,7 +113,7 @@ export const CreateEventModal = ({
               Create Event
             </Typography>
             <form onSubmit={handleSubmit(onSubmit)}>
-              {/* Title field */}
+              {/* Title field input */}
               <TextField
                 variant="outlined"
                 margin="normal"
@@ -153,11 +158,13 @@ export const CreateEventModal = ({
                       field.onChange(coercedDate); // Pass the Date object to set the value
                     }}
                     viewRenderers={{
+                      // necessary to render parts of DateTime picker seperately to ensure it works on mobile devices
                       hours: renderMultiSectionDigitalClockTimeView,
                       minutes: renderMultiSectionDigitalClockTimeView,
                       seconds: renderMultiSectionDigitalClockTimeView,
                     }}
                     slotProps={{
+                      // Error handling
                       textField: {
                         error: !!errors.dateTime,
                         helperText: errors.dateTime?.message,

@@ -12,37 +12,75 @@ test("Standard user can create an event, subscribe, then unsubscribe. Event can 
   await page.getByRole("button", { name: "EVENTS", exact: true }).click();
   // create new event
   await page.getByRole("button", { name: "Create New Event" }).click();
-  await page.getByLabel("Title *").fill("Test Event");
+  // random integer allows for multi threading tests without causing conflicts
+  const randomInt = Math.floor(Math.random() * 100000);
+  await page.getByLabel("Title *").fill(`Test Event-${randomInt}`);
   await page.getByLabel("Choose date, selected date is").click();
-  await page.getByRole("gridcell", { name: "12" }).click();
+
+  // Different browser handle MUi DateTime picker differently
+  // Different logic required to test correctly
+
+  // Check if it's WebKit AND a mobile device
+  const isMobile = await page.evaluate(() =>
+    /Android/i.test(navigator.userAgent)
+  );
+
+  const isMobileSafari = await page.evaluate(() =>
+    /iPhone|iPad|iPod/i.test(navigator.userAgent)
+  );
+
+  // Normal computer web browser
+  if (!isMobile && !isMobileSafari) {
+    // Chromium requires selecting a date first before the month is changed
+    await page.getByRole("gridcell", { name: "12" }).click();
+    await page
+      .getByRole("button", { name: "Next month" })
+      .click({ force: true });
+    await page.getByRole("gridcell", { name: "12" }).first().click();
+  } else if (isMobile) {
+    // Mobile requires changing the month before anything else
+    await page
+      .getByRole("button", { name: "Next month" })
+      .click({ force: true });
+    await page.getByRole("gridcell").nth(-1).click({ force: true });
+  } else if (isMobileSafari) {
+    // Mobile safari gets selectors slightly differently
+    await page
+      .getByRole("button", { name: "Next month" })
+      .click({ force: true });
+    await page.getByRole("gridcell").nth(-2).click({ force: true });
+  }
+
   await page.getByLabel("7 hours").click();
   await page.getByLabel("5 minutes", { exact: true }).click();
   await page.getByRole("button", { name: "OK" }).click();
-  await page.getByLabel("Location or Link *").fill("google.com");
-  await page.getByLabel("Description *").fill("Test online event");
+  await page.getByLabel("Location or Link *").click();
+  await page
+    .getByLabel("Location or Link *")
+    .fill("google.com", { force: true });
+  await page
+    .getByLabel("Description *")
+    .fill("Test online event", { force: true });
   await page.getByLabel("Number of participants *").fill("5");
-  await page.getByRole("button", { name: "Submit" }).click();
+  await page.getByRole("button", { name: "Submit" }).click({ force: true });
+
   await page.getByRole("tab", { name: "Online Events" }).click();
   // test new event can be seen
   await expect(page.getByText("Successfully created event")).toBeVisible();
   // change tab - test new event is seen in the correct tab
   await page.getByRole("tab", { name: "All Events" }).click();
-  await expect(
-    page
-      .locator("div")
-      .filter({ hasText: /^Test Event$/ })
-      .first()
-  ).toBeVisible();
+  await expect(page.getByText(`Test Event-${randomInt}`)).toBeVisible();
   // edit event
+  await page;
   await page
-    .locator("div")
-    .filter({ hasText: /^Test Event$/ })
-    .first()
+    .locator(`div`)
+    .filter({ hasText: new RegExp(`^Test Event-${randomInt}$`) })
     .getByTestId("ModeEditIcon")
     .click();
   await page.getByLabel("Title *").fill("Test Event - editted");
   await page.getByLabel("Description *").fill("Test online event -editted");
-  await page.getByRole("button", { name: "Submit" }).click();
+  await page.getByRole("button", { name: "Submit" }).click({ force: true });
+
   // test event displays updated
   await expect(page.getByText("Test Event - editted").first()).toBeVisible();
   await expect(
@@ -51,6 +89,7 @@ test("Standard user can create an event, subscribe, then unsubscribe. Event can 
   // unsubscribe
   await page.getByRole("button", { name: "Unsubscribe" }).first().click();
   await page.getByRole("button", { name: "Yes" }).click();
+  // test evnt displays in correct tabs
   await page.getByRole("tab", { name: "Available Events" }).click();
   await page.getByRole("tab", { name: "All Events" }).click();
   // subscribe
@@ -60,7 +99,9 @@ test("Standard user can create an event, subscribe, then unsubscribe. Event can 
     .click();
   await page.getByRole("button", { name: "Yes" }).click();
   await page.getByLabel("close").first().click();
+  // test tab switching
   await page.getByRole("tab", { name: "Online Events" }).click();
+  await page.getByRole("tab", { name: "All Events" }).click();
   // Check the unsubscribe cancel button works
   await page.getByRole("button", { name: "Unsubscribe" }).first().click();
   await page.getByRole("button", { name: "Cancel" }).click();
@@ -92,7 +133,10 @@ test("Admin user can edit another users event, unsubscribe, then delete the even
   // unsubscribe
   await page.locator(".MuiPaper-root > .MuiButtonBase-root").first().click();
   await page.getByRole("button", { name: "Yes" }).click();
-  await page.getByRole("button", { name: "Unsubscribe" }).first().click();
+  await page
+    .getByRole("button", { name: "Unsubscribe" })
+    .first()
+    .click({ force: true });
   await page.getByRole("button", { name: "Yes" }).click();
   // delete
   await page
