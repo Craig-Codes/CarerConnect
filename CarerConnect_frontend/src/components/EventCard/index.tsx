@@ -155,6 +155,7 @@ export const EventCard = ({
           {/* User can only edit the event if they created it or are an administrator */}
           {(event.user_id === user.id || user.isAdmin) && (
             <ModeEditIcon
+              data-testid="edit-icon"
               color="success"
               onClick={handleEditModalOpen}
               sx={{
@@ -169,6 +170,7 @@ export const EventCard = ({
           {/* User can only delete the event if they are an admin or created it*/}
           {user.isAdmin && (
             <DeleteIcon
+              data-testid="delete-icon"
               color="error"
               onClick={handleDeleteModalOpen}
               sx={{

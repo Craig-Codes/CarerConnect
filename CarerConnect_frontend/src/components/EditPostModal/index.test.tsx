@@ -1,8 +1,9 @@
 import { fireEvent, render, screen } from "@testing-library/react";
-import { CreatePostModal } from ".";
+import { EditPostModal } from ".";
 import userEvent from "@testing-library/user-event";
+import { Post } from "../../pages/forumThread";
 
-describe("<CreatePostModal />", () => {
+describe("<EditPostModal />", () => {
   const user = userEvent.setup();
 
   // mock the handleClose event
@@ -12,16 +13,37 @@ describe("<CreatePostModal />", () => {
     mockedHandleClose = jest.fn();
   });
 
+  const mockPostData: Post = {
+    id: 1,
+    thread_id: 1,
+    user_id: 2,
+    username: "mock username",
+    content: "mock post content",
+    created_at: "2025-02-12 19:05:41.247",
+  };
+
   test("Modal does not render when open is false", () => {
     // Given
-    render(<CreatePostModal open={false} handleClose={mockedHandleClose} />);
+    render(
+      <EditPostModal
+        open={false}
+        handleClose={mockedHandleClose}
+        post={mockPostData}
+      />
+    );
     // Then expect modal text not to be seen
-    expect(screen.queryByText("Create Post")).not.toBeInTheDocument();
+    expect(screen.queryByText("Edit Post")).not.toBeInTheDocument();
   });
 
   test("Calls handleClose when Cancel button is clicked", () => {
     // Given
-    render(<CreatePostModal open={true} handleClose={mockedHandleClose} />);
+    render(
+      <EditPostModal
+        open={true}
+        handleClose={mockedHandleClose}
+        post={mockPostData}
+      />
+    );
 
     // When - Click the cancel button
     fireEvent.click(screen.getByText("Cancel"));
@@ -32,12 +54,18 @@ describe("<CreatePostModal />", () => {
 
   test("Calls handleClose with true and correct params when form is submitted", async () => {
     // Given
-    render(<CreatePostModal open={true} handleClose={mockedHandleClose} />);
+    render(
+      <EditPostModal
+        open={true}
+        handleClose={mockedHandleClose}
+        post={mockPostData}
+      />
+    );
 
-    // When - Fill in the form fields
+    // When - Fill in the form fields, adding content to already there content
     await user.type(
-      screen.getByRole("textbox", { name: /Content/i }),
-      "My Content"
+      screen.getByRole("textbox", { name: /content/i }),
+      " - updated"
     );
 
     // Submit the form
@@ -45,7 +73,8 @@ describe("<CreatePostModal />", () => {
 
     // Then - Ensure handleClose was called with correct inputs
     expect(mockedHandleClose).toHaveBeenCalledWith(true, {
-      content: "My Content",
+      content: "mock post content - updated",
+      postId: mockPostData.id,
     });
   });
 });
