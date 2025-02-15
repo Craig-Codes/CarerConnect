@@ -1,3 +1,5 @@
+// Page shows all forum threads for the chosen category
+
 import { Box, Button, Typography } from "@mui/material";
 import { useContext, useEffect, useState, MouseEvent } from "react";
 import { useNavigate, useParams } from "react-router-dom";
@@ -15,26 +17,20 @@ import theme from "../theme/theme";
 import { ForumThreadTitleBlock } from "../components/ForumThreadTitleBlock";
 import { ForumPostGroup } from "../components/ForumPostGroup";
 import { EditPostFormInputs } from "../components/EditPostModal";
+import { Post } from "../utils/Types/types";
 
-export type Post = {
-  id: number;
-  thread_id: number;
-  user_id: number;
-  username: string;
-  content: string;
-  created_at: string;
-};
-
+// Define the necesary properties of a thread
 type Thread = {
   title: string;
   createdAt: string;
 };
 
 export const ForumThreadPage = () => {
-  const navigate = useNavigate();
-  const { user } = useContext(UserContext);
+  const navigate = useNavigate(); // use react-router-dom to navigate between pages
+  const { user } = useContext(UserContext); // get the current logged in users details from global app context
 
   const { id } = useParams<{ id: string }>(); // Get the category ID from the URL
+  // states store the thread information, and all the posts from the selected thread
   const [allPosts, setAllPosts] = useState<Post[]>([]);
   const [thread, setThread] = useState<Thread>();
 
@@ -52,10 +48,12 @@ export const ForumThreadPage = () => {
   ) => {
     setCreatePostModalOpen(false); // close the modal
     if (create) {
+      // trigger the create post logic to pass new post content to the API
       handleCreatePost(postContent!);
     }
   };
 
+  // Passes the new post content to the API to create the post
   const handleCreatePost = async (eventContent: CreatePostFormInputs) => {
     try {
       // Create the post body object to provide the API the correct inputs necessary to create a new post
@@ -63,14 +61,16 @@ export const ForumThreadPage = () => {
         content: eventContent.content,
         threadId: id,
       };
-      await fetchWrapper("POST", `forum/post/${id}`, postBody);
-      await fetchPosts();
-      toast.success("Successfully created post");
+      await fetchWrapper("POST", `forum/post/${id}`, postBody); // pass post content to API to create
+      await fetchPosts(); // fetch a new list of posts, including the new one just created
+      toast.success("Successfully created post"); // keep user informed that post successfully created
     } catch {
-      toast.error("Failed to create post, please try again");
+      toast.error("Failed to create post, please try again"); // gracefully keep user informed that post failed to create
+      // error message is generic to prevent exposing to much information which may caus vulnerabilities in the API
     }
   };
 
+  // function handles passing an editted posts content to the API
   const handleEditPost = async (
     postId: number,
     formContent: EditPostFormInputs
@@ -81,7 +81,7 @@ export const ForumThreadPage = () => {
         content: formContent.content,
         postId: postId,
       };
-      await fetchWrapper("PATCH", `forum/post/${postId}`, postBody);
+      await fetchWrapper("PATCH", `forum/post/${postId}`, postBody); // update the post sending a patch request to the API
       await fetchPosts();
       toast.success("Successfully edited post");
     } catch {
@@ -89,9 +89,10 @@ export const ForumThreadPage = () => {
     }
   };
 
+  // function handles the deleting of a post by passing the post id to the API
   const handleDeletePost = async (postId: number) => {
     try {
-      await fetchWrapper("DELETE", `forum/post/${postId}`);
+      await fetchWrapper("DELETE", `forum/post/${postId}`); // delete request with post id passed to the API
       await fetchPosts();
       toast.success("Successfully deleted post");
     } catch {

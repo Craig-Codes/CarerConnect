@@ -13,15 +13,18 @@ import { UserContext } from "../Context";
 import { useNavigate } from "react-router-dom";
 
 export default function NavBar() {
-  const { user, setUser } = useContext(UserContext);
+  const { user, setUser } = useContext(UserContext); // get the current application user details
   const username = user.username;
-  const navigate = useNavigate();
+  const navigate = useNavigate(); // use react-router-dom to navigate to other pages when selecting header links
+  //  control the elements of nav bar, and hamburger menu
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [mobileMenuAnchorEl, setMobileMenuAnchorEl] =
     useState<null | HTMLElement>(null);
 
+  // All pages which require links in the navbar
   const pages = ["Home", "Events", "Forum"];
 
+  // handle selected element
   const handleMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
   };
@@ -30,22 +33,26 @@ export default function NavBar() {
     setMobileMenuAnchorEl(event.currentTarget);
   };
 
+  // handle close of the navbar menu - this menu includes the current users name and logout button
   const handleClose = () => {
     setAnchorEl(null);
     setMobileMenuAnchorEl(null);
   };
 
+  // logout logic
   const handleLogout = () => {
-    handleClose();
+    handleClose(); // close the menu
+    // clear the App user context, setting it back to default
     setUser({
       id: 0,
       username: "",
       email: "",
       isAdmin: false,
     });
+    // Expire the cookie used to store the users details
     document.cookie =
       "CarerConnect_user_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-    navBarNavigate("login");
+    navBarNavigate("login"); // navigate back to the login page
   };
 
   // Function uses react-router-dom to navigate to the selected route,
@@ -72,6 +79,7 @@ export default function NavBar() {
               flexDirection: "row",
             }}
           >
+            {/* Show the Icon and App name */}
             <AddCommentIcon
               sx={{
                 fontSize: "1.8rem",
@@ -127,6 +135,7 @@ export default function NavBar() {
                     horizontal: "right",
                   }}
                 >
+                  {/* Show each navigation option in a drop down menu */}
                   {pages.map((page, index) => (
                     <MenuItem
                       key={index}
@@ -141,7 +150,7 @@ export default function NavBar() {
                 </Menu>
               </Box>
 
-              {/* User Menu */}
+              {/* User Menu - showing username and logout button*/}
               <div>
                 <Button color="inherit" onClick={handleMenu}>
                   {username && (

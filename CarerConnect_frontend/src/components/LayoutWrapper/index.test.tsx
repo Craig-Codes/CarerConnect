@@ -1,5 +1,5 @@
 import { render, screen } from "@testing-library/react";
-import { MemoryRouter } from "react-router-dom"; // Import BrowserRouter
+import { MemoryRouter } from "react-router-dom";
 import { LayoutWrapper } from ".";
 
 describe("<LayoutWrapper />", () => {

@@ -1,6 +1,7 @@
 import { fireEvent, render, screen } from "@testing-library/react";
-import { User, UserContext } from "../Context";
+import { UserContext } from "../Context";
 import { useContext, useState } from "react";
+import { User } from "../../utils/Types/types";
 
 // Consumer Component - used to test the context change
 const ConsumerComponent = () => {
@@ -12,6 +13,7 @@ const ConsumerComponent = () => {
       <button
         onClick={() =>
           setUser({
+            id: 1,
             email: "test@test.com",
             username: "Updated Username",
             isAdmin: false,
@@ -27,6 +29,7 @@ const ConsumerComponent = () => {
 // Test Component wrapped with the context provider
 const TestComponent = () => {
   const [user, setUser] = useState<User>({
+    id: 1,
     email: "",
     username: "Initial Username",
     isAdmin: false,

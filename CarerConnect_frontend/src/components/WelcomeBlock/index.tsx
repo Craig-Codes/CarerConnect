@@ -2,12 +2,13 @@ import { Box, Button, Paper, Typography } from "@mui/material";
 import theme from "../../theme/theme";
 import { useNavigate } from "react-router-dom";
 
+// Properties passed into the component
 interface WelcomeBlockProps {
   username: string;
 }
 
 export const WelcomeBlock = ({ username }: WelcomeBlockProps) => {
-  const navigate = useNavigate(); // use react router to change pages
+  const navigate = useNavigate(); // use react router dom to change pages
 
   return (
     <Paper elevation={2} sx={{ padding: "1vw" }}>
@@ -20,8 +21,10 @@ export const WelcomeBlock = ({ username }: WelcomeBlockProps) => {
           paddingRight: "12px",
         }}
       >
+        {/* dynamically insert users username */}
         Hello {username}
       </Typography>
+      {/* navigation buttons for forum or events */}
       <Box
         sx={{
           padding: "15px",

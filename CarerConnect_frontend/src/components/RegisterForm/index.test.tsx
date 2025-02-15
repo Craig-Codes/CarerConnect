@@ -33,6 +33,7 @@ describe("<RegisterForm />", () => {
             email: "",
             username: "",
             isAdmin: false,
+            id: 0,
           },
           setUser: mockSetUser,
         }}
@@ -62,6 +63,7 @@ describe("<RegisterForm />", () => {
             email: "",
             username: "",
             isAdmin: false,
+            id: 0,
           },
           setUser: mockSetUser,
         }}
@@ -102,6 +104,7 @@ describe("<RegisterForm />", () => {
             email: "",
             username: "",
             isAdmin: false,
+            id: 0,
           },
           setUser: mockSetUser,
         }}
@@ -147,6 +150,7 @@ describe("<RegisterForm />", () => {
             email: "",
             username: "",
             isAdmin: false,
+            id: 0,
           },
           setUser: mockSetUser,
         }}

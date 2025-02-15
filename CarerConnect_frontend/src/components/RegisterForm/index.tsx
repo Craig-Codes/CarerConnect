@@ -75,21 +75,25 @@ export default function RegisterForm() {
   // Function sends a http fetch request to the API /user/register endpoint using the POST method
   const submitRegisterForm = async (event: FormEvent) => {
     event.preventDefault(); // Prevents the form from submitting and reloading the page
-    const result = await fetchWrapper("POST", "user/register", {
-      username: username,
-      password: password,
-      email: email,
-    });
+    try {
+      const result = await fetchWrapper("POST", "user/register", {
+        username: username,
+        password: password,
+        email: email,
+      });
 
-    if (!result.message) {
-      // Update the User Context across the application to the users details
-      setUser(() => ({
-        id: result.id,
-        email: result.email,
-        isAdmin: result.isAdmin,
-        username: result.username,
-      }));
-    } else {
+      if (!result.message) {
+        // Update the User Context across the application to the users details
+        setUser(() => ({
+          id: result.id,
+          email: result.email,
+          isAdmin: result.isAdmin,
+          username: result.username,
+        }));
+      } else {
+        setLogAlert(true);
+      }
+    } catch {
       setLogAlert(true);
     }
   };

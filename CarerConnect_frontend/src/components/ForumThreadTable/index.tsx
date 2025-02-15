@@ -12,10 +12,11 @@ import theme from "../../theme/theme";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { grey } from "@mui/material/colors";
 import { useNavigate } from "react-router-dom";
-import { Thread } from "../../pages/forumCategory";
 import { WarningModal } from "../WarningModal";
 import { useState } from "react";
+import { Thread } from "../../utils/Types/types";
 
+// Properties passed into the component
 interface ForumThreadTableProps {
   isAdmin: boolean;
   threads: Thread[];
@@ -30,6 +31,7 @@ export const ForumThreadTable = ({
   // Use react-router-dom to navigate to correct page when user clicks a table row
   const navigate = useNavigate();
 
+  //  States control opening and closing modals
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const handleDeleteModalOpen = () => setDeleteModalOpen(true);
 
@@ -58,6 +60,7 @@ export const ForumThreadTable = ({
         sx={{ width: { xs: "90vw", lg: "80vw", marginTop: "20px" } }}
       >
         <Table aria-label="forum thread table">
+          {/* Header row of table */}
           <TableHead>
             <TableRow>
               <TableCell
@@ -100,6 +103,7 @@ export const ForumThreadTable = ({
             </TableRow>
           </TableHead>
           <TableBody>
+            {/* Table rows made from each found thread using a loop */}
             {threadData.map((thread) => (
               <TableRow
                 key={thread.id}
@@ -111,6 +115,7 @@ export const ForumThreadTable = ({
                 <TableCell
                   component="th"
                   scope="row"
+                  // On clicking the table row, navigate to the thread page
                   onClick={() => navigate(`/thread/${thread.id}`)}
                 >
                   <Typography>{thread.thread_title}</Typography>
@@ -172,6 +177,7 @@ export const ForumThreadTable = ({
           </TableBody>
         </Table>
       </TableContainer>
+      {/* Warning modal used to ensure an admin user has to confirm a delete action on a thread */}
       <WarningModal
         open={deleteModalOpen}
         handleClose={handleDeleteModalClose}

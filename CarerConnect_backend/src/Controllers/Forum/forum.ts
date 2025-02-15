@@ -52,7 +52,6 @@ export const getThreads = async (req: Request, res: Response) => {
 };
 
 export const addThread = async (req: Request, res: Response) => {
-  console.log("Adding thrad");
   try {
     const token = req.cookies.CarerConnect_user_token;
     const userId = await getUserId(token); // Decode token to get the users id

@@ -1,7 +1,10 @@
+// theme file is provided to entire app to allow components to share simialr look and feel
+
 import { colors } from "@mui/material";
 import { grey } from "@mui/material/colors";
 import { createTheme, responsiveFontSizes } from "@mui/material/styles";
 
+// Main colours are defined here and used in the theme to customsie components
 let theme = createTheme({
   palette: {
     primary: {
@@ -17,6 +20,7 @@ let theme = createTheme({
 });
 
 theme = createTheme(theme, {
+  // components are overwritten to customise look and feel
   components: {
     MuiTypography: {
       styleOverrides: {
@@ -132,6 +136,7 @@ theme = createTheme(theme, {
   },
 });
 
+// This ensure typography blocks scale based on screen size
 theme = responsiveFontSizes(theme);
 
 export default theme;

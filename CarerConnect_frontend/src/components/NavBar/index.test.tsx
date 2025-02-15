@@ -17,7 +17,12 @@ describe("<NavBar />", () => {
     render(
       <UserContext.Provider
         value={{
-          user: { email: "test@test.com", isAdmin: true, username: "Craig" },
+          user: {
+            email: "test@test.com",
+            isAdmin: true,
+            username: "Craig",
+            id: 0,
+          },
           setUser: () => {},
         }}
       >
@@ -27,7 +32,7 @@ describe("<NavBar />", () => {
 
     // WHEN
     const homeLink = screen.getAllByText("Home")[0];
-    const meetupLink = screen.getAllByText("Meetups")[0];
+    const meetupLink = screen.getAllByText("Events")[0];
     const forumLink = screen.getAllByText("Forum")[0];
 
     // THEN
@@ -45,6 +50,7 @@ describe("<NavBar />", () => {
             email: "test@test.com",
             isAdmin: true,
             username: "Craig Adam",
+            id: 0,
           },
           setUser: () => {},
         }}
@@ -71,6 +77,7 @@ describe("<NavBar />", () => {
             email: "",
             isAdmin: false,
             username: "",
+            id: 0,
           },
           setUser: () => {},
         }}
@@ -81,7 +88,7 @@ describe("<NavBar />", () => {
 
     // THEN
     expect(screen.queryByText("Home")).not.toBeInTheDocument();
-    expect(screen.queryByText("Meetups")).not.toBeInTheDocument();
+    expect(screen.queryByText("Events")).not.toBeInTheDocument();
     expect(screen.queryByText("Forum")).not.toBeInTheDocument();
     expect(screen.queryByTestId("MenuIcon")).not.toBeInTheDocument();
   });
@@ -95,6 +102,7 @@ describe("<NavBar />", () => {
             email: "user1@test.com",
             isAdmin: true,
             username: "User1",
+            id: 0,
           },
           setUser: () => {},
         }}

@@ -10,12 +10,15 @@ interface LayoutProps {
 export const LayoutWrapper = ({ children }: LayoutProps) => {
   return (
     <>
+      {/* Place the navbar onto all pages */}
       <NavBar />
+      {/* Wrap each page in a box component which can be used for styling all pages at once */}
       <Box
         sx={{
           marginTop: { xs: "75px", md: "56px" },
         }}
       >
+        {/* children allows any other components to be placed into the wrapper */}
         {children}
       </Box>
     </>
