@@ -12,9 +12,9 @@ import theme from "../../theme/theme";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { grey } from "@mui/material/colors";
 import { useNavigate } from "react-router-dom";
-import { Thread } from "../../pages/forumCategory";
 import { WarningModal } from "../WarningModal";
 import { useState } from "react";
+import { Thread } from "../../utils/Types/types";
 
 // Properties passed into the component
 interface ForumThreadTableProps {

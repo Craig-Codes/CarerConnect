@@ -1,7 +1,6 @@
 import { render, screen, fireEvent, act } from "@testing-library/react";
 import { EventCard } from ".";
-import { Meetup } from "../../utils/Types/types";
-import { User } from "../Context";
+import { Meetup, User } from "../../utils/Types/types";
 
 // Mocked event and user data
 const mockEvent: Meetup = {

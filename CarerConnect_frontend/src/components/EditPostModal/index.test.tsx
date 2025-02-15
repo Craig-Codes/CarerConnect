@@ -1,7 +1,7 @@
 import { fireEvent, render, screen } from "@testing-library/react";
 import { EditPostModal } from ".";
 import userEvent from "@testing-library/user-event";
-import { Post } from "../../pages/forumThread";
+import { Post } from "../../utils/Types/types";
 
 describe("<EditPostModal />", () => {
   const user = userEvent.setup();

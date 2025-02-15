@@ -1,9 +1,8 @@
 import { fireEvent, render, screen } from "@testing-library/react";
 import { ForumPostGroup } from ".";
-import { Post } from "../../pages/forumThread";
-import { User } from "../Context";
 import { EditPostModal } from "../EditPostModal";
 import { WarningModal } from "../WarningModal";
+import { Post, User } from "../../utils/Types/types";
 
 // Mock the EditPostModal and WarningModal components
 // This allows them to be called, without triggering any further actions

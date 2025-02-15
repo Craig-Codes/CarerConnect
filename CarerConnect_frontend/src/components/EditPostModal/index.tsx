@@ -7,9 +7,9 @@ import Typography from "@mui/material/Typography";
 import theme from "../../theme/theme";
 import { TextField } from "@mui/material";
 import { useForm, SubmitHandler } from "react-hook-form";
-import { Post } from "../../pages/forumThread";
 import { useEffect } from "react";
 import { modalStyles } from "../../utils/Consts/consts";
+import { Post } from "../../utils/Types/types";
 
 // Properties passed into the component
 interface EditPostModalProps {

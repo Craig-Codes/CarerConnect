@@ -1,6 +1,7 @@
 import { fireEvent, render, screen } from "@testing-library/react";
-import { User, UserContext } from "../Context";
+import { UserContext } from "../Context";
 import { useContext, useState } from "react";
+import { User } from "../../utils/Types/types";
 
 // Consumer Component - used to test the context change
 const ConsumerComponent = () => {
