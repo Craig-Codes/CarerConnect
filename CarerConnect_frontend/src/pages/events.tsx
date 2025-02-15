@@ -165,7 +165,7 @@ export const EventsPage = () => {
       ));
     };
     setEventCards(renderEventCards());
-  }, [allMeetups, tab]);
+  }, [allMeetups, fetchSubscribedMeetups, tab]);
 
   return (
     <>

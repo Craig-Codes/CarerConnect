@@ -42,7 +42,10 @@ test("Standard user can create an event, subscribe, then unsubscribe. Event can 
     await page
       .getByRole("button", { name: "Next month" })
       .click({ force: true });
-    await page.getByRole("gridcell").nth(-1).click({ force: true });
+    await page
+      .getByRole("button", { name: "Next month" })
+      .click({ force: true });
+    await page.getByRole("gridcell", { name: "12" }).first().click();
   } else if (isMobileSafari) {
     // Mobile safari gets selectors slightly differently
     await page
@@ -75,7 +78,7 @@ test("Standard user can create an event, subscribe, then unsubscribe. Event can 
   await page
     .locator(`div`)
     .filter({ hasText: new RegExp(`^Test Event-${randomInt}$`) })
-    .getByTestId("ModeEditIcon")
+    .getByTestId("edit-icon")
     .click();
   await page.getByLabel("Title *").fill("Test Event - editted");
   await page.getByLabel("Description *").fill("Test online event -editted");
@@ -142,7 +145,7 @@ test("Admin user can edit another users event, unsubscribe, then delete the even
   await page
     .locator("div")
     .filter({ hasText: /^Test Event - editted admin$/ })
-    .getByTestId("DeleteIcon")
+    .getByTestId("delete-icon")
     .locator("path")
     .first()
     .click();
