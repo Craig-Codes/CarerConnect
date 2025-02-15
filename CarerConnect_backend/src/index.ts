@@ -62,7 +62,7 @@ app.post("/api/forum/thread/:id", userAuthorisationMiddleware, addThread);
 app.patch("/api/forum/thread/:id", userAuthorisationMiddleware, editThread);
 
 app.get("/api/forum/thread/:id", userAuthorisationMiddleware, getThreadPosts);
-app.delete("/api/forum/post/:id", adminAuthorisationMiddleware, deletePost);
+app.delete("/api/forum/post/:id", userAuthorisationMiddleware, deletePost);
 app.post("/api/forum/post/:id", userAuthorisationMiddleware, addPost);
 app.patch("/api/forum/post/:id", userAuthorisationMiddleware, editPost);
 

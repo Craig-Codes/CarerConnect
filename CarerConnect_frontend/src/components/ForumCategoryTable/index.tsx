@@ -20,6 +20,7 @@ type CategoryTableRow = {
   thread_count: number;
 };
 
+// Properties passed into the component
 interface ForumCategoryTableProps {
   username: string;
   categories: CategoryTableRow[];
@@ -45,6 +46,7 @@ export const ForumCategoryTable = ({
     >
       <Table aria-label="forum category table">
         <TableHead>
+          {/* Header row */}
           <TableRow>
             <TableCell
               sx={{
@@ -83,9 +85,11 @@ export const ForumCategoryTable = ({
           </TableRow>
         </TableHead>
         <TableBody>
+          {/* Map each found post into a row */}
           {categories.map((category) => (
             <TableRow
               key={category.id}
+              // Make the row clickable, going straight to the category threads page
               onClick={() => navigate(`/category/${category.id}`)}
               sx={{
                 cursor: "pointer",

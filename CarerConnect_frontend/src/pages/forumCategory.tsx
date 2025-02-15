@@ -13,22 +13,14 @@ import {
 } from "../components/CreateThreadModal";
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 import dayjs from "dayjs";
-
-export type Thread = {
-  id: number;
-  thread_title: string;
-  post_count: number;
-  created_at: string;
-  category_id: number;
-  category_title: string;
-};
+import { Thread } from "../utils/Types/types";
 
 export const ForumCategoryPage = () => {
-  const navigate = useNavigate();
-  const { user } = useContext(UserContext);
+  const navigate = useNavigate(); // use react-router-dom to change pages
+  const { user } = useContext(UserContext); // get the current logged in user from glboal user context
 
   const { id } = useParams<{ id: string }>(); // Get the category ID from the URL
-  const [allThreads, setAllThreads] = useState<Thread[]>();
+  const [allThreads, setAllThreads] = useState<Thread[]>(); // state stores all found threads
 
   // state to handle open and closing the create event modal
   const [createThreadModalOpen, setCreateThreadModalOpen] = useState(false);
@@ -47,24 +39,26 @@ export const ForumCategoryPage = () => {
   ) => {
     setCreateThreadModalOpen(false); // close the modal
     if (create) {
+      // pass the content to the function to handle the API call to create a new thread
       handleCreateThread(threadContent!);
     }
   };
 
+  // function takes in new thread parameters and calls the API to create the thread
   const handleCreateThread = async (eventContent: CreateThreadFormInputs) => {
     try {
-      await fetchWrapper("POST", `forum/thread/${id}`, eventContent);
-      await fetchThreads();
-      toast.success("Successfully created thread");
+      await fetchWrapper("POST", `forum/thread/${id}`, eventContent); // pass new thread data to API to create thread
+      await fetchThreads(); // get updated list of threads
+      toast.success("Successfully created thread"); // keep the user informed of success
     } catch {
-      toast.error("Failed to create thread, please try again");
+      toast.error("Failed to create thread, please try again"); // gracefully let the user know of an API failure
     }
   };
 
   // function attempts to delete the thread, making a delete request to the API with the threadsId
   const handleThreadDelete = async (threadId: number) => {
     try {
-      await fetchWrapper("DELETE", `forum/thread/${threadId}`);
+      await fetchWrapper("DELETE", `forum/thread/${threadId}`); // pass the thread id to the API to delete it
       await fetchThreads();
       toast.success("Successfully deleted thread");
     } catch {
@@ -93,12 +87,13 @@ export const ForumCategoryPage = () => {
     }
   };
 
-  // When the id changes, this code triggers
+  // When the category id changes, this code triggers via the hook
   useEffect(() => {
     // Check that the category is valid, if not redirect to forum category page
     const isValidId = validateCategoryId(id);
 
     if (!isValidId) {
+      // if id is not as expected, redirect to previous page
       navigate("/forum", { replace: true });
     }
 

@@ -1,6 +1,7 @@
 import { Paper, Typography } from "@mui/material";
 import { grey } from "@mui/material/colors";
 
+// Properties passed into the component
 type ForumThreadTitleBlockProps = {
   title: string;
   createdAt: string;
@@ -20,7 +21,9 @@ export const ForumThreadTitleBlock = ({
         backgroundColor: grey[200],
       }}
     >
+      {/* Show the thread title */}
       <Typography variant="subtitle1">{title}</Typography>
+      {/* Show the thread created date */}
       <Typography
         variant="caption"
         sx={{

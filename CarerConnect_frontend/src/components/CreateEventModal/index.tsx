@@ -21,18 +21,7 @@ import {
   renderMultiSectionDigitalClockTimeView,
 } from "@mui/x-date-pickers";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
-
-const style = {
-  position: "absolute",
-  top: "50%",
-  left: "50%",
-  transform: "translate(-50%, -50%)",
-  width: 400,
-  bgcolor: "background.paper",
-  border: "2px solid #000",
-  boxShadow: 24,
-  p: 4,
-};
+import { modalStyles } from "../../utils/Consts/consts";
 
 // Properties passed into the component
 interface CreateEventModalProps {
@@ -43,7 +32,7 @@ interface CreateEventModalProps {
   ) => void;
 }
 
-// expected subscription input type
+// expected form input types
 export type CreateSubscriptionFormInputs = {
   title: string;
   description: string;
@@ -57,6 +46,7 @@ export const CreateEventModal = ({
   open,
   handleClose,
 }: CreateEventModalProps) => {
+  // Properties from react-hook-form
   const {
     register,
     handleSubmit,
@@ -85,6 +75,7 @@ export const CreateEventModal = ({
         aria-describedby="transition-modal-description"
         open={open}
         onClose={() => {
+          // If modal is closed, pass false up to parent component
           handleClose(false);
         }}
         closeAfterTransition
@@ -99,7 +90,7 @@ export const CreateEventModal = ({
         <Fade in={open}>
           <Box
             sx={{
-              ...style,
+              ...modalStyles,
               borderColor: theme.palette.secondary.main,
               width: { xs: "70vw", md: "50vw" },
             }}
@@ -288,6 +279,7 @@ export const CreateEventModal = ({
               />
               <br />
               <Box sx={{ paddingTop: "10px" }}>
+                {/* Submit button to submit the form and pass all input fields */}
                 <Button type="submit">Submit</Button>
                 <Button onClick={() => handleClose(false)}>Cancel</Button>
               </Box>

@@ -1,12 +1,8 @@
+// Component stores the global user state across entire application
+// Componet wraps the entire app (App.tsx) in a ContextProvider, allowing the current
+// user state to be accessed or updated anywhere in the app
 import { Dispatch, SetStateAction, createContext } from "react";
-
-// User type encapsulates necessary user information required across the application
-export type User = {
-  id: number;
-  email: string;
-  username: string;
-  isAdmin: boolean;
-};
+import { User } from "../../utils/Types/types";
 
 export interface UserContextType {
   user: User;

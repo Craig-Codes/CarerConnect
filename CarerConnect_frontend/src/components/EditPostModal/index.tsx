@@ -9,25 +9,16 @@ import { TextField } from "@mui/material";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { Post } from "../../pages/forumThread";
 import { useEffect } from "react";
+import { modalStyles } from "../../utils/Consts/consts";
 
-const style = {
-  position: "absolute",
-  top: "50%",
-  left: "50%",
-  transform: "translate(-50%, -50%)",
-  width: 400,
-  bgcolor: "background.paper",
-  border: "2px solid #000",
-  boxShadow: 24,
-  p: 4,
-};
-
+// Properties passed into the component
 interface EditPostModalProps {
   open: boolean;
   handleClose: (remove: boolean, content?: EditPostFormInputs) => void;
   post: Post;
 }
 
+// expected form input types
 export type EditPostFormInputs = {
   content: string;
   postId: number;
@@ -38,6 +29,7 @@ export const EditPostModal = ({
   handleClose,
   post,
 }: EditPostModalProps) => {
+  // Properties from react-hook-form
   const {
     register,
     handleSubmit,
@@ -48,12 +40,14 @@ export const EditPostModal = ({
       content: post.content,
     },
   });
+  // using React-hook-form to control form inputs and error handling
 
   // When the form field resets or the post state changes, get the latest post content to auto populate the form content field
   useEffect(() => {
     reset({ content: post.content });
   }, [post, reset]);
 
+  // when form submits successfully pass the inputs up to the parent component to make ncessary API calls
   const onSubmit: SubmitHandler<EditPostFormInputs> = (data) => {
     handleClose(true, { content: data.content, postId: post.id });
   };
@@ -64,6 +58,7 @@ export const EditPostModal = ({
       aria-describedby="transition-modal-description"
       open={open}
       onClose={() => {
+        // If modal is closed, pass false up to parent component
         handleClose(false);
       }}
       closeAfterTransition
@@ -74,10 +69,11 @@ export const EditPostModal = ({
         },
       }}
     >
+      {/* stylign for opening modal, and the modal itself */}
       <Fade in={open}>
         <Box
           sx={{
-            ...style,
+            ...modalStyles,
             borderColor: theme.palette.secondary.main,
             width: { xs: "70vw", md: "50vw" },
           }}
@@ -121,6 +117,7 @@ export const EditPostModal = ({
               error={!!errors.content}
             />
             <Box sx={{ paddingTop: "25px" }}>
+              {/* Submit button to submit the form and pass all input fields */}
               <Button type="submit">Submit</Button>
               <Button onClick={() => handleClose(false)}>Cancel</Button>
             </Box>

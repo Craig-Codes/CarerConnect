@@ -1,14 +1,14 @@
 import { Box, Button, Link, Paper, Typography } from "@mui/material";
-import { Meetup } from "../../utils/Types/types";
+import { Meetup, User } from "../../utils/Types/types";
 import ModeEditIcon from "@mui/icons-material/ModeEdit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import theme from "../../theme/theme";
-import { User } from "../Context";
 import { useState } from "react";
 import { WarningModal } from "../WarningModal";
 import { EditEventModal, EditSubscriptionFormInputs } from "../EditEventModal";
 import { grey, teal } from "@mui/material/colors";
 
+// Properties passed into the component
 interface EventCardProps {
   width?: string; // optional parameter to control width on different pages
   event: Meetup;
@@ -33,7 +33,7 @@ export const EventCard = ({
   subscribeEvent,
   currentlySubscribedEvents,
 }: EventCardProps) => {
-  // Handle the confirmation modal open / close
+  // Handle each modals open / close state
   const [unsubscribeModalOpen, setUnsubscribeModalOpen] = useState(false);
   const handleUnsubscribeModalOpen = () => setUnsubscribeModalOpen(true);
 
@@ -46,10 +46,12 @@ export const EventCard = ({
   const [subscribeModalOpen, setSubscribeModalOpen] = useState(false);
   const handleSubscribeModalOpen = () => setSubscribeModalOpen(true);
 
-  // Function to close the modal
+  // Functions to close each modal - either passing the value up to the page
+  // to control the API call, or simply closing the modal
   const handleUnsubscribeModalClose = async (unsubscribe: boolean) => {
     setUnsubscribeModalOpen(false);
     if (unsubscribe) {
+      // pass the selected eventId to the parent
       unsubscribeEvent(event.id);
     }
   };
@@ -67,6 +69,7 @@ export const EventCard = ({
   ) => {
     setEditModalOpen(false);
     if (shouldEdit) {
+      // pass the selected eventId and changed content to the parent
       editEvent(event.id, content);
     }
   };
@@ -78,7 +81,7 @@ export const EventCard = ({
     }
   };
 
-  // Function uses logic to decide which button is shown to the user
+  // Function uses logic to decide which button is shown to the user, using conditional rendering
   const conditionallyRenderButton = () => {
     // If the event is already fully subscribed, cannot subscribe so hide the subscribe button
     if (event.subscriber_count >= event.max_attendees) {
@@ -108,7 +111,7 @@ export const EventCard = ({
       );
     }
 
-    // The user is not subscibed, show the subscribe button
+    // If the user is not subscibed, show the subscribe button
     else {
       return (
         <Button
@@ -212,6 +215,7 @@ export const EventCard = ({
           <span style={{ display: "inline", color: teal[700] }}>
             {event.location}
           </span>
+          // style the link
         )}
       </Typography>
       <Typography
@@ -226,7 +230,9 @@ export const EventCard = ({
       >
         Participants: {event.subscriber_count} of {event.max_attendees}
       </Typography>
+      {/* Only show the conditionally rendered buttons */}
       {conditionallyRenderButton()}
+      {/* All of the necessary modals which are called from the component */}
       <WarningModal
         open={unsubscribeModalOpen}
         handleClose={handleUnsubscribeModalClose}

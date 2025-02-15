@@ -9,19 +9,9 @@ import { useForm, SubmitHandler } from "react-hook-form";
 import theme from "../../theme/theme";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
+import { modalStyles } from "../../utils/Consts/consts";
 
-const style = {
-  position: "absolute",
-  top: "50%",
-  left: "50%",
-  transform: "translate(-50%, -50%)",
-  width: 400,
-  bgcolor: "background.paper",
-  border: "2px solid #000",
-  boxShadow: 24,
-  p: 4,
-};
-
+// properties passed into the modal, allowing parent componet to control opening and closing
 interface CreatePostModalProps {
   open: boolean;
   handleClose: (create: boolean, postContent?: CreatePostFormInputs) => void;
@@ -35,13 +25,16 @@ export const CreatePostModal = ({
   open,
   handleClose,
 }: CreatePostModalProps) => {
+  // Properties from react-hook-form
   const {
     register,
     handleSubmit,
     formState: { errors },
     // control,
   } = useForm<CreatePostFormInputs>();
+  // using React-hook-form to control form inputs and error handling
 
+  // when form submits successfully pass the inputs up to the parent component to make ncessary API calls
   const onSubmit: SubmitHandler<CreatePostFormInputs> = (data) => {
     handleClose(true, {
       content: data.content,
@@ -49,12 +42,14 @@ export const CreatePostModal = ({
   };
 
   return (
+    // Wrapped in localisation provider to ensure data / time is correct for users across the world
     <LocalizationProvider dateAdapter={AdapterDateFns}>
       <Modal
         aria-labelledby="transition-modal-title"
         aria-describedby="transition-modal-description"
         open={open}
         onClose={() => {
+          // If modal is closed, pass false up to parent component
           handleClose(false);
         }}
         closeAfterTransition
@@ -65,10 +60,11 @@ export const CreatePostModal = ({
           },
         }}
       >
+        {/* stylign for opening modal, and the modal itself */}
         <Fade in={open}>
           <Box
             sx={{
-              ...style,
+              ...modalStyles,
               borderColor: theme.palette.secondary.main,
               width: { xs: "70vw", md: "50vw" },
             }}
@@ -113,6 +109,7 @@ export const CreatePostModal = ({
                 sx={{ paddingBottom: "10px" }}
               />
               <Box sx={{ paddingTop: "10px" }}>
+                {/* Submit button to submit the form and pass all input fields */}
                 <Button type="submit">Submit</Button>
                 <Button onClick={() => handleClose(false)}>Cancel</Button>
               </Box>

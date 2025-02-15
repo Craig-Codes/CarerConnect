@@ -1,13 +1,15 @@
+// This hook is used to allow different components to get meetups
 import { useState, useEffect } from "react";
 import { fetchWrapper } from "../utils/fetchWrapper";
 import { formatDate } from "../utils/utils";
 import { Meetup } from "../utils/Types/types";
 
 type useFetchMeetupsProps = {
-  all?: boolean;
+  all?: boolean; // conditional allows componets to get all events, or just a specific users events
 };
 
-const useFetchMeetups = ({ all = false }: useFetchMeetupsProps = {}) => {
+export const useFetchMeetups = ({ all = false }: useFetchMeetupsProps = {}) => {
+  // State is used to keep track of the current meetups value
   const [meetups, setMeetups] = useState<Meetup[]>([]);
 
   const fetchMeetups = async () => {
@@ -16,11 +18,13 @@ const useFetchMeetups = ({ all = false }: useFetchMeetupsProps = {}) => {
       let eventData;
 
       if (all) {
+        // different API endpoints depending on condition
         eventData = await fetchWrapper("GET", "event");
       } else {
         eventData = await fetchWrapper("GET", "event/user");
       }
 
+      // map the returned events into the correct format
       const formattedMeetups = eventData.map((meetup: Meetup) => ({
         id: meetup.id,
         user_id: meetup.user_id,
@@ -33,7 +37,7 @@ const useFetchMeetups = ({ all = false }: useFetchMeetupsProps = {}) => {
         subscriber_count: Number(meetup.subscriber_count),
       }));
 
-      setMeetups(formattedMeetups);
+      setMeetups(formattedMeetups); // set the meetups across any componet using this hook
     } catch (error) {
       console.error("Failed to fetch user data:", error);
     }
@@ -45,6 +49,6 @@ const useFetchMeetups = ({ all = false }: useFetchMeetupsProps = {}) => {
   }, []);
 
   return { meetups, fetchMeetups };
+  // Any component can use the value or set the value using the following syntax:
+  //   const { meetups, fetchMeetups } = useFetchMeetups();
 };
-
-export default useFetchMeetups;

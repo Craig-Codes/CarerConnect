@@ -8,25 +8,16 @@ import theme from "../../theme/theme";
 import { TextField } from "@mui/material";
 import { Meetup } from "../../utils/Types/types";
 import { useForm, SubmitHandler } from "react-hook-form";
+import { modalStyles } from "../../utils/Consts/consts";
 
-const style = {
-  position: "absolute",
-  top: "50%",
-  left: "50%",
-  transform: "translate(-50%, -50%)",
-  width: 400,
-  bgcolor: "background.paper",
-  border: "2px solid #000",
-  boxShadow: 24,
-  p: 4,
-};
-
+// Properties passed into the component
 interface EditEventModalProps {
   open: boolean;
   handleClose: (remove: boolean, content?: EditSubscriptionFormInputs) => void;
   currentEventData: Meetup;
 }
 
+// expected form input types
 export type EditSubscriptionFormInputs = {
   title: string;
   description: string;
@@ -37,17 +28,21 @@ export const EditEventModal = ({
   handleClose,
   currentEventData,
 }: EditEventModalProps) => {
+  // Properties from react-hook-form
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm<EditSubscriptionFormInputs>({
+    // Default values incase no current subscription is passed in
     defaultValues: {
       title: currentEventData.title,
       description: currentEventData.description,
     },
   });
+  // using React-hook-form to control form inputs and error handling
 
+  // when form submits successfully pass the inputs up to the parent component to make ncessary API calls
   const onSubmit: SubmitHandler<EditSubscriptionFormInputs> = (data) => {
     handleClose(true, { title: data.title, description: data.description });
   };
@@ -58,6 +53,7 @@ export const EditEventModal = ({
       aria-describedby="transition-modal-description"
       open={open}
       onClose={() => {
+        // If modal is closed, pass false up to parent component
         handleClose(false);
       }}
       closeAfterTransition
@@ -68,10 +64,11 @@ export const EditEventModal = ({
         },
       }}
     >
+      {/* stylign for opening modal, and the modal itself */}
       <Fade in={open}>
         <Box
           sx={{
-            ...style,
+            ...modalStyles,
             borderColor: theme.palette.secondary.main,
             width: { xs: "70vw", md: "50vw" },
           }}
@@ -142,6 +139,7 @@ export const EditEventModal = ({
             />
             <br />
             <Box sx={{ paddingTop: "25px" }}>
+              {/* Submit button to submit the form and pass all input fields */}
               <Button type="submit">Submit</Button>
               <Button onClick={() => handleClose(false)}>Cancel</Button>
             </Box>
