@@ -2,16 +2,16 @@
 
 # Navigate to the frontend directory and run tests
 echo "Running frontend tests..."
-cd CarerConnect_frontend || { echo "Frontend directory not found"; exit 1; }
+cd CarerConnect_frontend 
 npm run test -- --runInBand
+echo "Running end-to-end tests..."
 npm run e2e 
 cd ..
 
 # Navigate to the backend directory and run tests
 echo "Running backend tests..."
-cd CarerConnect_backend || { echo "Backend directory not found"; exit 1; }
+cd CarerConnect_backend 
 npm run test -- --runInBand
- || { echo "Backend tests failed"; exit 1; }
 cd ..
 
 echo "All tests completed successfully!"
