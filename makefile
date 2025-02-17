@@ -34,5 +34,8 @@ backend-npm-install:
 run-migration: 
 	docker exec -e POSTGRES_HOST=database carer_connect_backend npm run migrate up
 
+test-all:
+	./runTests.sh
+
 
 
