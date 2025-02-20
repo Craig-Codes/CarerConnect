@@ -26,6 +26,7 @@ import {
   updateEvent,
 } from "./Controllers/Events/events";
 
+// The node.js application uses the express framework - a lightweight web application framework
 export const app = express();
 
 // Define the allowed origin - in this case only the frontends domain, preventing cross-site forgery attacks
@@ -34,33 +35,38 @@ const corsOptions = {
   credentials: true, // Allow credentials (cookies, authorization headers)
 };
 
-app.use(cors(corsOptions));
-app.use(express.json());
+app.use(cors(corsOptions)); // cors enabled, protecting the server from unorthorised traffic which will be dropped
+app.use(express.json()); // allows express to parse http method request json body
 app.use(cookieParser()); // use cookie parser on all routes
-const port = 3000;
+const port = 3000; // port the server is served on
 
-connectDatabase();
+connectDatabase(); // when the app is loaded, connect to the database
 
+// This route is currently used for quick testing purposes. Allowing a simple get request to '/' to prove the app is running
 app.get("/", (req, res) => {
   res.send("Welcome to the home route!");
 });
 
-// adminAuthorisationMiddlewear used to protect certain routes which
+// For a stateless architecture, the server does not store sessions
+// Instead, it relies on cookies being sent with each request, which are decoded to find user information
+// This is carried out in the middleware, which protects all API endpoints.
+
+// adminAuthorisationMiddleware used to protect certain routes which
 // require that a user is an administrator
 // userAuthorisationMiddlewear used to protect certain routes which
 // require a user to be logged in
+
+// User routes
 app.get("/api/user", userAuthorisationMiddleware, getUser);
 app.post("/api/user", loginUser);
 app.post("/api/user/register", registerUser);
 
 // Forum routes
 app.get("/api/forum", userAuthorisationMiddleware, getCategories);
-
 app.get("/api/forum/threads/:id", userAuthorisationMiddleware, getThreads);
 app.delete("/api/forum/thread/:id", adminAuthorisationMiddleware, deleteThread);
 app.post("/api/forum/thread/:id", userAuthorisationMiddleware, addThread);
 app.patch("/api/forum/thread/:id", userAuthorisationMiddleware, editThread);
-
 app.get("/api/forum/thread/:id", userAuthorisationMiddleware, getThreadPosts);
 app.delete("/api/forum/post/:id", userAuthorisationMiddleware, deletePost);
 app.post("/api/forum/post/:id", userAuthorisationMiddleware, addPost);
@@ -87,6 +93,7 @@ app.post(
   subscribeEvent
 );
 
+// When the app starts, it listens for requests entering on only the chosen port (3000)
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);
 });

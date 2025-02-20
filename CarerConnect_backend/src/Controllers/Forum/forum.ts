@@ -19,6 +19,7 @@ import { getUserId } from "../User/user";
 import { getUserIsAdmin } from "../../Validators/token";
 import { stringInputValidator } from "../../Validators/input";
 
+// Function returns a list of forum categories with the thread and post of each
 export const getCategories = async (req: Request, res: Response) => {
   try {
     const categories = (
@@ -51,6 +52,7 @@ export const getThreads = async (req: Request, res: Response) => {
   }
 };
 
+// Function adds a thread to the database
 export const addThread = async (req: Request, res: Response) => {
   try {
     const token = req.cookies.CarerConnect_user_token;
@@ -132,6 +134,7 @@ export const getThreadPosts = async (req: Request, res: Response) => {
   }
 };
 
+// Function allows a forum post to be added to the database
 export const addPost = async (req: Request, res: Response) => {
   try {
     const token = req.cookies.CarerConnect_user_token;
@@ -220,6 +223,7 @@ export const deletePost = async (req: Request, res: Response) => {
   }
 };
 
+// Function allows a thread to be editted
 export const editThread = async (req: Request, res: Response) => {
   // Get the input :id and convert the string into a number
   const threadId = Number(req.params.id);
@@ -283,6 +287,7 @@ export const editThread = async (req: Request, res: Response) => {
   }
 };
 
+// Function allows a post to be editted
 export const editPost = async (req: Request, res: Response) => {
   // Get the input :id and convert the string into a number
   const postId = Number(req.params.id);

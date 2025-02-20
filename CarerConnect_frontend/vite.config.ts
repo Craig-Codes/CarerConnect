@@ -6,7 +6,7 @@ export default defineConfig({
   plugins: [react(), EnvironmentPlugin("all")],
   server: {
     host: true,
-    port: 8080,
+    port: 8080, // tell app which port to run on
     watch: {
       usePolling: true,
     },

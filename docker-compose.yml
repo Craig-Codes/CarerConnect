@@ -1,9 +1,13 @@
+# Docker compose orcestrates the spinning up of multiple containers
+# Each service is a container
 services:
   carer_connect_frontend:
     container_name: carer_connect_frontend
     build:
       context: ./CarerConnect_frontend
       dockerfile: Dockerfile
+      # Map the internal app port, to the exposed container port.
+      #  Traffic entering port 8080 is directed to 8080 for the app in the container
     ports:
       - "8080:8080"
     volumes:
@@ -27,9 +31,13 @@ services:
     environment:
       - NODE_ENV=development
     depends_on:
+      # This stops the backend container from starting until the database is spun up
+      # This prevents connection issues when the database can't be found
       carer_connect_database:
         condition: service_healthy
 
+  # The rest of th services are pre-built, with the images taken directly from dockerhub
+  # These are official containers, supported and maintained by the creators of the services
   carer_connect_database:
     image: postgres:16
     restart: unless-stopped
@@ -38,6 +46,7 @@ services:
     ports:
       - "5432:5432"
     environment:
+      # Variables taken from root level .env
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_DB: ${POSTGRES_DB}

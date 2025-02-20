@@ -19,6 +19,9 @@ import { getUserId } from "../User/user";
 import { stringInputValidator } from "../../Validators/input";
 import { getUserIsAdmin } from "../../Validators/token";
 
+// Function returns a list of current events - excluding events whose timestamp has aleady passed
+// the optional online parameter controls if all events, online events, or offline events are returned
+// this allows different lists to be returned to the frontend, displayed in tabs
 export const getEvents = async (req: Request, res: Response) => {
   try {
     // Get the query parameter
@@ -27,10 +30,13 @@ export const getEvents = async (req: Request, res: Response) => {
 
     // Conditional logic to allow for filtering by online / offline events or all events
     if (onlineStatus === undefined) {
+      // get all events
       events = (await database.query(findAllEvents)).rows;
     } else if (onlineStatus === "true") {
+      // get only online events
       events = (await database.query(findAllEventsOnline)).rows;
     } else {
+      // get only offline events
       events = (await database.query(findAllEventsOffline)).rows;
     }
     return res.status(200).json(events);
@@ -39,6 +45,7 @@ export const getEvents = async (req: Request, res: Response) => {
   }
 };
 
+// Function retrieves the events a user has subscribed to
 export const getUserSubscribedEvents = async (req: Request, res: Response) => {
   const token = req.cookies.CarerConnect_user_token;
   const userId = await getUserId(token); // Decode token to get the users id
@@ -57,6 +64,7 @@ export const getUserSubscribedEvents = async (req: Request, res: Response) => {
   }
 };
 
+// Query allows a user to unsubscribe from an event
 export const unsubscribeEvent = async (req: Request, res: Response) => {
   try {
     // Get the current token to find the current user id
@@ -115,6 +123,7 @@ export const deleteEvent = async (req: Request, res: Response) => {
   }
 };
 
+// Function allows users to create new events
 export const addEvent = async (req: Request, res: Response) => {
   try {
     const token = req.cookies.CarerConnect_user_token;

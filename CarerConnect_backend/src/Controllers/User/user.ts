@@ -28,16 +28,6 @@ export const createWebToken = (inputEmail: string, isAdmin: boolean) => {
   );
 };
 
-// Function returns a full list of users with details... remove this!!!!
-export const getUsers = async (req: Request, res: Response) => {
-  try {
-    const result = (await database.query("SELECT * FROM person;")).rows;
-    res.status(200).json(result);
-  } catch (error) {
-    res.status(500).json({ message: "Unable to retrieve users" });
-  }
-};
-
 // Function returns an individual user statelessly using browser cookie storing JWT
 export const getUser = async (req: Request, res: Response) => {
   try {
@@ -175,9 +165,14 @@ export const getUserId = async (token: string): Promise<Number> => {
         token,
         process.env.JWT_PRIVATE_KEY!
       ) as JwtPayload;
-      return Number(
-        (await database.query(findUserQuery, [decoded.email])).rows[0].id
-      );
+
+      // check that the expected value exsists incase token is invalid
+      if (decoded) {
+        return Number(
+          (await database.query(findUserQuery, [decoded.email])).rows[0].id
+        );
+      }
+      return 0;
     }
   } catch (error) {
     console.log(error);
@@ -196,7 +191,12 @@ export const getUserEmail = (token: string) => {
         token,
         process.env.JWT_PRIVATE_KEY!
       ) as JwtPayload;
-      return decoded.email;
+
+      // check that the expected value exsists incase token is invalid
+      if (decoded) {
+        return decoded.email;
+      }
+      return null;
     }
   } catch (error) {
     console.log(error);
