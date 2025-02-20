@@ -8,7 +8,7 @@ dotenv.config({ path: "../.env" });
 
 // A connection pool manages connections to the database
 // This allows for shared connections and load balancing
-const database = new Pool({
+export const database = new Pool({
   user: process.env.POSTGRES_USER,
   password: process.env.POSTGRES_PASSWORD,
   host: process.env.POSTGRES_HOST,

@@ -10,6 +10,7 @@ exports.shorthands = undefined;
  * @returns {Promise<void> | void}
  */
 exports.up = (pgm) => {
+  // create the person table - required to login users and create accounts
   pgm.createTable("person", {
     id: "id",
     username: {
@@ -33,7 +34,7 @@ exports.up = (pgm) => {
     },
   });
 
-  //user
+  //user seed data - automatically creates 9 users with set passwords for testing purposes
   pgm.sql(`
     INSERT INTO person (username, email, password, is_admin) VALUES 
     ('Frank Castle', 'user1@example.com', '$2a$10$6iEheK9tIZaibXoEVhS48.EqPdfqT2oSWrD8UIA8gWs6pgCVvxOI6',  false),
