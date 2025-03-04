@@ -90,7 +90,7 @@ export const EventCard = ({
     // if the user is current subscribed, show the unsubscribe button
     // OR
     // if the current subscribed array is undefined, we are using component on the
-    // home page, and all events displayed have already been subscibed to
+    // home page, and all events displayed have already been subscribed to
     else if (
       currentlySubscribedEvents?.includes(event.id) ||
       currentlySubscribedEvents === undefined
@@ -111,7 +111,7 @@ export const EventCard = ({
       );
     }
 
-    // If the user is not subscibed, show the subscribe button
+    // If the user is not subscribed, show the subscribe button
     else {
       return (
         <Button
