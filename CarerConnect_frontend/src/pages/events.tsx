@@ -1,4 +1,4 @@
-// Events page provides user with access to all available events which can be subscibed to
+// Events page provides user with access to all available events which can be subscribed to
 // Features basic fitering using tabs to show all events, online, or in person
 
 import Button from "@mui/material/Button";
@@ -96,7 +96,7 @@ export const EventsPage = () => {
       await fetchWrapper("POST", `event/subscription/${eventId}`); // post event it to the API submscribe endpoint
       await fetchAllMeetups();
       await fetchSubscribedMeetups();
-      toast.success("Successfully subscibed to meetup event");
+      toast.success("Successfully subscribed to meetup event");
     } catch {
       toast.error("Failed to subscribe to meetup event, please try again");
     }
