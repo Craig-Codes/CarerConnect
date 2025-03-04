@@ -64,11 +64,11 @@ exports.up = (pgm) => {
   // Insert seed data for events
   pgm.sql(`
     INSERT INTO event (user_id, title, description, event_date, is_online, location, max_attendees) VALUES
-    (1, 'Online Mental Health Bootcamp', 'Time to get started on making ourselves more mentally robust - together!', '2025-02-15 09:00:00', true, 'https://meet.google.com/akf-nioa-vny', 15),
-    (2, 'Local Carer Meetup', 'A meetup for carers in the Stafford Area.', '2025-02-20 18:00:00', false, 'Community Hall', 10),
-    (3, 'Virtual Health Seminar', 'Full of useful health advise, with a guest speaker!', '2025-02-25 14:00:00', true, 'https://meet.google.com/akf-nioa-vny', 100),
-    (4, 'Coffee Morning', 'Lets get to know each other and get out of the house.', '2025-03-01 10:00:00', false, 'Central Park', 20),
-    (5, 'Virtual Coffee Morning', 'It would be great to meet a few more virtual faces.', '2025-03-05 16:00:00', true, 'https://meet.google.com/akf-nioa-vny', 12);
+    (1, 'Online Mental Health Bootcamp', 'Time to get started on making ourselves more mentally robust - together!', '2026-02-15 09:00:00', true, 'https://meet.google.com/akf-nioa-vny', 15),
+    (2, 'Local Carer Meetup', 'A meetup for carers in the Stafford Area.', '2026-02-20 18:00:00', false, 'Community Hall', 10),
+    (3, 'Virtual Health Seminar', 'Full of useful health advise, with a guest speaker!', '2026-02-25 14:00:00', true, 'https://meet.google.com/akf-nioa-vny', 100),
+    (4, 'Coffee Morning', 'Lets get to know each other and get out of the house.', '2026-03-01 10:00:00', false, 'Central Park', 20),
+    (5, 'Virtual Coffee Morning', 'It would be great to meet a few more virtual faces.', '2026-03-05 16:00:00', true, 'https://meet.google.com/akf-nioa-vny', 12);
 
     -- Insert seed data for subscriptions (2 per event, user IDs 1-9)
     INSERT INTO subscription (event_id, user_id) VALUES
