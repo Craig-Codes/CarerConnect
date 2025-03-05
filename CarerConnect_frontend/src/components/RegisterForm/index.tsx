@@ -83,6 +83,11 @@ export default function RegisterForm() {
       });
 
       if (!result.message) {
+        // Retreive the registered user
+        const result = await fetchWrapper("POST", "user", {
+          password: password,
+          email: email,
+        });
         // Update the User Context across the application to the users details
         setUser(() => ({
           id: result.id,
