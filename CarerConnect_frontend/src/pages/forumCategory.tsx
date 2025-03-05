@@ -1,7 +1,6 @@
 import { useNavigate, useParams } from "react-router-dom";
 import { Box, Button } from "@mui/material";
 import { useContext, useEffect, useState, MouseEvent } from "react";
-import { isLoggedIn } from "../utils/utils";
 import { fetchWrapper } from "../utils/fetchWrapper";
 import { ForumThreadTable } from "../components/ForumThreadTable";
 import { UserContext } from "../components/Context";
@@ -67,23 +66,19 @@ export const ForumCategoryPage = () => {
   };
 
   const fetchThreads = async () => {
-    // If a CarerConnect cookie is found we send a HTTP request to the API
-    // to retrieve the logged in users details
-    if (isLoggedIn()) {
-      try {
-        // API request to get the threads by chosen category id
-        const request = await fetchWrapper("GET", `forum/threads/${id}`);
-        // loop through the threads and map correctly - change date and time into human readable format
-        const threads = request.map((thread: Thread) => ({
-          ...thread, // bring all properties into new object
-          // fornate the date ISO string using day.js library
-          created_at: dayjs(thread.created_at).format("D MMMM YY - HH:mm"),
-        }));
-        // set the allThreads state to the found results array
-        setAllThreads(threads);
-      } catch (error) {
-        console.error("Failed to fetch threads data:", error);
-      }
+    try {
+      // API request to get the threads by chosen category id
+      const request = await fetchWrapper("GET", `forum/threads/${id}`);
+      // loop through the threads and map correctly - change date and time into human readable format
+      const threads = request.map((thread: Thread) => ({
+        ...thread, // bring all properties into new object
+        // fornate the date ISO string using day.js library
+        created_at: dayjs(thread.created_at).format("D MMMM YY - HH:mm"),
+      }));
+      // set the allThreads state to the found results array
+      setAllThreads(threads);
+    } catch (error) {
+      console.error("Failed to fetch threads data:", error);
     }
   };
 

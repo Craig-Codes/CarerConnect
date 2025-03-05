@@ -4,7 +4,6 @@ import { Box, Button, Typography } from "@mui/material";
 import { useContext, useEffect, useState, MouseEvent } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { UserContext } from "../components/Context";
-import { isLoggedIn } from "../utils/utils";
 import { fetchWrapper } from "../utils/fetchWrapper";
 import dayjs from "dayjs";
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
@@ -101,32 +100,28 @@ export const ForumThreadPage = () => {
   };
 
   const fetchPosts = async () => {
-    // If a CarerConnect cookie is found we send a HTTP request to the API
-    // to retrieve the logged in users details
-    if (isLoggedIn()) {
-      try {
-        // API request to get the threads by chosen category id
-        const request = await fetchWrapper("GET", `forum/thread/${id}`);
-        // extract the thread data and format correctly
-        const thread = {
-          title: request["thread"].title,
-          // fornate the date ISO string using day.js library
-          createdAt: dayjs(request["thread"].createdAt).format(
-            "D MMMM YY - HH:mm"
-          ),
-        };
-        setThread(thread);
-        // loop through the posts and map correctly - change date and time into human readable format
-        const posts = request["posts"].map((post: Post) => ({
-          ...post, // bring all properties into new object
-          // fornate the date ISO string using day.js library
-          created_at: dayjs(post.created_at).format("D MMMM YY - HH:mm"),
-        }));
-        // set the allPost state to the found and formatted results array
-        setAllPosts(posts);
-      } catch (error) {
-        console.error("Failed to fetch posts data:", error);
-      }
+    try {
+      // API request to get the threads by chosen category id
+      const request = await fetchWrapper("GET", `forum/thread/${id}`);
+      // extract the thread data and format correctly
+      const thread = {
+        title: request["thread"].title,
+        // fornate the date ISO string using day.js library
+        createdAt: dayjs(request["thread"].createdAt).format(
+          "D MMMM YY - HH:mm"
+        ),
+      };
+      setThread(thread);
+      // loop through the posts and map correctly - change date and time into human readable format
+      const posts = request["posts"].map((post: Post) => ({
+        ...post, // bring all properties into new object
+        // fornate the date ISO string using day.js library
+        created_at: dayjs(post.created_at).format("D MMMM YY - HH:mm"),
+      }));
+      // set the allPost state to the found and formatted results array
+      setAllPosts(posts);
+    } catch (error) {
+      console.error("Failed to fetch posts data:", error);
     }
   };
 
